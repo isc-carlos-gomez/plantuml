@@ -199,6 +199,26 @@ public class Link extends WithLinkType implements Hideable, Removeable {
 		return result;
 	}
 
+    public Link withAppendedLabel(final String label) {
+        final Display composedLabel = this.label.add(label);
+        return withLabel(composedLabel);
+    }
+
+    public Link withLabel(final String label) {
+        final Display newLabel = Display.create(label);
+        return withLabel(newLabel);
+    }
+
+    private Link withLabel(final Display newLabel) {
+      final Link result = new Link(cl1, cl2, getType(), newLabel, length, qualifier2, qualifier1,
+              labeldistance, labelangle, getSpecificColor(), styleBuilder);
+      result.inverted = this.inverted;
+      result.port1 = this.port2;
+      result.port2 = this.port1;
+      result.url = this.url;
+      return result;
+    }
+
 	@Override
 	public void goNorank() {
 		setConstraint(false);

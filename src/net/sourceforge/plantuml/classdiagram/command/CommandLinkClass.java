@@ -35,6 +35,8 @@
  */
 package net.sourceforge.plantuml.classdiagram.command;
 
+import java.util.Optional;
+
 import net.sourceforge.plantuml.Direction;
 import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.StringUtils;
@@ -171,9 +173,9 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
 		final IEntity cl1 = getFoo1(diagram, code1, ident1);
 		final IEntity cl2 = getFoo1(diagram, code2, ident2);
 
-		final LinkType linkType = getLinkType(arg);
+		LinkType linkType = getLinkType(arg);
 		final Direction dir = getDirection(arg);
-		final int queue;
+		int queue;
 		if (dir == Direction.LEFT || dir == Direction.RIGHT) {
 			queue = 1;
 		} else {
@@ -237,6 +239,41 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
 		} else if (labelLink != null && labelLink.endsWith(" <")) {
 			linkArrow = LinkArrow.BACKWARD;
 			labelLink = StringUtils.trin(labelLink.substring(0, labelLink.length() - 2));
+		}
+		
+		if (arg.get("ARROW_BODY1", 0).contains("--") || arg.get("ARROW_BODY2", 0).contains("--")) {
+          linkType = linkType.goDashed();
+        }
+		// Do we need to nullify other directions and keep only right as default and down only when D is present?
+		if (dir == Direction.UP || dir == Direction.DOWN) {
+            queue = Math.max(2, queue);
+        }
+		
+		final String linkLabel = labelLink;
+//		final LinkType targetLinkType = linkType;
+		final Optional<Link> targetLink = diagram.getLinks().stream()
+		  .filter(link -> {
+		    return link.getEntity1().equals(cl1)
+		      && link.getEntity2().equals(cl2);
+//		      && link.getType().equals(targetLinkType);
+		  }).findFirst();
+		if (targetLink.isPresent()) {
+		  final Link link = targetLink.get();
+		  final Link newLink = link.withAppendedLabel("\n"+linkLabel);
+		  diagram.removeLink(link);
+		  diagram.addLink(newLink);
+		  return CommandExecutionResult.ok();
+		}
+        
+		final Optional<Link> invertedLink = diagram.getLinks().stream()
+          .filter(link -> {
+            return link.getEntity1().equals(cl2)
+              && link.getEntity2().equals(cl1);
+//              && link.getType().equals(targetLinkType);
+          }).findFirst();
+		if (invertedLink.isPresent()) {
+		  final Link emptyLink = invertedLink.get().withLabel(" ");
+		  diagram.addLink(emptyLink);
 		}
 
 		Link link = new Link(cl1, cl2, linkType, Display.getWithNewlines(labelLink), queue, firstLabel, secondLabel,

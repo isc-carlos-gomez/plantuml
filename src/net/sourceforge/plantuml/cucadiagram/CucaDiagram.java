@@ -401,7 +401,7 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 		entityFactory.addLink(link);
 	}
 
-	final protected void removeLink(Link link) {
+	final public void removeLink(Link link) {
 		entityFactory.removeLink(link);
 	}
 
