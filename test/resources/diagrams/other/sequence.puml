@@ -1,0 +1,20 @@
+@startuml
+
+Bob -> Alice : hello
+
+@enduml
+
+
+@startuml
+
+Customer -> OrderCheckout: create()
+  OrderCheckout -> Order: getTotal()
+    Order -> OrderItem: :*getTotal()
+    OrderItem --> Order: :*total
+    Order -> Order: calculateTotal()
+    Order --> OrderCheckout: total
+  OrderCheckout -> Order: countItems()
+    Order -> Order: count()
+    Order --> OrderCheckout: count
+
+@enduml

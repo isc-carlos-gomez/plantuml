@@ -1,0 +1,10 @@
+@startuml
+
+class Class1
+Class1 -R-> Class2 : 1. aLongMethodName\nBeingUsed\nNow()
+Class1 -R-> Class3 : 2. test()
+Class1 -R-> Class4 : 3. test another very long\ndescription\nagain()
+Class1 -D-> Class5 : 4. testing long methods again()
+Class1 -D-> Class6 : 5. simpleMethod()
+
+@enduml

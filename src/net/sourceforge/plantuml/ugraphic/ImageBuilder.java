@@ -40,6 +40,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -237,7 +238,7 @@ public class ImageBuilder {
 		}
 		try {
 			final UGraphic2 ug = createUGraphic(fileFormatOption, seed, dim, animationArg, dx, dy);
-			UGraphic ug2 = ug;
+			UGraphic ug2 = ug.apply(new UTranslate(this.overflow));
 			if (externalMargin1 > 0) {
 				ug2 = ug2.apply(new UTranslate(externalMargin1, externalMargin1));
 			}
@@ -292,6 +293,7 @@ public class ImageBuilder {
 		return 2 * (externalMargin1 + externalMargin2);
 	}
 
+	private Point2D.Double overflow;
 	public Dimension2D getFinalDimension(StringBounder stringBounder) {
 		final Dimension2D dim;
 		// if (udrawable instanceof TextBlock) {
@@ -301,8 +303,12 @@ public class ImageBuilder {
 		udrawable.drawU(limitFinder);
 		dim = new Dimension2DDouble(limitFinder.getMaxX(), limitFinder.getMaxY());
 		// }
-		return new Dimension2DDouble(dim.getWidth() + 1 + margin1 + margin2 + externalMargin(), dim.getHeight() + 1
-				+ margin1 + margin2 + externalMargin());
+        this.overflow = new Point2D.Double(
+            Math.abs(limitFinder.getMinX()),
+            Math.abs(limitFinder.getMinY()));
+		return new Dimension2DDouble(
+		    dim.getWidth() + 1 + margin1 + margin2 + externalMargin() + this.overflow.x,
+		    dim.getHeight() + 1 + margin1 + margin2 + externalMargin() + this.overflow.y);
 	}
 
 	private UGraphic handwritten(UGraphic ug) {

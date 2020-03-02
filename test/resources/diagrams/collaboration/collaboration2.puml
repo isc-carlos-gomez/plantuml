@@ -1,0 +1,101 @@
+@startuml
+
+allowmixing
+'top to bottom direction
+'left to right direction
+
+actor Customer
+class OrderCheckout
+class Order
+class OrderItem
+
+
+'1. User writes this code
+'UP and LEFT invert directions changing the order the entities are rendered, it's better not to use them
+Customer -> OrderCheckout: create()
+  OrderCheckout -> Order: getTotal()
+    Order -D> OrderItem: :*getTotal()
+    OrderItem --> Order: :*total
+    Order -> Order: calculateTotal()
+    Order --> OrderCheckout: total
+  OrderCheckout -> Order: countItems()
+    Order -> Order: count()
+    Order --> OrderCheckout: count
+
+
+'2. PlantUML transforms the code to this
+'Customer -R- OrderCheckout: 1: create() >
+'
+'OrderCheckout -R- Order: 1.1: getTotal()\n1.2: countItems() >
+'OrderCheckout -R- Order
+'Order .L. OrderCheckout: 1.1.4: total\n1.2.2: count >
+'
+'Order -U- OrderItem: 1.1.1 *: getTotal() >
+'Order -U- OrderItem
+'OrderItem .D. Order: 1.1.2 *: total >
+'
+'Order -- Order: 1.1.3: calculateTotal()\n1.2.1: count() >
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'Best numeric approach?
+'Customer -> OrderCheckout:     1: create()
+'  OrderCheckout -> Order:      1.1: getTotal()
+'    Order -> OrderItem:        1.1.1 *: getTotal()
+'    OrderItem --> Order:       1.1.2 *: total
+'    Order -> Order:            1.1.3: calculateTotal()
+'    Order --> OrderCheckout:   1.1.4: total
+'  OrderCheckout -> Order:      1.2: countItems()
+'    Order -> Order:            1.2.1: count()
+'    Order --> OrderCheckout:   1.2.2: count
+
+
+'Alternative non-numeric approach
+'Customer -> OrderCheckout: create()
+'OrderCheckout -> Order: getTotal()
+'Order -> OrderItem: :*getTotal()
+'OrderItem --> Order: :*total
+'Order -> Order: calculateTotal()
+'Order --> OrderCheckout: total
+'OrderCheckout -> Order: countItems()
+'Order -> Order: count()
+'Order --> OrderCheckout: count
+
+
+'1: Customer -> OrderCheckout: create()
+'1.1: OrderCheckout -> Order: getTotal()
+'1.1.1 *: Order -> OrderItem: getTotal()
+'1.1.2 *: OrderItem -> Order: total
+'1.1.3: Order -> Order: calculateTotal()
+'1.1.4: Order -> OrderCheckout: total
+'1.2: OrderCheckout -> Order: countItems()
+'1.2.1: Order -> Order: count()
+'1.2.2: Order -> OrderCheckout: count
+
+
+'Customer -> OrderCheckout: 1: create()
+'OrderCheckout -> Order:    1.1: getTotal()
+'Order -> OrderItem:        1.1.1 *: getTotal()
+'OrderItem -> Order:        1.1.2 *: total
+'Order -> Order:            1.1.3: calculateTotal()
+'Order -> OrderCheckout:    1.1.4: total
+'OrderCheckout -> Order:    1.2: countItems()
+'Order -> Order:            1.2.1: count()
+'Order -> OrderCheckout:    1.2.2: count
+
+'OrderCheckout -- Order: 1.2: countItems() >
+'Order - Order: 1.2.1: count() >
+'Order .L. OrderCheckout: 1.2.2: count
+
+@enduml
