@@ -36,6 +36,7 @@
 package net.sourceforge.plantuml.classdiagram.command;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import net.sourceforge.plantuml.Direction;
 import net.sourceforge.plantuml.LineLocation;
@@ -271,13 +272,18 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
               && link.getEntity2().equals(cl1);
 //              && link.getType().equals(targetLinkType);
           }).findFirst();
+		final UUID linkGroupId;
 		if (invertedLink.isPresent()) {
 		  final Link emptyLink = invertedLink.get().withLabel(" ");
 		  diagram.addLink(emptyLink);
+		  linkGroupId = invertedLink.get().getGroupId();
+		} else {
+		  linkGroupId = UUID.randomUUID();
 		}
 
 		Link link = new Link(cl1, cl2, linkType, Display.getWithNewlines(labelLink), queue, firstLabel, secondLabel,
-				diagram.getLabeldistance(), diagram.getLabelangle(), diagram.getSkinParam().getCurrentStyleBuilder());
+				diagram.getLabeldistance(), diagram.getLabelangle(), diagram.getSkinParam().getCurrentStyleBuilder(),
+				linkGroupId);
 		if (arg.get("URL", 0) != null) {
 			final UrlBuilder urlBuilder = new UrlBuilder(diagram.getSkinParam().getValue("topurl"), ModeUrl.STRICT);
 			final Url url = urlBuilder.getUrl(arg.get("URL", 0));

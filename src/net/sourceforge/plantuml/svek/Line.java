@@ -144,6 +144,7 @@ public class Line implements Moveable, Hideable {
 	private HtmlColor arrowLollipopColor;
 
 	// private final UmlDiagramType umlType;
+	private final LineGroup group;
 
 	@Override
 	public String toString() {
@@ -220,7 +221,7 @@ public class Line implements Moveable, Hideable {
 	}
 
 	public Line(Link link, ColorSequence colorSequence, ISkinParam skinParam, StringBounder stringBounder,
-			FontConfiguration labelFont, Bibliotekon bibliotekon, Pragma pragma) {
+			FontConfiguration labelFont, Bibliotekon bibliotekon, Pragma pragma, LineGroup group) {
 
 		if (link == null) {
 			throw new IllegalArgumentException();
@@ -332,6 +333,7 @@ public class Line implements Moveable, Hideable {
 					skinParam);
 		}
 
+		this.group = group;
 	}
 
 	private TextBlock getLineLabel(Link link, ISkinParam skinParam, FontConfiguration labelFont) {
@@ -733,7 +735,9 @@ public class Line implements Moveable, Hideable {
 		final String tmp = uniq(ids, comment);
 		todraw.setComment(tmp);
 
-		drawRainbow(ug.apply(new UTranslate(x, y)), color, todraw, link.getSupplementaryColors(), stroke);
+		if (this.group.isVisible(this)) {
+		    drawRainbow(ug.apply(new UTranslate(x, y)), color, todraw, link.getSupplementaryColors(), stroke);
+		}
 
 		ug = ug.apply(new UStroke()).apply(new UChangeColor(color));
 

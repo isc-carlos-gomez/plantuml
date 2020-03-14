@@ -41,8 +41,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -354,6 +356,7 @@ public final class GeneralImageBuilder {
 		printGroups(dotStringFactory, dotData.getRootGroup());
 		printEntities(dotStringFactory, getUnpackagedEntities());
 
+		final Map<UUID, LineGroup> linkGroupIdToLineGroup = new HashMap<>();
 		for (Link link : dotData.getLinks()) {
 			if (link.isRemoved()) {
 				continue;
@@ -369,8 +372,11 @@ public final class GeneralImageBuilder {
 					labelFont = new FontConfiguration(skinParam, FontParam.ARROW, null);
 				}
 
+				final LineGroup lineGroup = linkGroupIdToLineGroup.computeIfAbsent(
+				    link.getGroupId(), LineGroup::new);
 				final Line line = new Line(link, dotStringFactory.getColorSequence(), skinParam, stringBounder,
-						labelFont, dotStringFactory.getBibliotekon(), dotData.getPragma());
+						labelFont, dotStringFactory.getBibliotekon(), dotData.getPragma(), lineGroup);
+				lineGroup.addLine(line);
 
 				dotStringFactory.getBibliotekon().addLine(line);
 
