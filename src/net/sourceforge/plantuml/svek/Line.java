@@ -581,9 +581,9 @@ public class Line implements Moveable, Hideable {
 		PointListIterator pointListIterator = lineSvg.getPointsWithThisColor(lineColor);
 
 		final LinkType linkType = link.getType();
-		this.extremity1 = getExtremity(linkType.getDecor2(), pointListIterator, dotPath.getStartPoint(),
+		this.extremity1 = getExtremity(LinkDecor.NONE, pointListIterator, dotPath.getStartPoint(),
 				dotPath.getStartAngle() + Math.PI, ltail, bibliotekon.getShape(link.getEntity1()));
-		this.extremity2 = getExtremity(linkType.getDecor1(), pointListIterator, dotPath.getEndPoint(),
+		this.extremity2 = getExtremity(LinkDecor.NONE, pointListIterator, dotPath.getEndPoint(),
 				dotPath.getEndAngle(), lhead, bibliotekon.getShape(link.getEntity2()));
 
 		if (link.getEntity1().getLeafType() == LeafType.LOLLIPOP_HALF) {
