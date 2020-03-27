@@ -87,6 +87,8 @@ import net.sourceforge.plantuml.posimo.Positionable;
 import net.sourceforge.plantuml.posimo.PositionableUtils;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
 import net.sourceforge.plantuml.skin.rose.Rose;
+import net.sourceforge.plantuml.svek.communication.CommunicationLink;
+import net.sourceforge.plantuml.svek.communication.Rectangle;
 import net.sourceforge.plantuml.svek.extremity.Extremity;
 import net.sourceforge.plantuml.svek.extremity.ExtremityFactory;
 import net.sourceforge.plantuml.svek.extremity.ExtremityFactoryExtends;
@@ -144,7 +146,7 @@ public class Line implements Moveable, Hideable {
 	private HtmlColor arrowLollipopColor;
 
 	// private final UmlDiagramType umlType;
-	private final LineGroup group;
+	private final CommunicationLink communicationLink;
 
 	@Override
 	public String toString() {
@@ -221,7 +223,8 @@ public class Line implements Moveable, Hideable {
 	}
 
 	public Line(Link link, ColorSequence colorSequence, ISkinParam skinParam, StringBounder stringBounder,
-			FontConfiguration labelFont, Bibliotekon bibliotekon, Pragma pragma, LineGroup group) {
+			FontConfiguration labelFont, Bibliotekon bibliotekon, Pragma pragma,
+			CommunicationLink communicationLink) {
 
 		if (link == null) {
 			throw new IllegalArgumentException();
@@ -333,7 +336,7 @@ public class Line implements Moveable, Hideable {
 					skinParam);
 		}
 
-		this.group = group;
+		this.communicationLink = communicationLink;
 	}
 
 	private TextBlock getLineLabel(Link link, ISkinParam skinParam, FontConfiguration labelFont) {
@@ -735,8 +738,11 @@ public class Line implements Moveable, Hideable {
 		final String tmp = uniq(ids, comment);
 		todraw.setComment(tmp);
 
-		if (this.group.isVisible(this)) {
+		if (this.communicationLink.isLineVisible(this)) {
 		    drawRainbow(ug.apply(new UTranslate(x, y)), color, todraw, link.getSupplementaryColors(), stroke);
+		}
+		if (this.communicationLink.isLabelVisible(this)) {
+		  this.communicationLink.buildMessageArrow(this).drawU(ug);
 		}
 
 		ug = ug.apply(new UStroke()).apply(new UChangeColor(color));
@@ -1021,5 +1027,23 @@ public class Line implements Moveable, Hideable {
 		}
 		return null;
 	}
+    
+    /**
+     * @return the rectangular area occupied by the message label of this line
+     */
+    public Rectangle messageBox() {
+      double x = 0;
+      double y = 0;
+      if (this.link.isAutoLinkOfAGroup()) {
+        final Cluster cl = this.bibliotekon.getCluster((IGroup) this.link.getEntity1());
+        if (cl != null) {
+          x += cl.getWidth();
+          x -= this.dotPath.getStartPoint().getX() - cl.getMinX();
+        }
+      }
+      x += this.dx;
+      y += this.dy;
+      return new Rectangle(this.labelXY).withDelta(x, y);
+    }
 
 }

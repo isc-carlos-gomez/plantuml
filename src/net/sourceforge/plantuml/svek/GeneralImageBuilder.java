@@ -106,6 +106,7 @@ import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleSignature;
+import net.sourceforge.plantuml.svek.communication.CommunicationLink;
 import net.sourceforge.plantuml.svek.image.EntityImageActivity;
 import net.sourceforge.plantuml.svek.image.EntityImageArcCircle;
 import net.sourceforge.plantuml.svek.image.EntityImageAssociation;
@@ -356,7 +357,7 @@ public final class GeneralImageBuilder {
 		printGroups(dotStringFactory, dotData.getRootGroup());
 		printEntities(dotStringFactory, getUnpackagedEntities());
 
-		final Map<UUID, LineGroup> linkGroupIdToLineGroup = new HashMap<>();
+		final Map<UUID, CommunicationLink> linkGroupIdToCommunicationLink = new HashMap<>();
 		for (Link link : dotData.getLinks()) {
 			if (link.isRemoved()) {
 				continue;
@@ -372,11 +373,11 @@ public final class GeneralImageBuilder {
 					labelFont = new FontConfiguration(skinParam, FontParam.ARROW, null);
 				}
 
-				final LineGroup lineGroup = linkGroupIdToLineGroup.computeIfAbsent(
-				    link.getGroupId(), LineGroup::new);
+				final CommunicationLink communicationLink = linkGroupIdToCommunicationLink.computeIfAbsent(
+				    link.getGroupId(), CommunicationLink::new);
 				final Line line = new Line(link, dotStringFactory.getColorSequence(), skinParam, stringBounder,
-						labelFont, dotStringFactory.getBibliotekon(), dotData.getPragma(), lineGroup);
-				lineGroup.addLine(line);
+						labelFont, dotStringFactory.getBibliotekon(), dotData.getPragma(), communicationLink);
+				communicationLink.addLine(line);
 
 				dotStringFactory.getBibliotekon().addLine(line);
 
