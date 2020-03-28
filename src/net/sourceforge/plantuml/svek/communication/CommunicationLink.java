@@ -52,20 +52,21 @@ public class CommunicationLink {
 
   /**
    * @param line
-   *        the line carrying the label to analyze
-   * @return whether the label of a line is visible in this link or not
-   */
-  public boolean isLabelVisible(final Line line) {
-    return this.group.isLabelVisible(line);
-  }
-
-  /**
-   * @param line
    *        the line the message arrow is created for
    * @return a new {@link MessageArrow} which position corresponds with the position of a line label
    */
   public MessageArrow buildMessageArrow(final Line line) {
     return new MessageArrowBuilder(line, this.group.orientation(), this.group.focalPoint()).build();
+  }
+
+  /**
+   * @param line
+   *        the line containing the message to position
+   * @return the point corresponding to the message's top left corner that is fully aligned with its
+   *         message arrow
+   */
+  public Point calculateMessagePosition(final Line line) {
+    return new MessagePositionCalculator(line, this.group.orientation(), this.group.focalPoint()).calculate();
   }
 
   @Override

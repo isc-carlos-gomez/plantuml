@@ -29,11 +29,6 @@ class ThreeLineGroup implements LineGroup {
   }
 
   @Override
-  public boolean isLabelVisible(final Line line) {
-    return line == this.data.firstLine() || line == this.data.lastLine();
-  }
-
-  @Override
   public Orientation orientation() {
     if (this.orientation == null) {
       this.orientation = calculateOrientation();

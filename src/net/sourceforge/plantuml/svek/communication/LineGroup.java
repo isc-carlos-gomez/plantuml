@@ -32,15 +32,6 @@ interface LineGroup {
   }
 
   /**
-   * @param line
-   *        the line carrying the label to analyze
-   * @return whether the label of a line is visible in this group or not
-   */
-  default boolean isLabelVisible(final Line line) {
-    throw new UnsupportedOperationException();
-  }
-
-  /**
    * @return the {@link Orientation} of this line group considering the position of its lines and
    *         labels in the Communication Diagram
    */

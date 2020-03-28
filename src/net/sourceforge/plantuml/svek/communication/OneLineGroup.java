@@ -31,11 +31,6 @@ public class OneLineGroup implements LineGroup {
   }
 
   @Override
-  public boolean isLabelVisible(final Line line) {
-    return true;
-  }
-
-  @Override
   public Orientation orientation() {
     if (this.orientation == null) {
       this.orientation = calculateOrientation();

@@ -99,12 +99,33 @@ public class Rectangle {
   }
 
   /**
+   * @return the top left corner of this rectangle
+   */
+  public Point topLeft() {
+    return new Point(this.x1, this.y1);
+  }
+
+  /**
    * @return the central point of this rectangle
    */
   public Point center() {
     return new Point(
         this.x1 + width() / 2,
         this.y1 + height() / 2);
+  }
+
+  /**
+   * @return the width of this rectangle
+   */
+  public double width() {
+    return Math.abs(this.x1 - this.x2);
+  }
+
+  /**
+   * @return the height of this rectangle
+   */
+  public double height() {
+    return Math.abs(this.y1 - this.y2);
   }
 
   /**
@@ -163,14 +184,6 @@ public class Rectangle {
       return Overlap.HORIZONTAL;
     }
     return Overlap.VERTICAL;
-  }
-
-  private double height() {
-    return Math.abs(this.y1 - this.y2);
-  }
-
-  private double width() {
-    return Math.abs(this.x1 - this.x2);
   }
 
   /**

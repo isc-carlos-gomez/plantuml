@@ -88,6 +88,7 @@ import net.sourceforge.plantuml.posimo.PositionableUtils;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
 import net.sourceforge.plantuml.skin.rose.Rose;
 import net.sourceforge.plantuml.svek.communication.CommunicationLink;
+import net.sourceforge.plantuml.svek.communication.Point;
 import net.sourceforge.plantuml.svek.communication.Rectangle;
 import net.sourceforge.plantuml.svek.extremity.Extremity;
 import net.sourceforge.plantuml.svek.extremity.ExtremityFactory;
@@ -741,17 +742,17 @@ public class Line implements Moveable, Hideable {
 		if (this.communicationLink.isLineVisible(this)) {
 		    drawRainbow(ug.apply(new UTranslate(x, y)), color, todraw, link.getSupplementaryColors(), stroke);
 		}
-		if (this.communicationLink.isLabelVisible(this)) {
-		  this.communicationLink.buildMessageArrow(this).drawU(ug);
-		}
 
 		ug = ug.apply(new UStroke()).apply(new UChangeColor(color));
 
-		if (this.labelText != null && this.labelXY != null
-				&& link.getNoteLinkStrategy() != NoteLinkStrategy.HALF_NOT_PRINTED) {
-			this.labelText.drawU(ug.apply(new UTranslate(x + this.labelXY.getPosition().getX(), y
-					+ this.labelXY.getPosition().getY())));
-		}
+		final boolean messageVisible = !this.link.getLabel().isWhite()
+		    && this.labelText != null && this.labelXY != null
+		    && link.getNoteLinkStrategy() != NoteLinkStrategy.HALF_NOT_PRINTED;
+        if (messageVisible) {
+            final Point messagePosition = this.communicationLink.calculateMessagePosition(this);
+            this.labelText.drawU(ug.apply(new UTranslate(messagePosition.getX(), messagePosition.getY())));
+            this.communicationLink.buildMessageArrow(this).drawU(ug);
+        }
 		if (this.startTailText != null && this.startTailLabelXY != null && this.startTailLabelXY.getPosition() != null) {
 			this.startTailText.drawU(ug.apply(new UTranslate(x + this.startTailLabelXY.getPosition().getX(), y
 					+ this.startTailLabelXY.getPosition().getY())));
