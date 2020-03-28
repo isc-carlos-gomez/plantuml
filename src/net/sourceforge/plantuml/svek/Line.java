@@ -751,7 +751,7 @@ public class Line implements Moveable, Hideable {
         if (messageVisible) {
             final Point messagePosition = this.communicationLink.calculateMessagePosition(this);
             this.labelText.drawU(ug.apply(new UTranslate(messagePosition.getX(), messagePosition.getY())));
-            this.communicationLink.buildMessageArrow(this).drawU(ug);
+            this.communicationLink.buildMessageArrow(this).drawU(ug.apply(stroke));
         }
 		if (this.startTailText != null && this.startTailLabelXY != null && this.startTailLabelXY.getPosition() != null) {
 			this.startTailText.drawU(ug.apply(new UTranslate(x + this.startTailLabelXY.getPosition().getX(), y
