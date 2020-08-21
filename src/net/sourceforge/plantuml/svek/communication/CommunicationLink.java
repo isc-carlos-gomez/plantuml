@@ -56,7 +56,8 @@ public class CommunicationLink {
    * @return a new {@link MessageArrow} which position corresponds with the position of a line label
    */
   public MessageArrow buildMessageArrow(final Line line) {
-    return new MessageArrowBuilder(line, this.group.orientation(), this.group.focalPoint()).build();
+    return new MessageArrowBuilder(line, this.group.orientation(), this.group.focalPoint())
+        .build();
   }
 
   /**
@@ -66,7 +67,8 @@ public class CommunicationLink {
    *         message arrow
    */
   public Point calculateMessagePosition(final Line line) {
-    return new MessagePositionCalculator(line, this.group.orientation(), this.group.focalPoint()).calculate();
+    return new MessagePositionCalculator(line, this.group.orientation(), this.group.focalPoint())
+        .calculate();
   }
 
   @Override

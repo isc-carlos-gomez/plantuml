@@ -48,7 +48,7 @@ class UmlEndToEndTest {
         .forEach(path -> {
           try {
             assertThat(generateDiagram(path)).isNotNull();
-          } catch (IOException e) {
+          } catch (final IOException e) {
             fail(e);
           }
         });
@@ -62,7 +62,7 @@ class UmlEndToEndTest {
         .forEach(path -> {
           try {
             assertThat(generateDiagram(path)).isNotNull();
-          } catch (IOException e) {
+          } catch (final IOException e) {
             fail(e);
           }
         });

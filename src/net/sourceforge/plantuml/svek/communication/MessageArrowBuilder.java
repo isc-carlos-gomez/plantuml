@@ -61,16 +61,10 @@ class MessageArrowBuilder {
     if (angle < 0) {
       angle += 360;
     }
-    if (angle > 315 || angle >= 0 && angle < 45) {
+    if (angle <= 180) {
       return this.linkOrientation == Orientation.HORIZONTAL ? Direction.RIGHT : Direction.UP;
     }
-    if (angle >= 45 && angle <= 135) {
-      return this.linkOrientation == Orientation.VERTICAL ? Direction.UP : Direction.RIGHT;
-    }
-    if (angle > 135 && angle < 225) {
-      return this.linkOrientation == Orientation.HORIZONTAL ? Direction.LEFT : Direction.DOWN;
-    }
-    return this.linkOrientation == Orientation.VERTICAL ? Direction.DOWN : Direction.LEFT;
+    return this.linkOrientation == Orientation.HORIZONTAL ? Direction.LEFT : Direction.DOWN;
   }
 
   private Point calculateStartPoint() {
