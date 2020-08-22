@@ -703,7 +703,7 @@ public class Line implements Moveable, Hideable {
 		if (link.getColors() != null && link.getColors().getSpecificLineStroke() != null) {
 			stroke = link.getColors().getSpecificLineStroke();
 		}
-		ug = ug.apply(stroke);
+		ug = ug.apply(stroke.onlyThickness());
 		// double moveEndY = 0;
 
 		if (dotPath == null) {
