@@ -1,4 +1,4 @@
-package net.sourceforge.plantuml.svek.communication;
+package net.sourceforge.plantuml.communicationdiagram.link;
 
 import net.sourceforge.plantuml.svek.Line;
 

@@ -1,31 +1,33 @@
-package net.sourceforge.plantuml.svek.communication;
+package net.sourceforge.plantuml.communicationdiagram.link;
 
+import java.util.Objects;
+
+import net.sourceforge.plantuml.communicationdiagram.link.Rectangle.Overlap;
 import net.sourceforge.plantuml.svek.Line;
-import net.sourceforge.plantuml.svek.communication.Rectangle.Overlap;
 
 /**
- * A {@link LineGroup} with three lines.
+ * A {@link LineGroup} with only one line.
  *
  * @author Carlos Gomez
  */
-class ThreeLineGroup implements LineGroup {
+public class OneLineGroup implements LineGroup {
 
-  private final ThreeLineGroupLazyData data;
+  private final Line line;
   private Orientation orientation;
   private Point focalPoint;
 
-  ThreeLineGroup(final Line line1, final Line line2, final Line line3) {
-    this.data = new ThreeLineGroupLazyData(line1, line2, line3);
+  OneLineGroup(final Line line) {
+    this.line = Objects.requireNonNull(line);
   }
 
   @Override
-  public LineGroup addLine(final Line line) {
-    throw new UnsupportedOperationException();
+  public LineGroup addLine(final Line line2) {
+    return new TwoLineGroup(this.line, line2);
   }
 
   @Override
   public boolean isLineVisible(final Line line) {
-    return line == this.data.centralLine();
+    return true;
   }
 
   @Override
@@ -39,16 +41,15 @@ class ThreeLineGroup implements LineGroup {
   @Override
   public Point focalPoint() {
     if (this.focalPoint == null) {
-      this.focalPoint = new FocalPointCalculator(this.data.centralLine(), orientation())
+      this.focalPoint = new FocalPointCalculator(this.line, orientation())
           .calculate();
     }
     return this.focalPoint;
   }
 
   private Orientation calculateOrientation() {
-    final Rectangle centralLineBox = new Rectangle(this.data.centralLine().getDotPath().getMinMax());
-    final Rectangle messageBoxes = this.data.firstLine().messageBox()
-        .join(this.data.lastLine().messageBox());
+    final Rectangle centralLineBox = new Rectangle(this.line.getDotPath().getMinMax());
+    final Rectangle messageBoxes = this.line.messageBox();
     final Overlap overlap = centralLineBox.overlap(messageBoxes);
     switch (overlap) {
       case HORIZONTAL:

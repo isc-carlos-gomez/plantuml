@@ -1,10 +1,11 @@
-package net.sourceforge.plantuml.svek.communication;
+package net.sourceforge.plantuml.communicationdiagram.link;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
-import net.sourceforge.plantuml.svek.communication.Rectangle.Overlap;
+import net.sourceforge.plantuml.communicationdiagram.link.Rectangle.Overlap;
+
 
 /**
  * Unit tests {@link Rectangle}.
