@@ -55,6 +55,7 @@ import net.sourceforge.plantuml.command.regex.RegexLeaf;
 import net.sourceforge.plantuml.command.regex.RegexOptional;
 import net.sourceforge.plantuml.command.regex.RegexOr;
 import net.sourceforge.plantuml.command.regex.RegexResult;
+import net.sourceforge.plantuml.communicationdiagram.sequence.CommandArgumentSequenceDecorator;
 import net.sourceforge.plantuml.cucadiagram.Code;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
@@ -72,9 +73,11 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
 
 	private static final String SINGLE = "[.\\\\]{0,2}[\\p{L}0-9_]+(?:[.\\\\]{1,2}[\\p{L}0-9_]+)*";
 	private static final String COUPLE = "\\([%s]*(" + SINGLE + ")[%s]*,[%s]*(" + SINGLE + ")[%s]*\\)";
+    private final CommandArgumentSequenceDecorator sequenceDecorator;
 
 	public CommandLinkClass(UmlDiagramType umlDiagramType) {
 		super(getRegexConcat(umlDiagramType));
+		this.sequenceDecorator = new CommandArgumentSequenceDecorator();
 	}
 
 	static private RegexConcat getRegexConcat(UmlDiagramType umlDiagramType) {
@@ -130,6 +133,18 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
 	public static String getSeparator() {
 		return "(?:\\.|::|\\\\|\\\\\\\\)";
 	}
+
+    /**
+     * Decorates the given command argument by prefixing its link label (if present) with a sequence
+     * number.
+     * 
+     * @return the given command argument decorated if its link label is present, or the original
+     *         command argument otherwise
+     */
+    @Override
+    protected RegexResult decorateArgument(final RegexResult commandArgument, final String commandString) {
+      return sequenceDecorator.decorate(commandArgument, commandString);
+    }
 
 	@Override
 	protected CommandExecutionResult executeArg(AbstractClassOrObjectDiagram diagram, LineLocation location,

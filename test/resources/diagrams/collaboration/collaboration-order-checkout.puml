@@ -14,12 +14,12 @@ class OrderItem
 'UP and LEFT invert directions changing the order the entities are rendered, it's better not to use them
 Customer -> OrderCheckout: create()
   OrderCheckout -> Order: getTotal()
-    Order -D> OrderItem: :*getTotal()
-    OrderItem --> Order: :*total
-    Order -D> OrderItem2: :*getTotal()
-    OrderItem2 --> Order: :*total
-    Order -D> OrderItem3: :*getTotal()
-    OrderItem3 --> Order: :*total
+    Order -D> OrderItem: *getTotal()
+    OrderItem --> Order: *total
+    Order -D> OrderItem2: *getTotal()
+    OrderItem2 --> Order: *total
+    Order -D> OrderItem3: *getTotal()
+    OrderItem3 --> Order: *total
     Order -> Order: calculateTotal()
     Order --> OrderCheckout: total
   OrderCheckout -> Order: countItems()

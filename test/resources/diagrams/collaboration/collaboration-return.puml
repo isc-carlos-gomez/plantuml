@@ -1,9 +1,9 @@
 @startuml
 
 class Class1
-Class1 -- Class2: 1. methodCall()
-Class2 .. Class1: 1.1 returnA
-Class2 .. Class1: 1.2 returnB
-Class2 -- Class1: 1.3 anotherMethodCall()
+Class1 -- Class2: methodCall()
+  Class2 .. Class1: returnA
+  Class2 .. Class1: returnB
+  Class2 -- Class1: anotherMethodCall()
 
 @enduml
