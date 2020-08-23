@@ -46,10 +46,8 @@ class ThreeLineGroup implements LineGroup {
   }
 
   private Orientation calculateOrientation() {
-    final Rectangle centralLineBox = new Rectangle(this.data.centralLine().getDotPath().getMinMax());
-    final Rectangle messageBoxes = this.data.firstLine().messageBox()
-        .join(this.data.lastLine().messageBox());
-    final Overlap overlap = centralLineBox.overlap(messageBoxes);
+    final Overlap overlap = this.data.firstLine().messageBox()
+        .overlap(this.data.lastLine().messageBox());
     switch (overlap) {
       case HORIZONTAL:
         return Orientation.HORIZONTAL;
