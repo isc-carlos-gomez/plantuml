@@ -211,7 +211,8 @@ public class Link extends WithLinkType implements Hideable, Removeable {
 	}
 
     public Link withAppendedLabel(final String label) {
-        final Display composedLabel = this.label.add(label);
+        final Display newLabel = Display.getWithNewlines(label);
+        final Display composedLabel = this.label.addAll(newLabel);
         return withLabel(composedLabel);
     }
 
