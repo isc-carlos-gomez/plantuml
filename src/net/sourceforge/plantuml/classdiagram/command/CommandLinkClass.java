@@ -265,35 +265,20 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
             queue = Math.max(2, queue);
         }
 		
-		final String linkLabel = labelLink;
-//		final LinkType targetLinkType = linkType;
-		final Optional<Link> targetLink = diagram.getLinks().stream()
-		  .filter(link -> {
-		    return link.getEntity1().equals(cl1)
-		      && link.getEntity2().equals(cl2);
-//		      && link.getType().equals(targetLinkType);
-		  }).findFirst();
-		if (targetLink.isPresent()) {
-		  final Link link = targetLink.get();
-		  final Link newLink = link.withAppendedLabel("\n"+linkLabel);
-		  diagram.removeLink(link);
-		  diagram.addLink(newLink);
+		final Optional<Link> forwardLink = findLink(cl1, cl2, dir, diagram);
+		if (forwardLink.isPresent()) {
+		  final Link link = forwardLink.get();
+		  updateLinkAppendingLabel(link, labelLink, diagram);
 		  return CommandExecutionResult.ok();
 		}
         
-		final Optional<Link> invertedLink = diagram.getLinks().stream()
-          .filter(link -> {
-            return link.getEntity1().equals(cl2)
-              && link.getEntity2().equals(cl1);
-//              && link.getType().equals(targetLinkType);
-          }).findFirst();
 		final UUID linkGroupId;
-		if (invertedLink.isPresent()) {
-		  final Link emptyLink = invertedLink.get().withLabel(" ");
-		  diagram.addLink(emptyLink);
-		  linkGroupId = invertedLink.get().getGroupId();
+		final Optional<Link> backwardLink = findLink(cl2, cl1, dir, diagram);
+		if (backwardLink.isPresent()) {
+		    addThirdEmptyLink(backwardLink.get(), diagram);
+            linkGroupId = backwardLink.get().getGroupId();
 		} else {
-		  linkGroupId = UUID.randomUUID();
+		    linkGroupId = UUID.randomUUID();
 		}
 
 		Link link = new Link(cl1, cl2, linkType, Display.getWithNewlines(labelLink), queue, firstLabel, secondLabel,
@@ -317,6 +302,31 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
 
 		return CommandExecutionResult.ok();
 	}
+
+    private Optional<Link> findLink(final IEntity entity1, final IEntity entity2, final Direction direction,
+        final AbstractClassOrObjectDiagram diagram) {
+      return diagram.getLinks().stream()
+          .filter(link -> {
+            if (direction == Direction.LEFT || direction == Direction.UP) {
+              return link.getEntity1().equals(entity2)
+                  && link.getEntity2().equals(entity1);
+            }
+            return link.getEntity1().equals(entity1)
+                && link.getEntity2().equals(entity2);
+          }).findFirst();
+    }
+
+    private void updateLinkAppendingLabel(final Link link, final String label,
+        final AbstractClassOrObjectDiagram diagram) {
+      final Link newLink = link.withAppendedLabel("\n" + label);
+      diagram.removeLink(link);
+      diagram.addLink(newLink);
+    }
+
+    private void addThirdEmptyLink(final Link templateLink, final AbstractClassOrObjectDiagram diagram) {
+      final Link emptyLink = templateLink.withLabel(" ");
+      diagram.addLink(emptyLink);
+    }
 
 	private IEntity getFoo1(AbstractClassOrObjectDiagram diagram, Code code, Ident ident) {
 		if (isGroupButNotTheCurrentGroup(diagram, code, ident)) {
