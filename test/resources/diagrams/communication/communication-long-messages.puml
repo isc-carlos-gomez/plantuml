@@ -1,5 +1,6 @@
 @startuml
 
+communication diagram
 class Class1
 Class1 -R-> Class2 : aLongMethodName\nBeingUsed\nNow()
 Class1 -R-> Class3 : test()

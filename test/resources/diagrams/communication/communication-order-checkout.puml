@@ -1,9 +1,9 @@
 @startuml
 
-allowmixing
 'top to bottom direction
 'left to right direction
 
+communication diagram
 actor Customer
 class OrderCheckout
 class Order

@@ -1,11 +1,11 @@
 @startuml Online Bookshop
 
-allowmixing
 hide members
 hide circle
 
 title Online Bookshop interaction
 
+communication diagram
 actor Customer
 class ":Online\nBookshop" as OnlineBookshop
 class ":Inventory" as Inventory
