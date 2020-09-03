@@ -38,6 +38,7 @@ public class CommunicationDiagramFactory extends ClassDiagramFactory {
   protected List<Command> createCommands() {
     final List<Command> commands = new ArrayList<>();
     commands.add(new CommandCommunicationDiagram());
+    commands.add(new CommandCommunicationLink());
     commands.addAll(super.createCommands());
     return commands;
   }

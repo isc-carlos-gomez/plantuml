@@ -146,7 +146,7 @@ public abstract class SingleLineCommand2<S extends Diagram> implements Command<S
 		}
 		// System.err.println("lines="+lines);
 		// System.err.println("pattern="+pattern.getPattern());
-		return executeArg(system, first.getLocation(), decorateArgument(arg, first.getString()));
+		return executeArg(system, first.getLocation(), arg);
 	}
 
 	protected boolean isForbidden(CharSequence line) {
@@ -154,19 +154,5 @@ public abstract class SingleLineCommand2<S extends Diagram> implements Command<S
 	}
 
 	protected abstract CommandExecutionResult executeArg(S system, LineLocation location, RegexResult arg);
-
-    /**
-     * Hook method to allow subclasses decorating a command argument before being executed. This
-     * default implementation performs no decoration at all.
-     * 
-     * @param commandArgument
-     *        the command argument to decorate
-     * @param commandString
-     *        the command string where the argument was created from
-     * @return the same input argument
-     */
-    protected RegexResult decorateArgument(final RegexResult commandArgument, final String commandString) {
-      return commandArgument;
-    }
 
 }

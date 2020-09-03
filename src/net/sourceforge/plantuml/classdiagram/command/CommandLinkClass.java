@@ -35,9 +35,6 @@
  */
 package net.sourceforge.plantuml.classdiagram.command;
 
-import java.util.Optional;
-import java.util.UUID;
-
 import net.sourceforge.plantuml.Direction;
 import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.StringUtils;
@@ -55,7 +52,6 @@ import net.sourceforge.plantuml.command.regex.RegexLeaf;
 import net.sourceforge.plantuml.command.regex.RegexOptional;
 import net.sourceforge.plantuml.command.regex.RegexOr;
 import net.sourceforge.plantuml.command.regex.RegexResult;
-import net.sourceforge.plantuml.communicationdiagram.sequence.CommandArgumentSequenceDecorator;
 import net.sourceforge.plantuml.cucadiagram.Code;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
@@ -69,15 +65,13 @@ import net.sourceforge.plantuml.graphic.color.ColorParser;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.objectdiagram.AbstractClassOrObjectDiagram;
 
-final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrObjectDiagram> {
+public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrObjectDiagram> {
 
 	private static final String SINGLE = "[.\\\\]{0,2}[\\p{L}0-9_]+(?:[.\\\\]{1,2}[\\p{L}0-9_]+)*";
 	private static final String COUPLE = "\\([%s]*(" + SINGLE + ")[%s]*,[%s]*(" + SINGLE + ")[%s]*\\)";
-    private final CommandArgumentSequenceDecorator sequenceDecorator;
 
 	public CommandLinkClass(UmlDiagramType umlDiagramType) {
 		super(getRegexConcat(umlDiagramType));
-		this.sequenceDecorator = new CommandArgumentSequenceDecorator();
 	}
 
 	static private RegexConcat getRegexConcat(UmlDiagramType umlDiagramType) {
@@ -134,18 +128,6 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
 		return "(?:\\.|::|\\\\|\\\\\\\\)";
 	}
 
-    /**
-     * Decorates the given command argument by prefixing its link label (if present) with a sequence
-     * number.
-     * 
-     * @return the given command argument decorated if its link label is present, or the original
-     *         command argument otherwise
-     */
-    @Override
-    protected RegexResult decorateArgument(final RegexResult commandArgument, final String commandString) {
-      return sequenceDecorator.decorate(commandArgument, commandString);
-    }
-
 	@Override
 	protected CommandExecutionResult executeArg(AbstractClassOrObjectDiagram diagram, LineLocation location,
 			RegexResult arg) {
@@ -189,9 +171,9 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
 		final IEntity cl1 = getFoo1(diagram, code1, ident1);
 		final IEntity cl2 = getFoo1(diagram, code2, ident2);
 
-		LinkType linkType = getLinkType(arg);
+		final LinkType linkType = getLinkType(arg);
 		final Direction dir = getDirection(arg);
-		int queue;
+		final int queue;
 		if (dir == Direction.LEFT || dir == Direction.RIGHT) {
 			queue = 1;
 		} else {
@@ -256,34 +238,9 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
 			linkArrow = LinkArrow.BACKWARD;
 			labelLink = StringUtils.trin(labelLink.substring(0, labelLink.length() - 2));
 		}
-		
-		if (arg.get("ARROW_BODY1", 0).contains("--") || arg.get("ARROW_BODY2", 0).contains("--")) {
-          linkType = linkType.goDashed();
-        }
-		// Do we need to nullify other directions and keep only right as default and down only when D is present?
-		if (dir == Direction.UP || dir == Direction.DOWN) {
-            queue = Math.max(2, queue);
-        }
-		
-		final Optional<Link> forwardLink = findLink(cl1, cl2, dir, diagram);
-		if (forwardLink.isPresent()) {
-		  final Link link = forwardLink.get();
-		  updateLinkAppendingLabel(link, labelLink, diagram);
-		  return CommandExecutionResult.ok();
-		}
-        
-		final UUID linkGroupId;
-		final Optional<Link> backwardLink = findLink(cl2, cl1, dir, diagram);
-		if (backwardLink.isPresent()) {
-		    addThirdEmptyLink(backwardLink.get(), diagram);
-            linkGroupId = backwardLink.get().getGroupId();
-		} else {
-		    linkGroupId = UUID.randomUUID();
-		}
 
 		Link link = new Link(cl1, cl2, linkType, Display.getWithNewlines(labelLink), queue, firstLabel, secondLabel,
-				diagram.getLabeldistance(), diagram.getLabelangle(), diagram.getSkinParam().getCurrentStyleBuilder(),
-				linkGroupId);
+				diagram.getLabeldistance(), diagram.getLabelangle(), diagram.getSkinParam().getCurrentStyleBuilder());
 		if (arg.get("URL", 0) != null) {
 			final UrlBuilder urlBuilder = new UrlBuilder(diagram.getSkinParam().getValue("topurl"), ModeUrl.STRICT);
 			final Url url = urlBuilder.getUrl(arg.get("URL", 0));
@@ -302,31 +259,6 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
 
 		return CommandExecutionResult.ok();
 	}
-
-    private Optional<Link> findLink(final IEntity entity1, final IEntity entity2, final Direction direction,
-        final AbstractClassOrObjectDiagram diagram) {
-      return diagram.getLinks().stream()
-          .filter(link -> {
-            if (direction == Direction.LEFT || direction == Direction.UP) {
-              return link.getEntity1().equals(entity2)
-                  && link.getEntity2().equals(entity1);
-            }
-            return link.getEntity1().equals(entity1)
-                && link.getEntity2().equals(entity2);
-          }).findFirst();
-    }
-
-    private void updateLinkAppendingLabel(final Link link, final String label,
-        final AbstractClassOrObjectDiagram diagram) {
-      final Link newLink = link.withAppendedLabel("\n" + label);
-      diagram.removeLink(link);
-      diagram.addLink(newLink);
-    }
-
-    private void addThirdEmptyLink(final Link templateLink, final AbstractClassOrObjectDiagram diagram) {
-      final Link emptyLink = templateLink.withLabel(" ");
-      diagram.addLink(emptyLink);
-    }
 
 	private IEntity getFoo1(AbstractClassOrObjectDiagram diagram, Code code, Ident ident) {
 		if (isGroupButNotTheCurrentGroup(diagram, code, ident)) {
@@ -619,7 +551,7 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
 		return s.length();
 	}
 
-	private Direction getDirection(RegexResult arg) {
+	protected Direction getDirection(RegexResult arg) {
 		final LinkDecor decors1 = getDecors1(arg.get("ARROW_HEAD1", 0));
 		final LinkDecor decors2 = getDecors2(arg.get("ARROW_HEAD2", 0));
 

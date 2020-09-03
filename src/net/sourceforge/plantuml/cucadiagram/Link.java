@@ -90,7 +90,7 @@ public class Link extends WithLinkType implements Hideable, Removeable {
 	private final String labelangle;
 
 	private boolean constraint = true;
-	private boolean inverted = false;
+	private final boolean inverted;
 	private LinkArrow linkArrow = LinkArrow.NONE;
 
 	private boolean opale;
@@ -100,8 +100,6 @@ public class Link extends WithLinkType implements Hideable, Removeable {
 	private final StyleBuilder styleBuilder;
 
 	private Url url;
-	
-	private final UUID groupId;
 
 	public String idCommentForSvg() {
 		if (type.looksLikeRevertedForSvg()) {
@@ -126,24 +124,17 @@ public class Link extends WithLinkType implements Hideable, Removeable {
 	}
 
 	public Link(IEntity cl1, IEntity cl2, LinkType type, Display label, int length, StyleBuilder styleBuilder) {
-		this(cl1, cl2, type, label, length, null, null, null, null, null, styleBuilder, UUID.randomUUID());
+		this(cl1, cl2, type, label, length, null, null, null, null, null, styleBuilder, false);
 	}
 
-    public Link(IEntity cl1, IEntity cl2, LinkType type, Display label, int length, String qualifier1,
-            String qualifier2, String labeldistance, String labelangle, StyleBuilder styleBuilder) {
-        this(cl1, cl2, type, label, length, qualifier1, qualifier2, labeldistance, labelangle, null, styleBuilder,
-            UUID.randomUUID());
-    }
-
 	public Link(IEntity cl1, IEntity cl2, LinkType type, Display label, int length, String qualifier1,
-			String qualifier2, String labeldistance, String labelangle, StyleBuilder styleBuilder, UUID groupId) {
-		this(cl1, cl2, type, label, length, qualifier1, qualifier2, labeldistance, labelangle, null, styleBuilder,
-		    groupId);
+			String qualifier2, String labeldistance, String labelangle, StyleBuilder styleBuilder) {
+		this(cl1, cl2, type, label, length, qualifier1, qualifier2, labeldistance, labelangle, null, styleBuilder, false);
 	}
 
 	public Link(IEntity cl1, IEntity cl2, LinkType type, Display label, int length, String qualifier1,
 			String qualifier2, String labeldistance, String labelangle, HtmlColor specificColor,
-			StyleBuilder styleBuilder, UUID groupId) {
+			StyleBuilder styleBuilder, boolean inverted) {
 		if (length < 1) {
 			throw new IllegalArgumentException();
 		}
@@ -182,7 +173,7 @@ public class Link extends WithLinkType implements Hideable, Removeable {
 		// if (type.getDecor2() == LinkDecor.EXTENDS) {
 		// setSametail(cl1.getUid());
 		// }
-		this.groupId = groupId;
+		this.inverted = inverted;
 	}
 
 	// private static boolean doWeHaveToRemoveUrlAtStart(Display label) {
@@ -202,34 +193,12 @@ public class Link extends WithLinkType implements Hideable, Removeable {
 		// cl2.setXposition(x-1);
 		// }
 		final Link result = new Link(cl2, cl1, getType().getInversed(), label, length, qualifier2, qualifier1,
-				labeldistance, labelangle, getSpecificColor(), styleBuilder, this.groupId);
-		result.inverted = !this.inverted;
+				labeldistance, labelangle, getSpecificColor(), styleBuilder, !this.inverted);
 		result.port1 = this.port2;
 		result.port2 = this.port1;
 		result.url = this.url;
 		return result;
 	}
-
-    public Link withAppendedLabel(final String label) {
-        final Display newLabel = Display.getWithNewlines(label);
-        final Display composedLabel = this.label.addAll(newLabel);
-        return withLabel(composedLabel);
-    }
-
-    public Link withLabel(final String label) {
-        final Display newLabel = Display.create(label);
-        return withLabel(newLabel);
-    }
-
-    private Link withLabel(final Display newLabel) {
-      final Link result = new Link(cl1, cl2, getType(), newLabel, length, qualifier2, qualifier1,
-              labeldistance, labelangle, getSpecificColor(), styleBuilder, this.groupId);
-      result.inverted = this.inverted;
-      result.port1 = this.port2;
-      result.port2 = this.port1;
-      result.url = this.url;
-      return result;
-    }
 
 	@Override
 	public void goNorank() {
@@ -602,12 +571,12 @@ public class Link extends WithLinkType implements Hideable, Removeable {
 		return umlType;
 	}
 	
-	/**
-   * @return the unique identifier of the link group this link belongs to. Links are grouped together
-   *         at creation time when they connect exactly the same entities.
-   */
+    /**
+     * @return the unique identifier of the link group this link belongs to. Links are grouped
+     *         together at creation time when they connect exactly the same entities.
+     */
     public UUID getGroupId() {
-      return this.groupId;
+      return UUID.randomUUID();
     }
 
 }
