@@ -1,4 +1,4 @@
-package net.sourceforge.plantuml.communicationdiagram.sequence;
+package net.sourceforge.plantuml.communicationdiagram.link;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

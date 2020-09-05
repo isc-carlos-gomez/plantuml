@@ -7,6 +7,7 @@ import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.classdiagram.ClassDiagram;
 import net.sourceforge.plantuml.classdiagram.ClassDiagramFactory;
 import net.sourceforge.plantuml.command.Command;
+import net.sourceforge.plantuml.communicationdiagram.link.CommandCommunicationLink;
 
 /**
  * Factory of {@link CommunicationDiagram}s.

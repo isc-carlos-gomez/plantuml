@@ -1,8 +1,9 @@
-package net.sourceforge.plantuml.communicationdiagram;
+package net.sourceforge.plantuml.communicationdiagram.link;
 
 import java.util.Optional;
 import java.util.UUID;
 
+import net.sourceforge.plantuml.communicationdiagram.CommunicationDiagram;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.LinkType;

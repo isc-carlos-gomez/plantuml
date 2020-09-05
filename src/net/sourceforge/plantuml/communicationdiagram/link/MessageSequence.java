@@ -1,4 +1,4 @@
-package net.sourceforge.plantuml.communicationdiagram.sequence;
+package net.sourceforge.plantuml.communicationdiagram.link;
 
 import java.util.ArrayList;
 import java.util.List;

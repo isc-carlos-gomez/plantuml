@@ -1,4 +1,4 @@
-package net.sourceforge.plantuml.communicationdiagram.sequence;
+package net.sourceforge.plantuml.communicationdiagram.link;
 
 import net.sourceforge.plantuml.command.regex.RegexResult;
 
@@ -7,7 +7,7 @@ import net.sourceforge.plantuml.command.regex.RegexResult;
  *
  * @author Carlos Gomez
  */
-public class CommandArgumentSequenceDecorator {
+class CommandArgumentSequenceDecorator {
 
   private static final String LINK_LABEL_KEY = "LABEL_LINK";
   private static final int INDENTATION_SIZE = 2;
@@ -16,7 +16,7 @@ public class CommandArgumentSequenceDecorator {
   /**
    * Creates a new instance with a single-level sequence starting at zero.
    */
-  public CommandArgumentSequenceDecorator() {
+  CommandArgumentSequenceDecorator() {
     this.sequence = new MessageSequence();
   }
 
@@ -31,7 +31,7 @@ public class CommandArgumentSequenceDecorator {
    * @return the given command argument decorated if its link label is present, or the original
    *         command argument otherwise
    */
-  public RegexResult decorate(final RegexResult commandArgument, final String commandString) {
+  RegexResult decorate(final RegexResult commandArgument, final String commandString) {
     if (hasLinkLabel(commandArgument)) {
       return decorateWithSequence(commandArgument, commandString);
     }

@@ -1,4 +1,4 @@
-package net.sourceforge.plantuml.communicationdiagram;
+package net.sourceforge.plantuml.communicationdiagram.link;
 
 import java.util.UUID;
 
@@ -11,7 +11,7 @@ import net.sourceforge.plantuml.cucadiagram.LinkType;
  *
  * @author Carlos Gomez
  */
-class CommunicationLink extends Link {
+public class CommunicationLink extends Link {
 
   private final UUID groupId;
 
@@ -71,6 +71,26 @@ class CommunicationLink extends Link {
   }
 
   /**
+   * @param link
+   *        the link to compare
+   * @return whether this link has the same ends (aka. entities) as the given link
+   */
+  public boolean hasSameEnds(final Link link) {
+    return getEntity1().equals(link.getEntity1())
+        && getEntity2().equals(link.getEntity2());
+  }
+
+  /**
+   * @param link
+   *        the link to compare
+   * @return whether this link has ends (aka. entities) opposite to the given link
+   */
+  public boolean hasOppositeEnds(final Link link) {
+    return getEntity1().equals(link.getEntity2())
+        && getEntity2().equals(link.getEntity1());
+  }
+
+  /**
    * @param label
    *        label that will be appended to this link
    * @return a clone of this link with the given label appended to the original label
@@ -87,26 +107,6 @@ class CommunicationLink extends Link {
    */
   CommunicationLink withLabel(final Display newLabel) {
     return new CommunicationLink(this, this.groupId, getType(), getLength(), newLabel);
-  }
-
-  /**
-   * @param link
-   *        the link to compare
-   * @return whether this link has the same ends (aka. entities) as the given link
-   */
-  boolean hasSameEnds(final Link link) {
-    return getEntity1().equals(link.getEntity1())
-        && getEntity2().equals(link.getEntity2());
-  }
-
-  /**
-   * @param link
-   *        the link to compare
-   * @return whether this link has ends (aka. entities) opposite to the given link
-   */
-  boolean hasOppositeEnds(final Link link) {
-    return getEntity1().equals(link.getEntity2())
-        && getEntity2().equals(link.getEntity1());
   }
 
 }

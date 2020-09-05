@@ -6,6 +6,7 @@ import java.util.Optional;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.classdiagram.ClassDiagram;
+import net.sourceforge.plantuml.communicationdiagram.link.CommunicationLink;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.svek.CucaDiagramFileMaker;
 
@@ -18,7 +19,7 @@ import net.sourceforge.plantuml.svek.CucaDiagramFileMaker;
  *
  * @author Carlos Gomez
  */
-class CommunicationDiagram extends ClassDiagram {
+public class CommunicationDiagram extends ClassDiagram {
 
   /**
    * Creates a new instance.
@@ -30,31 +31,12 @@ class CommunicationDiagram extends ClassDiagram {
     super(skinParam);
   }
 
-  @Override
-  protected CucaDiagramFileMaker newCucaDiagramFileMaker(final FileFormatOption fileFormatOption) throws IOException {
-    if (isUseJDot()) {
-      throw new IllegalStateException("JDot not supported for communication diagrams");
-    }
-    return new CommunicationCucaDiagramFileMakerSvek(this);
-  }
-
-  /**
-   * Ensures that the last link of this diagram is a communication link.
-   *
-   * @param linkProperties
-   *        properties that will be used to transform the last link into a communication link
-   */
-  void ensureLastLinkIsCommunicationLink(final CommunicationLinkProperties linkProperties) {
-    new LastLinkToCommunicationLinkTransformer(this, linkProperties)
-        .transform();
-  }
-
   /**
    * Removes the last link from this diagram.
    *
    * @return the removed link
    */
-  Link removeLastLink() {
+  public Link removeLastLink() {
     final Link lastLink = getLastLink();
     removeLink(lastLink);
     return lastLink;
@@ -68,7 +50,7 @@ class CommunicationDiagram extends ClassDiagram {
    * @param newLink
    *        the replacing link
    */
-  void replaceLink(final Link existingLink, final Link newLink) {
+  public void replaceLink(final Link existingLink, final Link newLink) {
     removeLink(existingLink);
     addLink(newLink);
   }
@@ -80,7 +62,7 @@ class CommunicationDiagram extends ClassDiagram {
    *        the link to compare
    * @return the found link, if any
    */
-  Optional<CommunicationLink> findLinkWithSameEnds(final Link link) {
+  public Optional<CommunicationLink> findLinkWithSameEnds(final Link link) {
     return getLinks().stream()
         .map(CommunicationLink.class::cast)
         .filter(communicationLink -> communicationLink.hasSameEnds(link))
@@ -94,11 +76,19 @@ class CommunicationDiagram extends ClassDiagram {
    *        the link to compare
    * @return the found link, if any
    */
-  Optional<CommunicationLink> findLinkWithOppositeEnds(final Link link) {
+  public Optional<CommunicationLink> findLinkWithOppositeEnds(final Link link) {
     return getLinks().stream()
         .map(CommunicationLink.class::cast)
         .filter(communicationLink -> communicationLink.hasOppositeEnds(link))
         .findFirst();
+  }
+
+  @Override
+  protected CucaDiagramFileMaker newCucaDiagramFileMaker(final FileFormatOption fileFormatOption) throws IOException {
+    if (isUseJDot()) {
+      throw new IllegalStateException("JDot not supported for communication diagrams");
+    }
+    return new CommunicationCucaDiagramFileMakerSvek(this);
   }
 
 }

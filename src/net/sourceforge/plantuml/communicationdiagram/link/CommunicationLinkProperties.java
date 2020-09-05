@@ -1,4 +1,4 @@
-package net.sourceforge.plantuml.communicationdiagram;
+package net.sourceforge.plantuml.communicationdiagram.link;
 
 import net.sourceforge.plantuml.Direction;
 import net.sourceforge.plantuml.command.regex.RegexResult;

@@ -8,6 +8,7 @@ import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.Pragma;
 import net.sourceforge.plantuml.communicationdiagram.line.CommunicationLine;
 import net.sourceforge.plantuml.communicationdiagram.line.CommunicationLineGroup;
+import net.sourceforge.plantuml.communicationdiagram.link.CommunicationLink;
 import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.dot.DotData;

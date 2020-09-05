@@ -1,4 +1,4 @@
-package net.sourceforge.plantuml.communicationdiagram;
+package net.sourceforge.plantuml.communicationdiagram.link;
 
 import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.UmlDiagramType;
@@ -8,7 +8,7 @@ import net.sourceforge.plantuml.command.Command;
 import net.sourceforge.plantuml.command.CommandControl;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.regex.RegexResult;
-import net.sourceforge.plantuml.communicationdiagram.sequence.CommandArgumentSequenceDecorator;
+import net.sourceforge.plantuml.communicationdiagram.CommunicationDiagram;
 import net.sourceforge.plantuml.objectdiagram.AbstractClassOrObjectDiagram;
 
 /**
@@ -16,12 +16,12 @@ import net.sourceforge.plantuml.objectdiagram.AbstractClassOrObjectDiagram;
  *
  * @author Carlos Gomez
  */
-class CommandCommunicationLink implements Command<CommunicationDiagram> {
+public class CommandCommunicationLink implements Command<CommunicationDiagram> {
 
   private final CommunicationCommandLinkClass delegate;
   private String commandString;
 
-  CommandCommunicationLink() {
+  public CommandCommunicationLink() {
     this.delegate = new CommunicationCommandLinkClass();
     this.commandString = "";
   }
@@ -64,7 +64,8 @@ class CommandCommunicationLink implements Command<CommunicationDiagram> {
       final CommunicationDiagram diagram = (CommunicationDiagram) abstractDiagram;
       final CommandExecutionResult result = super.executeArg(diagram, location, decorateArgument(arg));
       if (result.isOk()) {
-        diagram.ensureLastLinkIsCommunicationLink(new CommunicationLinkProperties(arg, getDirection(arg)));
+        new LastLinkToCommunicationLinkTransformer(diagram, new CommunicationLinkProperties(arg, getDirection(arg)))
+            .transform();
       }
       return result;
     }
