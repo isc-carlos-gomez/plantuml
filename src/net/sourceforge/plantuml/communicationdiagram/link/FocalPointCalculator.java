@@ -5,8 +5,6 @@ import java.util.Comparator;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
-import net.sourceforge.plantuml.svek.Line;
-
 /**
  * Service used by {@link LineGroup} to calculate the focal point of a line, i.e. the point where
  * the center of a label perpendicularly intercepts a line.
@@ -15,7 +13,7 @@ import net.sourceforge.plantuml.svek.Line;
  */
 class FocalPointCalculator {
 
-  private final Line line;
+  private final CommunicationLine line;
   private final Orientation orientation;
 
   /**
@@ -26,7 +24,7 @@ class FocalPointCalculator {
    * @param orientation
    *        the orientation of the {@link LineGroup}
    */
-  FocalPointCalculator(final Line line, final Orientation orientation) {
+  FocalPointCalculator(final CommunicationLine line, final Orientation orientation) {
     this.line = line;
     this.orientation = orientation;
   }

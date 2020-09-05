@@ -3,11 +3,9 @@ package net.sourceforge.plantuml.communicationdiagram.link;
 import java.awt.geom.Point2D;
 
 import net.sourceforge.plantuml.Direction;
-import net.sourceforge.plantuml.svek.Line;
 
 /**
- * Service used by a {@link CommunicationLink} to build a {@link MessageArrow} that corresponds with
- * the position of a line label.
+ * Service to build a {@link MessageArrow} that corresponds with the position of a line message.
  *
  * @author Carlos Gomez
  */
@@ -16,7 +14,7 @@ class MessageArrowBuilder {
   private static final double ARROW_LENGTH = 20;
   private static final int LINK_CENTER_GAP = 10;
 
-  private final Line line;
+  private final CommunicationLine line;
   private final Orientation linkOrientation;
   private final Point linkFocalPoint;
 
@@ -30,7 +28,7 @@ class MessageArrowBuilder {
    * @param linkFocalPoint
    *        the focal point where the communication link and its message(s) converge
    */
-  MessageArrowBuilder(final Line line, final Orientation linkOrientation, final Point linkFocalPoint) {
+  MessageArrowBuilder(final CommunicationLine line, final Orientation linkOrientation, final Point linkFocalPoint) {
     this.line = line;
     this.linkOrientation = linkOrientation;
     this.linkFocalPoint = linkFocalPoint;
@@ -54,7 +52,7 @@ class MessageArrowBuilder {
     return direction;
   }
 
-  private Direction naturalDirection(final Line line) {
+  private Direction naturalDirection(final CommunicationLine line) {
     final Point2D start = line.getDotPath().getStartPoint();
     final Point2D end = line.getDotPath().getEndPoint();
     double angle = Math.toDegrees(Math.atan2(-end.getY() + start.getY(), end.getX() - start.getX()));

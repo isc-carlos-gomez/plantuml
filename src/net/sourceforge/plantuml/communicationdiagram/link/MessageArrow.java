@@ -12,7 +12,7 @@ import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
 
 /**
- * A drawable message arrow flowing around a Communication Diagram Link.
+ * A drawable message arrow floating around a Communication Diagram Link.
  *
  * @author Carlos Gomez
  */

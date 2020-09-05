@@ -6,7 +6,8 @@ import java.util.UUID;
 
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.Pragma;
-import net.sourceforge.plantuml.communicationdiagram.link.CommunicationLink;
+import net.sourceforge.plantuml.communicationdiagram.link.CommunicationLine;
+import net.sourceforge.plantuml.communicationdiagram.link.CommunicationLineGroup;
 import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.dot.DotData;
@@ -25,23 +26,31 @@ import net.sourceforge.plantuml.svek.Line;
  */
 class CommunicationGeneralImageBuilder extends GeneralImageBuilder {
 
-  private final Map<UUID, CommunicationLink> linkGroupIdToCommunicationLink;
+  private final Map<UUID, CommunicationLineGroup> linkGroupIdToLineGroup;
 
   CommunicationGeneralImageBuilder(final DotData dotData, final EntityFactory entityFactory,
       final UmlSource source, final Pragma pragma, final StringBounder stringBounder) {
     super(dotData, entityFactory, source, pragma, stringBounder);
-    this.linkGroupIdToCommunicationLink = new HashMap<>();
+    this.linkGroupIdToLineGroup = new HashMap<>();
   }
 
   @Override
   protected Line newLine(final Link link, final ISkinParam skinParam, final FontConfiguration labelFont,
       final DotStringFactory dotStringFactory, final StringBounder stringBounder, final DotData dotData) {
-    final CommunicationLink communicationLink = this.linkGroupIdToCommunicationLink.computeIfAbsent(
-        ((net.sourceforge.plantuml.communicationdiagram.CommunicationLink) link).getGroupId(), CommunicationLink::new);
-
-    final Line line = new Line(link, dotStringFactory.getColorSequence(), skinParam, stringBounder,
-        labelFont, dotStringFactory.getBibliotekon(), dotData.getPragma(), communicationLink);
-    communicationLink.addLine(line);
+    
+    final CommunicationLineGroup group = this.linkGroupIdToLineGroup.computeIfAbsent(
+        ((CommunicationLink) link).getGroupId(), id -> new CommunicationLineGroup());
+    final CommunicationLine line = CommunicationLine.builder()
+        .withGroup(group)
+        .withLink(link)
+        .withColorSequence(dotStringFactory.getColorSequence())
+        .withSkinParam(skinParam)
+        .withStringBounder(stringBounder)
+        .withLabelFont(labelFont)
+        .withBibliotekon(dotStringFactory.getBibliotekon())
+        .withPragma(dotData.getPragma())
+        .build();
+    group.addLine(line);
 
     return line;
 

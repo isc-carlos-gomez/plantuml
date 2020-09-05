@@ -1,7 +1,6 @@
 package net.sourceforge.plantuml.communicationdiagram.link;
 
 import net.sourceforge.plantuml.communicationdiagram.link.Rectangle.Overlap;
-import net.sourceforge.plantuml.svek.Line;
 
 /**
  * A {@link LineGroup} with three lines.
@@ -14,17 +13,17 @@ class ThreeLineGroup implements LineGroup {
   private Orientation orientation;
   private Point focalPoint;
 
-  ThreeLineGroup(final Line line1, final Line line2, final Line line3) {
+  ThreeLineGroup(final CommunicationLine line1, final CommunicationLine line2, final CommunicationLine line3) {
     this.data = new ThreeLineGroupLazyData(line1, line2, line3);
   }
 
   @Override
-  public LineGroup addLine(final Line line) {
+  public LineGroup addLine(final CommunicationLine line) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public boolean isLineVisible(final Line line) {
+  public boolean isLineVisible(final CommunicationLine line) {
     return line == this.data.centralLine();
   }
 

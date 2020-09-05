@@ -3,7 +3,6 @@ package net.sourceforge.plantuml.communicationdiagram.link;
 import java.util.Objects;
 
 import net.sourceforge.plantuml.communicationdiagram.link.Rectangle.Overlap;
-import net.sourceforge.plantuml.svek.Line;
 
 /**
  * A {@link LineGroup} with only one line.
@@ -12,21 +11,21 @@ import net.sourceforge.plantuml.svek.Line;
  */
 public class OneLineGroup implements LineGroup {
 
-  private final Line line;
+  private final CommunicationLine line;
   private Orientation orientation;
   private Point focalPoint;
 
-  OneLineGroup(final Line line) {
+  OneLineGroup(final CommunicationLine line) {
     this.line = Objects.requireNonNull(line);
   }
 
   @Override
-  public LineGroup addLine(final Line line2) {
+  public LineGroup addLine(final CommunicationLine line2) {
     return new TwoLineGroup(this.line, line2);
   }
 
   @Override
-  public boolean isLineVisible(final Line line) {
+  public boolean isLineVisible(final CommunicationLine line) {
     return true;
   }
 

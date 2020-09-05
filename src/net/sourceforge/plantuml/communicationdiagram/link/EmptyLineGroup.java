@@ -1,7 +1,5 @@
 package net.sourceforge.plantuml.communicationdiagram.link;
 
-import net.sourceforge.plantuml.svek.Line;
-
 /**
  * An empty {@link LineGroup}.
  *
@@ -10,7 +8,7 @@ import net.sourceforge.plantuml.svek.Line;
 class EmptyLineGroup implements LineGroup {
 
   @Override
-  public LineGroup addLine(final Line line) {
+  public LineGroup addLine(final CommunicationLine line) {
     return new OneLineGroup(line);
   }
 

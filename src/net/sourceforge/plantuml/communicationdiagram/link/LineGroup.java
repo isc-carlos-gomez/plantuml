@@ -1,7 +1,5 @@
 package net.sourceforge.plantuml.communicationdiagram.link;
 
-import net.sourceforge.plantuml.svek.Line;
-
 /**
  * Value object representing a group of lines that are analyzed together to determine some of their
  * features and behaviors so that when rendered together they draw a single Communication Diagram
@@ -18,7 +16,7 @@ interface LineGroup {
    *        the line to add
    * @return a new group that contains this group's lines and the added line
    */
-  default LineGroup addLine(final Line line) {
+  default LineGroup addLine(final CommunicationLine line) {
     throw new UnsupportedOperationException();
   }
 
@@ -27,7 +25,7 @@ interface LineGroup {
    *        the line to analyze
    * @return whether a line is visible in this group or not
    */
-  default boolean isLineVisible(final Line line) {
+  default boolean isLineVisible(final CommunicationLine line) {
     throw new UnsupportedOperationException();
   }
 

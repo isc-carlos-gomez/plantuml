@@ -43,7 +43,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -63,7 +62,6 @@ import net.sourceforge.plantuml.SkinParamUtils;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.activitydiagram3.ftile.EntityImageLegend;
-import net.sourceforge.plantuml.communicationdiagram.link.CommunicationLink;
 import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.DisplayPositionned;
@@ -689,11 +687,7 @@ public class GeneralImageBuilder {
      */
     protected Line newLine(Link link, final ISkinParam skinParam, final FontConfiguration labelFont,
         final DotStringFactory dotStringFactory, final StringBounder stringBounder, final DotData dotData) {
-      // TODO: remove communication link dependencies
-      final CommunicationLink communicationLink = new CommunicationLink(UUID.randomUUID());
-      final Line line = new Line(link, dotStringFactory.getColorSequence(), skinParam, stringBounder,
-          labelFont, dotStringFactory.getBibliotekon(), dotData.getPragma(), communicationLink);
-      communicationLink.addLine(line);
-      return line;
+      return new Line(link, dotStringFactory.getColorSequence(), skinParam, stringBounder,
+          labelFont, dotStringFactory.getBibliotekon(), dotData.getPragma());
     }
 }

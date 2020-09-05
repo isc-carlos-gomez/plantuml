@@ -1,10 +1,8 @@
 package net.sourceforge.plantuml.communicationdiagram.link;
 
-import net.sourceforge.plantuml.svek.Line;
-
 /**
- * Service used by a {@link CommunicationLink} to calculate the position of one of its messages.
- * Message positions needs to be calculated to align them with the message arrows.
+ * Service to calculate the position of a line message. Message positions needs to be calculated so
+ * that they can be aligned with message arrows.
  *
  * @author Carlos Gomez
  */
@@ -13,7 +11,7 @@ class MessagePositionCalculator {
   private static final int GAP_VERTICAL_LINK = 17;
   private static final int GAP_HORIZONTAL_LINK = 15;
 
-  private final Line line;
+  private final CommunicationLine line;
   private final Orientation linkOrientation;
   private final Point linkFocalPoint;
 
@@ -27,7 +25,8 @@ class MessagePositionCalculator {
    * @param linkFocalPoint
    *        the focal point where the communication link and its message(s) converge
    */
-  MessagePositionCalculator(final Line line, final Orientation linkOrientation, final Point linkFocalPoint) {
+  MessagePositionCalculator(final CommunicationLine line, final Orientation linkOrientation,
+      final Point linkFocalPoint) {
     this.line = line;
     this.linkOrientation = linkOrientation;
     this.linkFocalPoint = linkFocalPoint;

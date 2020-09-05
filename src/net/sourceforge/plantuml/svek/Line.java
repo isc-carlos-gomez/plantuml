@@ -54,9 +54,6 @@ import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.command.Position;
-import net.sourceforge.plantuml.communicationdiagram.link.CommunicationLink;
-import net.sourceforge.plantuml.communicationdiagram.link.Point;
-import net.sourceforge.plantuml.communicationdiagram.link.Rectangle;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.EntityPort;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
@@ -147,7 +144,6 @@ public class Line implements Moveable, Hideable {
 	private HtmlColor arrowLollipopColor;
 
 	// private final UmlDiagramType umlType;
-	private final CommunicationLink communicationLink;
 
 	@Override
 	public String toString() {
@@ -224,8 +220,7 @@ public class Line implements Moveable, Hideable {
 	}
 
 	public Line(Link link, ColorSequence colorSequence, ISkinParam skinParam, StringBounder stringBounder,
-			FontConfiguration labelFont, Bibliotekon bibliotekon, Pragma pragma,
-			CommunicationLink communicationLink) {
+			FontConfiguration labelFont, Bibliotekon bibliotekon, Pragma pragma) {
 
 		if (link == null) {
 			throw new IllegalArgumentException();
@@ -337,7 +332,6 @@ public class Line implements Moveable, Hideable {
 					skinParam);
 		}
 
-		this.communicationLink = communicationLink;
 	}
 
 	private TextBlock getLineLabel(Link link, ISkinParam skinParam, FontConfiguration labelFont) {
@@ -585,9 +579,9 @@ public class Line implements Moveable, Hideable {
 		PointListIterator pointListIterator = lineSvg.getPointsWithThisColor(lineColor);
 
 		final LinkType linkType = link.getType();
-		this.extremity1 = getExtremity(LinkDecor.NONE, pointListIterator, dotPath.getStartPoint(),
+		this.extremity1 = getExtremity(linkType.getDecor2(), pointListIterator, dotPath.getStartPoint(),
 				dotPath.getStartAngle() + Math.PI, ltail, bibliotekon.getShape(link.getEntity1()));
-		this.extremity2 = getExtremity(LinkDecor.NONE, pointListIterator, dotPath.getEndPoint(),
+		this.extremity2 = getExtremity(linkType.getDecor1(), pointListIterator, dotPath.getEndPoint(),
 				dotPath.getEndAngle(), lhead, bibliotekon.getShape(link.getEntity2()));
 
 		if (link.getEntity1().getLeafType() == LeafType.LOLLIPOP_HALF) {
@@ -703,7 +697,7 @@ public class Line implements Moveable, Hideable {
 		if (link.getColors() != null && link.getColors().getSpecificLineStroke() != null) {
 			stroke = link.getColors().getSpecificLineStroke();
 		}
-		ug = ug.apply(stroke.onlyThickness());
+		ug = ug.apply(stroke);
 		// double moveEndY = 0;
 
 		if (dotPath == null) {
@@ -739,20 +733,11 @@ public class Line implements Moveable, Hideable {
 		final String tmp = uniq(ids, comment);
 		todraw.setComment(tmp);
 
-		if (this.communicationLink.isLineVisible(this)) {
-		    drawRainbow(ug.apply(new UTranslate(x, y)), color, todraw, link.getSupplementaryColors(), stroke);
-		}
+		drawRainbow(ug.apply(new UTranslate(x, y)), color, todraw, link.getSupplementaryColors(), stroke);
 
 		ug = ug.apply(new UStroke()).apply(new UChangeColor(color));
 
-		final boolean messageVisible = !this.link.getLabel().isWhite()
-		    && this.labelText != null && this.labelXY != null
-		    && link.getNoteLinkStrategy() != NoteLinkStrategy.HALF_NOT_PRINTED;
-        if (messageVisible) {
-            final Point messagePosition = this.communicationLink.calculateMessagePosition(this);
-            this.labelText.drawU(ug.apply(new UTranslate(messagePosition.getX(), messagePosition.getY())));
-            this.communicationLink.buildMessageArrow(this).drawU(ug.apply(stroke));
-        }
+		drawLabelText(ug, this.labelText);
 		if (this.startTailText != null && this.startTailLabelXY != null && this.startTailLabelXY.getPosition() != null) {
 			this.startTailText.drawU(ug.apply(new UTranslate(x + this.startTailLabelXY.getPosition().getX(), y
 					+ this.startTailLabelXY.getPosition().getY())));
@@ -792,7 +777,7 @@ public class Line implements Moveable, Hideable {
 		}
 	}
 
-	private void drawRainbow(UGraphic ug, HtmlColor color, DotPath todraw, List<Colors> supplementaryColors,
+	protected void drawRainbow(UGraphic ug, HtmlColor color, DotPath todraw, List<Colors> supplementaryColors,
 			UStroke stroke) {
 		ug.draw(todraw);
 		final LinkType linkType = link.getType();
@@ -1030,21 +1015,41 @@ public class Line implements Moveable, Hideable {
 	}
     
     /**
-     * @return the rectangular area occupied by the message label of this line
+     * Draws the label of this line. This method can be used by subclasses to customize the line
+     * label.
+     * 
+     * @param ug
+     *        graphic context that can be used to draw the line label
+     * @param labelText
+     *        text of the line label
      */
-    public Rectangle messageBox() {
-      double x = 0;
-      double y = 0;
-      if (this.link.isAutoLinkOfAGroup()) {
-        final Cluster cl = this.bibliotekon.getCluster((IGroup) this.link.getEntity1());
-        if (cl != null) {
-          x += cl.getWidth();
-          x -= this.dotPath.getStartPoint().getX() - cl.getMinX();
-        }
+    protected void drawLabelText(final UGraphic ug, final TextBlock labelText) {
+      if (labelText != null && this.labelXY != null
+          && link.getNoteLinkStrategy() != NoteLinkStrategy.HALF_NOT_PRINTED) {
+        labelText.drawU(ug.apply(new UTranslate(this.dx + this.labelXY.getPosition().getX(), this.dy
+            + this.labelXY.getPosition().getY())));
       }
-      x += this.dx;
-      y += this.dy;
-      return new Rectangle(this.labelXY).withDelta(x, y);
+    }
+
+    /**
+     * @return the delta X of this line
+     */
+    protected double getDx() {
+      return dx;
+    }
+
+    /**
+     * @return the delta Y of this line
+     */
+    protected double getDy() {
+      return dy;
+    }
+
+    /**
+     * @return this line's label position
+     */
+    protected Positionable getLabelXY() {
+      return labelXY;
     }
 
 }
