@@ -1,8 +1,8 @@
-package net.sourceforge.plantuml.communicationdiagram.link;
+package net.sourceforge.plantuml.communicationdiagram.line;
 
 import java.util.Objects;
 
-import net.sourceforge.plantuml.communicationdiagram.link.Rectangle.Overlap;
+import net.sourceforge.plantuml.communicationdiagram.line.Rectangle.Overlap;
 
 /**
  * A {@link LineGroup} with only one line.

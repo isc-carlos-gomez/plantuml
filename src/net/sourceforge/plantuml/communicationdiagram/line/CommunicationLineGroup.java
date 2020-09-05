@@ -1,4 +1,4 @@
-package net.sourceforge.plantuml.communicationdiagram.link;
+package net.sourceforge.plantuml.communicationdiagram.line;
 
 /**
  * Facade that provides access to the information required to render a group of lines as a single

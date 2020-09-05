@@ -1,4 +1,4 @@
-package net.sourceforge.plantuml.communicationdiagram.link;
+package net.sourceforge.plantuml.communicationdiagram.line;
 
 /**
  * Service to calculate the position of a line message. Message positions needs to be calculated so

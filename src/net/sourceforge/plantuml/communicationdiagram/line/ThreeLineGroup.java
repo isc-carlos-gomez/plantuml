@@ -1,6 +1,6 @@
-package net.sourceforge.plantuml.communicationdiagram.link;
+package net.sourceforge.plantuml.communicationdiagram.line;
 
-import net.sourceforge.plantuml.communicationdiagram.link.Rectangle.Overlap;
+import net.sourceforge.plantuml.communicationdiagram.line.Rectangle.Overlap;
 
 /**
  * A {@link LineGroup} with three lines.

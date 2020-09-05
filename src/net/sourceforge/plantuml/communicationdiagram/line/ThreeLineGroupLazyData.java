@@ -1,4 +1,4 @@
-package net.sourceforge.plantuml.communicationdiagram.link;
+package net.sourceforge.plantuml.communicationdiagram.line;
 
 import java.awt.geom.Dimension2D;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package net.sourceforge.plantuml.communicationdiagram.link;
+package net.sourceforge.plantuml.communicationdiagram.line;
 
 /**
  * An empty {@link LineGroup}.

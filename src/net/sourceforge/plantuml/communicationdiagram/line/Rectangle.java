@@ -1,4 +1,4 @@
-package net.sourceforge.plantuml.communicationdiagram.link;
+package net.sourceforge.plantuml.communicationdiagram.line;
 
 import net.sourceforge.plantuml.posimo.Positionable;
 import net.sourceforge.plantuml.ugraphic.MinMax;
