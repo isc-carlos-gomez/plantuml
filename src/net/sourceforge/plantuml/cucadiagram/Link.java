@@ -36,7 +36,6 @@
 package net.sourceforge.plantuml.cucadiagram;
 
 import java.awt.geom.Dimension2D;
-import java.util.UUID;
 
 import net.sourceforge.plantuml.Hideable;
 import net.sourceforge.plantuml.ISkinSimple;
@@ -570,13 +569,5 @@ public class Link extends WithLinkType implements Hideable, Removeable {
 	public UmlDiagramType getUmlDiagramType() {
 		return umlType;
 	}
-	
-    /**
-     * @return the unique identifier of the link group this link belongs to. Links are grouped
-     *         together at creation time when they connect exactly the same entities.
-     */
-    public UUID getGroupId() {
-      return UUID.randomUUID();
-    }
 
 }

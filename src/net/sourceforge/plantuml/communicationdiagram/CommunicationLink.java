@@ -63,9 +63,9 @@ class CommunicationLink extends Link {
   }
 
   /**
-   * @return the ID of the link group this link belongs to
+   * @return the ID of the link group this link belongs to. Links are grouped together at creation
+   *         time when they connect exactly the same entities.
    */
-  @Override
   public UUID getGroupId() {
     return this.groupId;
   }

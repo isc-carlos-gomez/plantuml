@@ -57,7 +57,7 @@ import net.sourceforge.plantuml.cucadiagram.dot.DotData;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.ugraphic.ImageBuilder;
 
-public final class CucaDiagramFileMakerSvek implements CucaDiagramFileMaker {
+public class CucaDiagramFileMakerSvek implements CucaDiagramFileMaker {
 
 	private final CucaDiagram diagram;
 
@@ -80,8 +80,7 @@ public final class CucaDiagramFileMakerSvek implements CucaDiagramFileMaker {
 				diagram.getLeafsvalues(), diagram.getUmlDiagramType(), diagram.getSkinParam(), diagram, diagram,
 				diagram.getColorMapper(), diagram.getEntityFactory(), diagram.isHideEmptyDescriptionForState(),
 				dotMode, diagram.getNamespaceSeparator(), diagram.getPragma());
-		return new GeneralImageBuilder(dotData, diagram.getEntityFactory(), diagram.getSource(), diagram.getPragma(),
-				stringBounder);
+		return newGeneralImageBuilder(stringBounder, dotData);
 
 	}
 
@@ -120,9 +119,7 @@ public final class CucaDiagramFileMakerSvek implements CucaDiagramFileMaker {
 		final Dimension2D dim = result.calculateDimension(fileFormatOption.getDefaultStringBounder());
 		final double scale = getScale(fileFormatOption, dim);
 
-		final ImageBuilder imageBuilder = new ImageBuilder(diagram.getSkinParam(), scale,
-				fileFormatOption.isWithMetadata() ? diagram.getMetadata() : null, warningOrError, 0, 10,
-				diagram.getAnimation(), result.getBackcolor());
+		final ImageBuilder imageBuilder = newImageBuilder(fileFormatOption, result, warningOrError, scale);
 		imageBuilder.setUDrawable(result);
 		final ImageData imageData = imageBuilder.writeImageTOBEMOVED(fileFormatOption, diagram.seed(), os);
 		if (isGraphvizCrash) {
@@ -167,5 +164,29 @@ public final class CucaDiagramFileMakerSvek implements CucaDiagramFileMaker {
 		}
 		return scale;
 	}
+
+    /**
+     * Factory method to create {@link ImageBuilder} instances. Can be used by subclasses to
+     * customize the image builder.
+     * 
+     * @return a new {@link ImageBuilder}
+     */
+    protected ImageBuilder newImageBuilder(final FileFormatOption fileFormatOption, final TextBlockBackcolored result,
+        final String warningOrError, final double scale) {
+      return new ImageBuilder(this.diagram.getSkinParam(), scale,
+          fileFormatOption.isWithMetadata() ? this.diagram.getMetadata() : null, warningOrError, 0, 10,
+          this.diagram.getAnimation(), result.getBackcolor());
+    }
+
+    /**
+     * Factory method to create {@link GeneralImageBuilder} instances. Can be used by subclasses to
+     * customize the general image builder.
+     * 
+     * @return a new {@link GeneralImageBuilder}
+     */
+    protected GeneralImageBuilder newGeneralImageBuilder(final StringBounder stringBounder, final DotData dotData) {
+      return new GeneralImageBuilder(dotData, this.diagram.getEntityFactory(), this.diagram.getSource(),
+          this.diagram.getPragma(), stringBounder);
+    }
 
 }

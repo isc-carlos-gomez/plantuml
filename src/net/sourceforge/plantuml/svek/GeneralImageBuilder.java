@@ -41,7 +41,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -134,7 +133,7 @@ import net.sourceforge.plantuml.svek.image.EntityImageUseCase;
 import net.sourceforge.plantuml.ugraphic.MinMax;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 
-public final class GeneralImageBuilder {
+public class GeneralImageBuilder {
 
 	public static IEntityImage createEntityImageBlock(ILeaf leaf, ISkinParam skinParam,
 			boolean isHideEmptyDescriptionForState, PortionShower portionShower, Bibliotekon bibliotekon,
@@ -357,7 +356,6 @@ public final class GeneralImageBuilder {
 		printGroups(dotStringFactory, dotData.getRootGroup());
 		printEntities(dotStringFactory, getUnpackagedEntities());
 
-		final Map<UUID, CommunicationLink> linkGroupIdToCommunicationLink = new HashMap<>();
 		for (Link link : dotData.getLinks()) {
 			if (link.isRemoved()) {
 				continue;
@@ -373,11 +371,7 @@ public final class GeneralImageBuilder {
 					labelFont = new FontConfiguration(skinParam, FontParam.ARROW, null);
 				}
 
-				final CommunicationLink communicationLink = linkGroupIdToCommunicationLink.computeIfAbsent(
-				    link.getGroupId(), CommunicationLink::new);
-				final Line line = new Line(link, dotStringFactory.getColorSequence(), skinParam, stringBounder,
-						labelFont, dotStringFactory.getBibliotekon(), dotData.getPragma(), communicationLink);
-				communicationLink.addLine(line);
+				final Line line = newLine(link, skinParam, labelFont, dotStringFactory, stringBounder, dotData);
 
 				dotStringFactory.getBibliotekon().addLine(line);
 
@@ -686,4 +680,20 @@ public final class GeneralImageBuilder {
 		}
 		return sb.length() == 0 ? "" : sb.toString();
 	}
+
+    /**
+     * Factory method to create {@link Line} instances. Can be used by subclasses to create custom
+     * lines.
+     * 
+     * @return a new line
+     */
+    protected Line newLine(Link link, final ISkinParam skinParam, final FontConfiguration labelFont,
+        final DotStringFactory dotStringFactory, final StringBounder stringBounder, final DotData dotData) {
+      // TODO: remove communication link dependencies
+      final CommunicationLink communicationLink = new CommunicationLink(UUID.randomUUID());
+      final Line line = new Line(link, dotStringFactory.getColorSequence(), skinParam, stringBounder,
+          labelFont, dotStringFactory.getBibliotekon(), dotData.getPragma(), communicationLink);
+      communicationLink.addLine(line);
+      return line;
+    }
 }
