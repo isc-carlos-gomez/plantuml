@@ -171,7 +171,7 @@ public class ImageBuilder {
 
 	}
 
-	private ImageBuilder(ISkinParam skinParam, Animation animation, String metadata, String warningOrError,
+	protected ImageBuilder(ISkinParam skinParam, Animation animation, String metadata, String warningOrError,
 			double dpiFactor, HColor mybackcolor, ClockwiseTopRightBottomLeft margins) {
 		this.top = margins.getTop();
 		this.right = margins.getRight();
@@ -420,7 +420,7 @@ public class ImageBuilder {
 		return im;
 	}
 
-	private UGraphic2 createUGraphic(FileFormatOption fileFormatOption, long seed, final Dimension2D dim,
+	protected UGraphic2 createUGraphic(FileFormatOption fileFormatOption, long seed, final Dimension2D dim,
 			Animation animationArg, double dx, double dy) {
 		final FileFormat fileFormat = fileFormatOption.getFileFormat();
 		switch (fileFormat) {

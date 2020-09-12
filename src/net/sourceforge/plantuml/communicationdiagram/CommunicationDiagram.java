@@ -1,11 +1,14 @@
 package net.sourceforge.plantuml.communicationdiagram;
 
+import java.io.IOException;
 import java.util.Optional;
 
+import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.classdiagram.ClassDiagram;
 import net.sourceforge.plantuml.communicationdiagram.link.CommunicationLink;
 import net.sourceforge.plantuml.cucadiagram.Link;
+import net.sourceforge.plantuml.svek.CucaDiagramFileMaker;
 
 /**
  * A <a href="https://www.uml-diagrams.org/communication-diagrams.html">UML Communication
@@ -78,6 +81,14 @@ public class CommunicationDiagram extends ClassDiagram {
         .map(CommunicationLink.class::cast)
         .filter(communicationLink -> communicationLink.hasOppositeEnds(link))
         .findFirst();
+  }
+
+  @Override
+  protected CucaDiagramFileMaker newCucaDiagramFileMaker(final FileFormatOption fileFormatOption) throws IOException {
+    if (isUseJDot()) {
+      throw new IllegalStateException("JDot not supported for communication diagrams");
+    }
+    return new CommunicationCucaDiagramFileMakerSvek(this);
   }
 
 }
