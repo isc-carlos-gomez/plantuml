@@ -684,11 +684,7 @@ public class Line implements Moveable, Hideable, GuideLine {
 
 		ug = ug.apply(new UStroke()).apply(color);
 
-		if (hasNoteLabelText() && this.labelXY != null
-				&& link.getNoteLinkStrategy() != NoteLinkStrategy.HALF_NOT_PRINTED) {
-			this.labelText.drawU(ug.apply(
-					new UTranslate(x + this.labelXY.getPosition().getX(), y + this.labelXY.getPosition().getY())));
-		}
+		drawLabelText(ug, this.labelText, x, y);
 		if (this.startTailText != null && this.startTailLabelXY != null
 				&& this.startTailLabelXY.getPosition() != null) {
 			this.startTailText.drawU(ug.apply(new UTranslate(x + this.startTailLabelXY.getPosition().getX(),
@@ -999,6 +995,27 @@ public class Line implements Moveable, Hideable, GuideLine {
 		}
 		return null;
 	}
+    
+    /**
+     * Draws the label of this line. This method can be used by subclasses to customize the line
+     * label.
+     * 
+     * @param ug
+     *        graphic context that can be used to draw the line label
+     * @param labelText
+     *        text of the line label
+     * @param dx
+     *        delta x for the label position
+     * @param dy
+     *        delta y for the label position
+     */
+    protected void drawLabelText(final UGraphic ug, final TextBlock labelText, double dx, double dy) {
+      if (hasNoteLabelText() && this.labelXY != null
+          && link.getNoteLinkStrategy() != NoteLinkStrategy.HALF_NOT_PRINTED) {
+        this.labelText.drawU(ug.apply(
+            new UTranslate(dx + this.labelXY.getPosition().getX(), dy + this.labelXY.getPosition().getY())));
+      }
+    }
 
     /**
      * @return the delta X of this line

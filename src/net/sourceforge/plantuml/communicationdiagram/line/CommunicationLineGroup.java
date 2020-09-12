@@ -37,4 +37,14 @@ public class CommunicationLineGroup {
     return this.group.isLineVisible(line);
   }
 
+  /**
+   * @param line
+   *        the line containing the message to position
+   * @return the point corresponding to the top left corner of the line message
+   */
+  Point calculateMessagePosition(final CommunicationLine line) {
+    return new MessagePositionCalculator(line, this.group.orientation(), this.group.focalPoint())
+        .calculate();
+  }
+
 }

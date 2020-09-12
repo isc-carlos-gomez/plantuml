@@ -29,4 +29,19 @@ interface LineGroup {
     throw new UnsupportedOperationException();
   }
 
+  /**
+   * @return the {@link Orientation} of this line group considering the position of its lines and
+   *         labels in the Communication Diagram
+   */
+  default Orientation orientation() {
+    throw new UnsupportedOperationException();
+  }
+
+  /**
+   * @return the focal point where the messages of this group of lines converge
+   */
+  default Point focalPoint() {
+    throw new UnsupportedOperationException();
+  }
+
 }
