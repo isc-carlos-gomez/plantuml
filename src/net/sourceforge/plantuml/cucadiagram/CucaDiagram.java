@@ -648,9 +648,7 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 
 		entityFactory.buildSuperGroups();
 
-		final CucaDiagramFileMaker maker = this.isUseJDot()
-				? new CucaDiagramFileMakerJDot(this, fileFormatOption.getDefaultStringBounder())
-				: new CucaDiagramFileMakerSvek(this);
+		final CucaDiagramFileMaker maker = newCucaDiagramFileMaker(fileFormatOption);
 		final ImageData result = maker.createFile(os, getDotStrings(), fileFormatOption);
 
 		if (result == null) {
@@ -917,5 +915,22 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 		link2.setLinkConstraint(linkConstraint);
 		return CommandExecutionResult.ok();
 	}
+
+    /**
+     * Factory method to create {@link CucaDiagramFileMaker} instances. Can be used by subclasses to
+     * customize the file maker.
+     * 
+     * @param fileFormatOption
+     *        file formatting options
+     * @return a new {@link CucaDiagramFileMaker}
+     * @throws IOException
+     *         if the file maker cannot be created
+     */
+    protected CucaDiagramFileMaker newCucaDiagramFileMaker(final FileFormatOption fileFormatOption) throws IOException {
+      if (this.isUseJDot()) {
+        return new CucaDiagramFileMakerJDot(this, fileFormatOption.getDefaultStringBounder());
+      }
+      return new CucaDiagramFileMakerSvek(this);
+    }
 
 }

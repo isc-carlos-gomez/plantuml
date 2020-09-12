@@ -138,7 +138,7 @@ import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 
-public final class GeneralImageBuilder {
+public class GeneralImageBuilder {
 
 	public static IEntityImage createEntityImageBlock(ILeaf leaf, ISkinParam skinParam,
 			boolean isHideEmptyDescriptionForState, PortionShower portionShower, Bibliotekon bibliotekon,
@@ -422,8 +422,7 @@ public final class GeneralImageBuilder {
 					labelFont = new FontConfiguration(skinParam, FontParam.ARROW, null);
 				}
 
-				final Line line = new Line(link, dotStringFactory.getColorSequence(), skinParam, stringBounder,
-						labelFont, dotStringFactory.getBibliotekon(), dotData.getPragma());
+				final Line line = newLine(link, skinParam, labelFont, dotStringFactory, stringBounder, dotData);
 
 				dotStringFactory.getBibliotekon().addLine(line);
 
@@ -717,4 +716,16 @@ public final class GeneralImageBuilder {
 		}
 		return sb.length() == 0 ? "" : sb.toString();
 	}
+
+    /**
+     * Factory method to create {@link Line} instances. Can be used by subclasses to create custom
+     * lines.
+     * 
+     * @return a new line
+     */
+    protected Line newLine(Link link, final ISkinParam skinParam, final FontConfiguration labelFont,
+        final DotStringFactory dotStringFactory, final StringBounder stringBounder, final DotData dotData) {
+      return new Line(link, dotStringFactory.getColorSequence(), skinParam, stringBounder,
+          labelFont, dotStringFactory.getBibliotekon(), dotData.getPragma());
+    }
 }

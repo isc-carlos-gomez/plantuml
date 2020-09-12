@@ -63,7 +63,7 @@ import net.sourceforge.plantuml.style.StyleSignature;
 import net.sourceforge.plantuml.ugraphic.ImageBuilder;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 
-public final class CucaDiagramFileMakerSvek implements CucaDiagramFileMaker {
+public class CucaDiagramFileMakerSvek implements CucaDiagramFileMaker {
 
 	private final CucaDiagram diagram;
 
@@ -84,12 +84,9 @@ public final class CucaDiagramFileMakerSvek implements CucaDiagramFileMaker {
 	private GeneralImageBuilder createDotDataImageBuilder(DotMode dotMode, StringBounder stringBounder) {
 		final DotData dotData = new DotData(diagram.getEntityFactory().getRootGroup(), getOrderedLinks(),
 				diagram.getLeafsvalues(), diagram.getUmlDiagramType(), diagram.getSkinParam(), diagram, diagram,
-				diagram.getColorMapper(), diagram.getEntityFactory(), diagram.isHideEmptyDescriptionForState(), dotMode,
-				diagram.getNamespaceSeparator(), diagram.getPragma());
-		final boolean intricated = diagram.mergeIntricated();
-		return new GeneralImageBuilder(intricated, dotData, diagram.getEntityFactory(), diagram.getSource(),
-				diagram.getPragma(), stringBounder, diagram.getUmlDiagramType().getStyleName());
-
+                diagram.getColorMapper(), diagram.getEntityFactory(), diagram.isHideEmptyDescriptionForState(), dotMode,
+                diagram.getNamespaceSeparator(), diagram.getPragma());
+		return newGeneralImageBuilder(stringBounder, dotData);
 	}
 
 	private ImageData createFileInternal(OutputStream os, List<String> dotStrings, FileFormatOption fileFormatOption)
@@ -182,5 +179,22 @@ public final class CucaDiagramFileMakerSvek implements CucaDiagramFileMaker {
 		}
 		return scale;
 	}
+
+    /**
+     * Factory method to create {@link GeneralImageBuilder} instances. Can be used by subclasses to
+     * customize the general image builder.
+     * 
+     * @return a new {@link GeneralImageBuilder}
+     */
+    protected GeneralImageBuilder newGeneralImageBuilder(final StringBounder stringBounder, final DotData dotData) {
+      return new GeneralImageBuilder(
+          this.diagram.mergeIntricated(),
+          dotData,
+          this.diagram.getEntityFactory(),
+          this.diagram.getSource(),
+          this.diagram.getPragma(),
+          stringBounder,
+          diagram.getUmlDiagramType().getStyleName());
+    }
 
 }
