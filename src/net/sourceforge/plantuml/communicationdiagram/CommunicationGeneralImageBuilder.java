@@ -1,8 +1,14 @@
 package net.sourceforge.plantuml.communicationdiagram;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.Pragma;
 import net.sourceforge.plantuml.communicationdiagram.line.CommunicationLine;
+import net.sourceforge.plantuml.communicationdiagram.line.CommunicationLineGroup;
+import net.sourceforge.plantuml.communicationdiagram.link.CommunicationLink;
 import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.dot.DotData;
@@ -22,17 +28,35 @@ import net.sourceforge.plantuml.svek.Line;
  */
 class CommunicationGeneralImageBuilder extends GeneralImageBuilder {
 
+  private final Map<UUID, CommunicationLineGroup> linkGroupIdToLineGroup;
+
   CommunicationGeneralImageBuilder(final boolean mergeIntricated, final DotData dotData,
       final EntityFactory entityFactory,
       final UmlSource source, final Pragma pragma, final StringBounder stringBounder, final SName styleName) {
     super(mergeIntricated, dotData, entityFactory, source, pragma, stringBounder, styleName);
+    this.linkGroupIdToLineGroup = new HashMap<>();
   }
 
   @Override
   protected Line newLine(final Link link, final ISkinParam skinParam, final FontConfiguration labelFont,
       final DotStringFactory dotStringFactory, final StringBounder stringBounder, final DotData dotData) {
-    return new CommunicationLine(link, dotStringFactory.getColorSequence(), skinParam, stringBounder,
-        labelFont, dotStringFactory.getBibliotekon(), dotData.getPragma());
+
+    final CommunicationLineGroup group = this.linkGroupIdToLineGroup.computeIfAbsent(
+        ((CommunicationLink) link).getGroupId(), id -> new CommunicationLineGroup());
+    final CommunicationLine line = CommunicationLine.builder()
+        .withGroup(group)
+        .withLink(link)
+        .withColorSequence(dotStringFactory.getColorSequence())
+        .withSkinParam(skinParam)
+        .withStringBounder(stringBounder)
+        .withLabelFont(labelFont)
+        .withBibliotekon(dotStringFactory.getBibliotekon())
+        .withPragma(dotData.getPragma())
+        .build();
+    group.addLine(line);
+
+    return line;
+
   }
 
 }
