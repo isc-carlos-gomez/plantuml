@@ -6,8 +6,10 @@ import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.Pragma;
 import net.sourceforge.plantuml.cucadiagram.IGroup;
 import net.sourceforge.plantuml.cucadiagram.Link;
+import net.sourceforge.plantuml.cucadiagram.NoteLinkStrategy;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.posimo.DotPath;
 import net.sourceforge.plantuml.svek.Bibliotekon;
@@ -16,6 +18,7 @@ import net.sourceforge.plantuml.svek.ColorSequence;
 import net.sourceforge.plantuml.svek.Line;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UStroke;
+import net.sourceforge.plantuml.ugraphic.UTranslate;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 /**
@@ -45,6 +48,14 @@ public class CommunicationLine extends Line {
     }
   }
 
+  @Override
+  protected void drawLabelText(final UGraphic ug, final TextBlock labelText, final double dx, final double dy) {
+    if (isLabelVisible(labelText)) {
+      final Point messagePosition = this.group.calculateMessagePosition(this);
+      labelText.drawU(ug.apply(new UTranslate(messagePosition.getX(), messagePosition.getY())));
+    }
+  }
+
   /**
    * @return the rectangular area occupied by the message label of this line
    */
@@ -61,6 +72,12 @@ public class CommunicationLine extends Line {
     x += getDx();
     y += getDy();
     return new Rectangle(getLabelXY()).withDelta(x, y);
+  }
+
+  private boolean isLabelVisible(final TextBlock labelText) {
+    return !this.link.getLabel().isWhite()
+        && labelText != null
+        && this.link.getNoteLinkStrategy() != NoteLinkStrategy.HALF_NOT_PRINTED;
   }
 
   /**
