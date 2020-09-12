@@ -1,0 +1,10 @@
+@startuml
+
+communication diagram
+class Class1
+Class1 -- Class2: methodCall()
+  Class2 .. Class1: returnA
+  Class2 .. Class1: returnB
+  Class2 -- Class1: anotherMethodCall()
+
+@enduml

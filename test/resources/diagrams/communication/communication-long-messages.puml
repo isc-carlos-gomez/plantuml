@@ -1,0 +1,11 @@
+@startuml
+
+communication diagram
+class Class1
+Class1 -R-> Class2 : aLongMethodName\nBeingUsed\nNow()
+Class1 -R-> Class3 : test()
+Class1 -R-> Class4 : test another very long\ndescription\nagain()
+Class1 -D-> Class5 : testing long methods again()
+Class1 -D-> Class6 : simpleMethod()
+
+@enduml

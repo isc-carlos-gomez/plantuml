@@ -1,0 +1,279 @@
+@startuml
+
+digraph unix {
+
+  nodesep=0.486111;
+  ranksep=0.833333;
+  remincross=true;
+  searchsize=500;
+  
+  sh0004 [shape=rect,label="Class1",width=0.972222,height=0.666667,color="#000004"];
+  sh0005 [shape=rect,label="Class2",width=0.972222,height=0.666667,color="#000005"];
+  sh0006 [shape=rect,label="Class3",width=0.972222,height=0.666667,color="#000005"];
+  sh0007 [shape=rect,label="Class4",width=0.972222,height=0.666667,color="#000005"];
+  sh0004->sh0005[
+    arrowtail=none,
+    arrowhead=none,
+    minlen=1,
+    color="#000006",
+    label="a label",
+    headlabel="1. methodCall()",
+    taillabel="1.1. very large, large return"];
+  sh0004->sh0006[
+    arrowtail=none,
+    arrowhead=none,
+    minlen=1,
+    color="#000006",
+    label="a label2",
+    headlabel="1. methodCall2()",
+    taillabel="1.1. very large, large return2"];
+  sh0004->sh0007[
+    arrowtail=none,
+    arrowhead=none,
+    minlen=1,
+    color="#000006",
+    label="a label2",
+    headlabel="1. methodCall3()",
+    taillabel="1.3. very large, large return3",
+    tail_lp="1"];
+  'sh0005->sh0004[arrowtail=none,arrowhead=none,minlen=1,color="#00000A",label=<<TABLE BGCOLOR="#00000B" FIXEDSIZE="TRUE" WIDTH="73" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+  'sh0005->sh0004[arrowtail=none,arrowhead=none,minlen=1,color="#00000E",label=<<TABLE BGCOLOR="#00000F" FIXEDSIZE="TRUE" WIDTH="71" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+  'sh0005->sh0004[arrowtail=none,arrowhead=none,minlen=1,color="#000012",label=<<TABLE BGCOLOR="#000013" FIXEDSIZE="TRUE" WIDTH="153" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+
+}
+
+@enduml
+
+@startuml Second
+
+digraph unix {
+
+  nodesep=0.486111;
+  ranksep=0.833333;
+  remincross=true;
+  searchsize=500;
+  
+  rankdir=LR
+  sh0004 [shape=rect,label="Class1",width=0.972222,height=0.666667,color="#000004"];
+  sh0005 [shape=rect,label="Class2",width=0.972222,height=0.666667,color="#000005"];
+  sh0006 [shape=rect,label="Class3",width=0.972222,height=0.666667,color="#000005"];
+  sh0007 [shape=rect,label="Class4",width=0.972222,height=0.666667,color="#000005"];
+  sh0004->sh0005[rankdir=LR,
+    arrowtail=none,
+    arrowhead=none,
+    minlen=1,
+    color="#000006",
+    label="1. methodCall()"];
+  sh0004->sh0005[
+    arrowtail=none,
+    arrowhead=none,
+    minlen=1,
+    color="#000006",
+    label=""];
+  sh0004->sh0005[
+    arrowtail=none,
+    arrowhead=none,
+    minlen=1,
+    color="#000006",
+    label="1.1. very large, large return"];
+  sh0004->sh0006[
+    arrowtail=none,
+    arrowhead=none,
+    minlen=1,
+    color="#000006",
+    label="1. methodCall()"];
+  sh0004->sh0006[
+    arrowtail=none,
+    arrowhead=none,
+    minlen=1,
+    color="#000006",
+    label=""];
+  sh0004->sh0006[
+    arrowtail=none,
+    arrowhead=none,
+    minlen=1,
+    color="#000006",
+    label="1.1. very large, large return"];
+  sh0004->sh0007[
+    arrowtail=none,
+    arrowhead=none,
+    minlen=1,
+    color="#000006",
+    label="4. methodCall()"];
+  sh0004->sh0007[
+    arrowtail=none,
+    arrowhead=none,
+    minlen=1,
+    color="#000006",
+    label=""];
+  sh0004->sh0007[
+    arrowtail=none,
+    arrowhead=none,
+    minlen=1,
+    color="#000006",
+    label="1.1. very large, large return"];
+  'sh0005->sh0004[arrowtail=none,arrowhead=none,minlen=1,color="#00000A",label=<<TABLE BGCOLOR="#00000B" FIXEDSIZE="TRUE" WIDTH="73" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+  'sh0005->sh0004[arrowtail=none,arrowhead=none,minlen=1,color="#00000E",label=<<TABLE BGCOLOR="#00000F" FIXEDSIZE="TRUE" WIDTH="71" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+  'sh0005->sh0004[arrowtail=none,arrowhead=none,minlen=1,color="#000012",label=<<TABLE BGCOLOR="#000013" FIXEDSIZE="TRUE" WIDTH="153" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+
+}
+
+@enduml
+
+@startuml Force Above
+
+digraph unix {
+nodesep=0.486111;
+ranksep=0.833333;
+remincross=true;
+searchsize=500;
+sh0007 [shape=rect,label="Node Above",width=1.263889,height=0.666667,color="#000007"];
+sh0005 [shape=rect,label="Node 2",width=1.652778,height=0.666667,color="#000005"];
+sh0004->sh0005[arrowtail=none,arrowhead=none,minlen=0,color="#000008",label=<<TABLE BGCOLOR="#000009" FIXEDSIZE="TRUE" WIDTH="61" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+sh0005->sh0006[arrowtail=none,arrowhead=none,minlen=0,color="#00000C",label=<<TABLE BGCOLOR="#00000D" FIXEDSIZE="TRUE" WIDTH="91" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+sh0005->sh0006[arrowtail=none,arrowhead=none,minlen=0,color="#000010",label=<<TABLE BGCOLOR="#000011" FIXEDSIZE="TRUE" WIDTH="44" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+sh0006->sh0006[arrowtail=none,arrowhead=none,minlen=0,color="#00001C",label=<<TABLE BGCOLOR="#00001D" FIXEDSIZE="TRUE" WIDTH="136" HEIGHT="27"><TR><TD></TD></TR></TABLE>>];
+sh0004 [shape=rect,label="Node 1",width=0.930556,height=1.131782,color="#000004"];
+sh0006 [shape=rect,label="Node 3",width=0.916667,height=0.666667,color="#000006"];
+
+// Forcing shape 7 to be above shape 6 by using "minlen=1" and edge starting at shape 7
+sh0007->sh0006[arrowtail=none,arrowhead=none,minlen=1,color="#000014",label=<<TABLE BGCOLOR="#000015" FIXEDSIZE="TRUE" WIDTH="113" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+sh0007->sh0006[arrowtail=none,arrowhead=none,minlen=1,color="#000018",label=<<TABLE BGCOLOR="#000019" FIXEDSIZE="TRUE" WIDTH="94" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+
+}
+
+@enduml
+
+@startuml Force Below
+
+digraph unix {
+nodesep=0.486111;
+ranksep=0.833333;
+remincross=true;
+searchsize=500;
+sh0006 [shape=rect,label="Node 3",width=0.916667,height=0.666667,color="#000006"];
+sh0005 [shape=rect,label="Node 2",width=1.652778,height=0.666667,color="#000005"];
+sh0004->sh0005[arrowtail=none,arrowhead=none,minlen=0,color="#000008",label=<<TABLE BGCOLOR="#000009" FIXEDSIZE="TRUE" WIDTH="61" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+sh0005->sh0006[arrowtail=none,arrowhead=none,minlen=0,color="#00000C",label=<<TABLE BGCOLOR="#00000D" FIXEDSIZE="TRUE" WIDTH="91" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+sh0005->sh0006[arrowtail=none,arrowhead=none,minlen=0,color="#000010",label=<<TABLE BGCOLOR="#000011" FIXEDSIZE="TRUE" WIDTH="44" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+sh0006->sh0006[arrowtail=none,arrowhead=none,minlen=0,color="#00001C",label=<<TABLE BGCOLOR="#00001D" FIXEDSIZE="TRUE" WIDTH="136" HEIGHT="27"><TR><TD></TD></TR></TABLE>>];
+sh0004 [shape=rect,label="Node 1",width=0.930556,height=1.131782,color="#000004"];
+sh0007 [shape=rect,label="Node Below",width=1.263889,height=0.666667,color="#000007"];
+
+// Forcing shape 7 to be below shape 6 by using "minlen=1" and edge starting at shape 6
+sh0006->sh0007[arrowtail=none,arrowhead=none,minlen=1,color="#000014",label=<<TABLE BGCOLOR="#000015" FIXEDSIZE="TRUE" WIDTH="113" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+sh0006->sh0007[arrowtail=none,arrowhead=none,minlen=1,color="#000018",label=<<TABLE BGCOLOR="#000019" FIXEDSIZE="TRUE" WIDTH="94" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+
+}
+
+@enduml
+
+@startuml Diagram using 3 edges per link
+
+digraph unix {
+
+  nodesep=0.486111;
+  ranksep=0.833333;
+  remincross=true;
+  searchsize=500;
+
+  sh0004 [shape=rect,label="Class1",width=0.972222,height=0.666667,color="#000004"];
+  sh0005 [shape=rect,label="Class2",width=0.972222,height=0.666667,color="#000005"];
+  sh0006 [shape=rect,label="Class3",width=0.972222,height=0.666667,color="#000006"];
+  sh0007 [shape=rect,label="Class4",width=0.972222,height=0.666667,color="#000007"];
+  sh0008 [shape=rect,label="Class5",width=0.972222,height=0.666667,color="#000008"];
+  sh0009 [shape=rect,label="Class6",width=0.972222,height=0.666667,color="#000009"];
+
+  sh0004->sh0005[arrowsize=0.5,minlen=0,color="#00001A",label=<<TABLE BGCOLOR="#00001B" FIXEDSIZE="TRUE" WIDTH="139" HEIGHT="47"><TR><TD></TD></TR></TABLE>>];
+  sh0004->sh0005[arrowhead=none,arrowsize=0.5,minlen=0,color="#00002A",label=" "];
+  sh0004->sh0005[arrowsize=0.5,minlen=0,color="#00003A",label=<<TABLE BGCOLOR="#00002B" FIXEDSIZE="TRUE" WIDTH="139" HEIGHT="47"><TR><TD></TD></TR></TABLE>>];
+  
+  sh0004->sh0006[arrowsize=0.5,minlen=0,color="#00000E",label=<<TABLE BGCOLOR="#00000F" FIXEDSIZE="TRUE" WIDTH="50" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+  sh0004->sh0006[arrowhead=none,arrowsize=0.5,minlen=0,color="#00000E",label=" "];
+  sh0004->sh0006[arrowsize=0.5,minlen=0,color="#00000E",label=<<TABLE BGCOLOR="#00000F" FIXEDSIZE="TRUE" WIDTH="50" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+  
+  sh0004->sh0007[arrowsize=0.5,minlen=0,color="#000012",label=<<TABLE BGCOLOR="#000013" FIXEDSIZE="TRUE" WIDTH="156" HEIGHT="47"><TR><TD></TD></TR></TABLE>>];
+  sh0004->sh0007[arrowhead=none,arrowsize=0.5,minlen=0,color="#000012",label=" "];
+  sh0004->sh0007[arrowsize=0.5,minlen=0,color="#000012",label=<<TABLE BGCOLOR="#000013" FIXEDSIZE="TRUE" WIDTH="156" HEIGHT="47"><TR><TD></TD></TR></TABLE>>];
+
+  sh0004->sh0008[arrowsize=0.5,minlen=1,color="#000016",label=<<TABLE BGCOLOR="#000017" FIXEDSIZE="TRUE" WIDTH="199" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+  sh0004->sh0008[arrowhead=none,arrowsize=0.5,minlen=1,color="#000016",label=" "];
+  sh0004->sh0008[arrowsize=0.5,minlen=1,color="#000016",label=<<TABLE BGCOLOR="#000017" FIXEDSIZE="TRUE" WIDTH="199" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+  
+  sh0004->sh0009[arrowsize=0.5,minlen=1,color="#00001A",label=<<TABLE BGCOLOR="#00001B" FIXEDSIZE="TRUE" WIDTH="115" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+  sh0004->sh0009[arrowhead=none,arrowsize=0.5,minlen=1,color="#00001A",label=" "];
+  sh0004->sh0009[arrowsize=0.5,minlen=1,color="#00001A",label=<<TABLE BGCOLOR="#00001B" FIXEDSIZE="TRUE" WIDTH="115" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+
+}
+
+@enduml
+
+@startuml Diagram using head and tail labels
+
+digraph unix {
+
+  nodesep=0.486111;
+  ranksep=0.833333;
+  remincross=true;
+  searchsize=500;
+
+  sh0004 [shape=rect,label="Class1",width=0.972222,height=0.666667,color="#000004"];
+  sh0005 [shape=rect,label="Class2",width=0.972222,height=0.666667,color="#000005"];
+  sh0006 [shape=rect,label="Class3",width=0.972222,height=0.666667,color="#000006"];
+  sh0007 [shape=rect,label="Class4",width=0.972222,height=0.666667,color="#000007"];
+  sh0008 [shape=rect,label="Class5",width=0.972222,height=0.666667,color="#000008"];
+  sh0009 [shape=rect,label="Class6",width=0.972222,height=0.666667,color="#000009"];
+
+  sh0004->sh0005[
+    arrowsize=0.5,
+    minlen=0,
+    color="#00001A",
+    head_lp=5,
+    headclip=true,
+    headlabel=<<TABLE BGCOLOR="#00001B" FIXEDSIZE="TRUE" WIDTH="139" HEIGHT="47"><TR><TD></TD></TR></TABLE>>,
+    taillabel=<<TABLE BGCOLOR="#00001B" FIXEDSIZE="TRUE" WIDTH="139" HEIGHT="47"><TR><TD></TD></TR></TABLE>>];
+  'sh0004->sh0005[arrowhead=none,arrowsize=0.5,minlen=0,color="#00002A",label=" "];
+  sh0004->sh0005[arrowsize=0.5,minlen=0,color="#00003A",label=<<TABLE BGCOLOR="#00002B" FIXEDSIZE="TRUE" WIDTH="139" HEIGHT="47"><TR><TD></TD></TR></TABLE>>];
+  '
+  'sh0004->sh0006[arrowsize=0.5,minlen=0,color="#00000E",label=<<TABLE BGCOLOR="#00000F" FIXEDSIZE="TRUE" WIDTH="50" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+  'sh0004->sh0006[arrowhead=none,arrowsize=0.5,minlen=0,color="#00000E",label=" "];
+  'sh0004->sh0006[arrowsize=0.5,minlen=0,color="#00000E",label=<<TABLE BGCOLOR="#00000F" FIXEDSIZE="TRUE" WIDTH="50" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+  '
+  'sh0004->sh0007[arrowsize=0.5,minlen=0,color="#000012",label=<<TABLE BGCOLOR="#000013" FIXEDSIZE="TRUE" WIDTH="156" HEIGHT="47"><TR><TD></TD></TR></TABLE>>];
+  'sh0004->sh0007[arrowhead=none,arrowsize=0.5,minlen=0,color="#000012",label=" "];
+  'sh0004->sh0007[arrowsize=0.5,minlen=0,color="#000012",label=<<TABLE BGCOLOR="#000013" FIXEDSIZE="TRUE" WIDTH="156" HEIGHT="47"><TR><TD></TD></TR></TABLE>>];
+  '
+  'sh0004->sh0008[arrowsize=0.5,minlen=1,color="#000016",label=<<TABLE BGCOLOR="#000017" FIXEDSIZE="TRUE" WIDTH="199" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+  'sh0004->sh0008[arrowhead=none,arrowsize=0.5,minlen=1,color="#000016",label=" "];
+  'sh0004->sh0008[arrowsize=0.5,minlen=1,color="#000016",label=<<TABLE BGCOLOR="#000017" FIXEDSIZE="TRUE" WIDTH="199" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+  '
+  'sh0004->sh0009[arrowsize=0.5,minlen=1,color="#00001A",label=<<TABLE BGCOLOR="#00001B" FIXEDSIZE="TRUE" WIDTH="115" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+  'sh0004->sh0009[arrowhead=none,arrowsize=0.5,minlen=1,color="#00001A",label=" "];
+  'sh0004->sh0009[arrowsize=0.5,minlen=1,color="#00001A",label=<<TABLE BGCOLOR="#00001B" FIXEDSIZE="TRUE" WIDTH="115" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+
+}
+
+@enduml
+
+@startuml
+digraph unix {
+nodesep=0.486111;
+ranksep=0.833333;
+remincross=true;
+searchsize=500;
+sh0004 [shape=rect,label="4",width=0.930556,height=1.131782,color="#000004"];
+sh0005 [shape=rect,label="5",width=1.652778,height=0.666667,color="#000005"];
+sh0006 [shape=rect,label="6",width=0.916667,height=0.666667,color="#000006"];
+'sh0006 [shape=rect,label="6",width=0.916667,height=0.666667,color="#000006"];
+sh0007 [shape=rect,label="7",width=1.263889,height=0.666667,color="#000007"];
+sh0004->sh0005[arrowsize=0.5,minlen=0,color="#000008",label=<<TABLE BGCOLOR="#000009" FIXEDSIZE="TRUE" WIDTH="48" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+sh0006->sh0007[arrowsize=0.5,minlen=0,color="#00000C",label=<<TABLE BGCOLOR="#00000D" FIXEDSIZE="TRUE" WIDTH="72" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+sh0007->sh0006[arrowtail=empty,arrowhead=none,dir=back,arrowsize=0.5,minlen=0,color="#000010",label=<<TABLE BGCOLOR="#000011" FIXEDSIZE="TRUE" WIDTH="6" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+sh0007->sh0006[arrowsize=0.5,minlen=0,color="#000014",label=<<TABLE BGCOLOR="#000015" FIXEDSIZE="TRUE" WIDTH="41" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+sh0006->sh0005[arrowsize=0.5,minlen=0,color="#000018",label=<<TABLE BGCOLOR="#000019" FIXEDSIZE="TRUE" WIDTH="31" HEIGHT="17"><TR><TD></TD></TR></TABLE>>];
+sh0006->sh0005[arrowtail=empty,arrowhead=none,dir=back,arrowsize=0.5,minlen=0,color="#00001C",label=<<TABLE BGCOLOR="#00001D" FIXEDSIZE="TRUE" WIDTH="85" HEIGHT="32"><TR><TD></TD></TR></TABLE>>];
+sh0005->sh0006[arrowsize=0.5,minlen=0,color="#000020",label=<<TABLE BGCOLOR="#000021" FIXEDSIZE="TRUE" WIDTH="42" HEIGHT="32"><TR><TD></TD></TR></TABLE>>];
+sh0006->sh0006[arrowtail=empty,arrowhead=none,dir=back,arrowsize=0.5,minlen=0,color="#000024",label=<<TABLE BGCOLOR="#000025" FIXEDSIZE="TRUE" WIDTH="108" HEIGHT="42"><TR><TD></TD></TR></TABLE>>];
+
+}
+@enduml

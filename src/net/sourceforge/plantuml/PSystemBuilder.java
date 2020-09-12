@@ -46,6 +46,7 @@ import net.sourceforge.plantuml.api.PSystemFactory;
 import net.sourceforge.plantuml.bpm.BpmDiagramFactory;
 import net.sourceforge.plantuml.classdiagram.ClassDiagramFactory;
 import net.sourceforge.plantuml.command.regex.RegexConcat;
+import net.sourceforge.plantuml.communicationdiagram.CommunicationDiagramFactory;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.core.DiagramType;
 import net.sourceforge.plantuml.core.UmlSource;
@@ -157,6 +158,7 @@ public class PSystemBuilder {
 		factories.add(new DescriptionDiagramFactory(skinParam));
 		factories.add(new StateDiagramFactory(skinParam));
 		factories.add(new ActivityDiagramFactory3(skinParam));
+		factories.add(new CommunicationDiagramFactory(skinParam));
 		// factories.add(new CompositeDiagramFactory(skinParam));
 		factories.add(new BpmDiagramFactory(DiagramType.BPM));
 		// factories.add(new PostIdDiagramFactory());

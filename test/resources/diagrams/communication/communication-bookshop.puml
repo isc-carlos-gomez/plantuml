@@ -1,0 +1,25 @@
+@startuml Online Bookshop
+
+hide members
+hide circle
+
+title Online Bookshop interaction
+
+communication diagram
+actor Customer
+class ":Online\nBookshop" as OnlineBookshop
+class ":Inventory" as Inventory
+class "b:Book" as Book
+class ":Order" as Order
+class "sc[customer]:\nShoping Cart" as ShopingCart
+
+Customer -> OnlineBookshop: *findBooks()
+  OnlineBookshop -U> Inventory: search()
+  OnlineBookshop -> Book: [interested]\nviewBook()
+  OnlineBookshop -D> ShopingCart: [decided to buy] addToCart()
+Customer -> OnlineBookshop: checkout()
+  OnlineBookshop -D> ShopingCart: getBooks()
+  OnlineBookshop -D> Order: [not empty cart]\nmakeOrder()
+  OnlineBookshop -U> Inventory: [order complete]\nupdateInventory()
+
+@enduml
