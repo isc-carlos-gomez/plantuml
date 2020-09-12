@@ -763,7 +763,7 @@ public class Line implements Moveable, Hideable, GuideLine {
 		}
 	}
 
-	private void drawRainbow(UGraphic ug, HColor color, DotPath todraw, List<Colors> supplementaryColors,
+	protected void drawRainbow(UGraphic ug, HColor color, DotPath todraw, List<Colors> supplementaryColors,
 			UStroke stroke) {
 		ug.draw(todraw);
 		final LinkType linkType = link.getType();
@@ -999,5 +999,26 @@ public class Line implements Moveable, Hideable, GuideLine {
 		}
 		return null;
 	}
+
+    /**
+     * @return the delta X of this line
+     */
+    protected double getDx() {
+      return dx;
+    }
+
+    /**
+     * @return the delta Y of this line
+     */
+    protected double getDy() {
+      return dy;
+    }
+
+    /**
+     * @return this line's label position
+     */
+    protected Positionable getLabelXY() {
+      return labelXY;
+    }
 
 }
