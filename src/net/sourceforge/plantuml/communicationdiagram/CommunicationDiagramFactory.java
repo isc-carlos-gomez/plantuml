@@ -7,6 +7,7 @@ import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.classdiagram.ClassDiagram;
 import net.sourceforge.plantuml.classdiagram.ClassDiagramFactory;
 import net.sourceforge.plantuml.command.Command;
+import net.sourceforge.plantuml.communicationdiagram.link.CommandCommunicationLink;
 
 /**
  * Factory of {@link CommunicationDiagram}s.
@@ -38,6 +39,7 @@ public class CommunicationDiagramFactory extends ClassDiagramFactory {
   protected List<Command> createCommands() {
     final List<Command> commands = new ArrayList<>();
     commands.add(new CommandCommunicationDiagram());
+    commands.add(new CommandCommunicationLink());
     commands.addAll(super.createCommands());
     return commands;
   }

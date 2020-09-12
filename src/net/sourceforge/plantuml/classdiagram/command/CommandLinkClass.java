@@ -63,7 +63,7 @@ import net.sourceforge.plantuml.graphic.color.ColorParser;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.objectdiagram.AbstractClassOrObjectDiagram;
 
-final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrObjectDiagram> {
+public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrObjectDiagram> {
 
 	private static final String SINGLE = "[.\\\\]{0,2}[\\p{L}0-9_]+(?:[.\\\\]{1,2}[\\p{L}0-9_]+)*";
 	private static final String COUPLE = "\\([%s]*(" + SINGLE + ")[%s]*,[%s]*(" + SINGLE + ")[%s]*\\)";
@@ -643,7 +643,7 @@ final public class CommandLinkClass extends SingleLineCommand2<AbstractClassOrOb
 		return s.length();
 	}
 
-	private Direction getDirection(RegexResult arg) {
+	protected Direction getDirection(RegexResult arg) {
 		final LinkDecor decors1 = getDecors1(getArrowHead1(arg));
 		final LinkDecor decors2 = getDecors2(getArrowHead2(arg));
 

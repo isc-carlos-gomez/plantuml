@@ -90,7 +90,7 @@ public class Link extends WithLinkType implements Hideable, Removeable {
 	private final String labelangle;
 
 	private boolean constraint = true;
-	private boolean inverted = false;
+	private final boolean inverted;
 	private LinkArrow linkArrow = LinkArrow.NONE_OR_SEVERAL;
 
 	private boolean opale;
@@ -123,17 +123,17 @@ public class Link extends WithLinkType implements Hideable, Removeable {
 	}
 
 	public Link(IEntity cl1, IEntity cl2, LinkType type, Display label, int length, StyleBuilder styleBuilder) {
-		this(cl1, cl2, type, label, length, null, null, null, null, null, styleBuilder);
+		this(cl1, cl2, type, label, length, null, null, null, null, null, styleBuilder, false);
 	}
 
 	public Link(IEntity cl1, IEntity cl2, LinkType type, Display label, int length, String qualifier1,
 			String qualifier2, String labeldistance, String labelangle, StyleBuilder styleBuilder) {
-		this(cl1, cl2, type, label, length, qualifier1, qualifier2, labeldistance, labelangle, null, styleBuilder);
+		this(cl1, cl2, type, label, length, qualifier1, qualifier2, labeldistance, labelangle, null, styleBuilder, false);
 	}
 
 	public Link(IEntity cl1, IEntity cl2, LinkType type, Display label, int length, String qualifier1,
 			String qualifier2, String labeldistance, String labelangle, HColor specificColor,
-			StyleBuilder styleBuilder) {
+			StyleBuilder styleBuilder, boolean inverted) {
 		if (length < 1) {
 			throw new IllegalArgumentException();
 		}
@@ -172,6 +172,7 @@ public class Link extends WithLinkType implements Hideable, Removeable {
 		// if (type.getDecor2() == LinkDecor.EXTENDS) {
 		// setSametail(cl1.getUid());
 		// }
+		this.inverted = inverted;
 	}
 
 	// private static boolean doWeHaveToRemoveUrlAtStart(Display label) {
@@ -191,8 +192,7 @@ public class Link extends WithLinkType implements Hideable, Removeable {
 		// cl2.setXposition(x-1);
 		// }
 		final Link result = new Link(cl2, cl1, getType().getInversed(), label, length, qualifier2, qualifier1,
-				labeldistance, labelangle, getSpecificColor(), styleBuilder);
-		result.inverted = !this.inverted;
+				labeldistance, labelangle, getSpecificColor(), styleBuilder, !this.inverted);
 		result.port1 = this.port2;
 		result.port2 = this.port1;
 		result.url = this.url;
