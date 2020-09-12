@@ -49,6 +49,7 @@ import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.cucadiagram.Code;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
+import net.sourceforge.plantuml.cucadiagram.Ident;
 import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.descdiagram.DescriptionDiagram;
@@ -122,10 +123,11 @@ public class CommandArchimate extends SingleLineCommand2<DescriptionDiagram> {
 		final String codeRaw = arg.getLazzy("CODE", 0);
 
 		final String idShort = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(codeRaw);
-		final Code code = diagram.buildCode(idShort);
+		final Ident ident = diagram.buildLeafIdent(idShort);
+		final Code code = diagram.V1972() ? ident : diagram.buildCode(idShort);
 		final String icon = arg.getLazzy("STEREOTYPE", 0);
 
-		final IEntity entity = diagram.getOrCreateLeaf(diagram.buildLeafIdent(idShort), code, LeafType.DESCRIPTION, USymbol.ARCHIMATE);
+		final IEntity entity = diagram.getOrCreateLeaf(ident, code, LeafType.DESCRIPTION, USymbol.ARCHIMATE);
 
 		final String displayRaw = arg.getLazzy("DISPLAY", 0);
 

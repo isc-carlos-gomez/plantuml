@@ -52,13 +52,15 @@ import net.sourceforge.plantuml.fun.IconLoader;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
 import net.sourceforge.plantuml.graphic.GraphicPosition;
 import net.sourceforge.plantuml.graphic.GraphicStrings;
-import net.sourceforge.plantuml.graphic.HtmlColor;
-import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.graphic.QuoteUtils;
 import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.ugraphic.AffineTransformType;
+import net.sourceforge.plantuml.ugraphic.PixelImage;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UImage;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 import net.sourceforge.plantuml.version.Version;
 
 public class GraphvizCrash extends AbstractTextBlock implements IEntityImage {
@@ -104,19 +106,19 @@ public class GraphvizCrash extends AbstractTextBlock implements IEntityImage {
 		final long days = (System.currentTimeMillis() - Version.compileTime()) / 1000L / 3600 / 24;
 		if (days >= 90) {
 			strings.add("This version of PlantUML is " + days + " days old, so you should");
-			strings.add("  consider upgrading from http://plantuml.com/download");
+			strings.add("  consider upgrading from https://plantuml.com/download");
 		}
 	}
 
 	public static void pleaseGoTo(final List<String> strings) {
 		strings.add(" ");
-		strings.add("Please go to http://plantuml.com/graphviz-dot to check your GraphViz version.");
+		strings.add("Please go to https://plantuml.com/graphviz-dot to check your GraphViz version.");
 		strings.add(" ");
 	}
 
 	public static void youShouldSendThisDiagram(final List<String> strings) {
 		strings.add("You should send this diagram and this image to <b>plantuml@gmail.com</b> or");
-		strings.add("post to <b>http://plantuml.com/qa</b> to solve this issue.");
+		strings.add("post to <b>https://plantuml.com/qa</b> to solve this issue.");
 		strings.add("You can try to turn arround this issue by simplifing your diagram.");
 	}
 
@@ -159,7 +161,8 @@ public class GraphvizCrash extends AbstractTextBlock implements IEntityImage {
 		strings.addAll(OptionPrint.interestingValues());
 	}
 
-	// private static void addTextProperty(final List<String> strings, String prop) {
+	// private static void addTextProperty(final List<String> strings, String prop)
+	// {
 	// strings.add(prop + ": " + System.getProperty(prop));
 	// }
 
@@ -167,8 +170,8 @@ public class GraphvizCrash extends AbstractTextBlock implements IEntityImage {
 		return false;
 	}
 
-	public HtmlColor getBackcolor() {
-		return HtmlColorUtils.WHITE;
+	public HColor getBackcolor() {
+		return HColorUtils.WHITE;
 	}
 
 	public Dimension2D calculateDimension(StringBounder stringBounder) {
@@ -184,8 +187,9 @@ public class GraphvizCrash extends AbstractTextBlock implements IEntityImage {
 		graphicStrings.drawU(ug);
 		if (flashCode != null) {
 			final double h = graphicStrings.calculateDimension(ug.getStringBounder()).getHeight();
-			ug = ug.apply(new UTranslate(0, h));
-			ug.draw(new UImage(flashCode).scaleNearestNeighbor(3));
+			ug = ug.apply(UTranslate.dy(h));
+			ug.draw(new UImage(new PixelImage(flashCode, AffineTransformType.TYPE_NEAREST_NEIGHBOR))
+					.scale(3));
 		}
 	}
 
@@ -196,10 +200,9 @@ public class GraphvizCrash extends AbstractTextBlock implements IEntityImage {
 	public Margins getShield(StringBounder stringBounder) {
 		return Margins.NONE;
 	}
-	
+
 	public double getOverscanX(StringBounder stringBounder) {
 		return 0;
 	}
-
 
 }

@@ -50,19 +50,17 @@ import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
 import net.sourceforge.plantuml.cucadiagram.ILeaf;
 import net.sourceforge.plantuml.cucadiagram.Link;
-import net.sourceforge.plantuml.graphic.HtmlColor;
-import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.skin.rose.Rose;
 import net.sourceforge.plantuml.svek.CucaDiagramFileMaker;
 import net.sourceforge.plantuml.svek.GeneralImageBuilder;
 import net.sourceforge.plantuml.svek.IEntityImage;
 import net.sourceforge.plantuml.ugraphic.MinMax;
-import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UGraphic2;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class CucaDiagramFileMakerHectorB1 implements CucaDiagramFileMaker {
 
@@ -144,7 +142,7 @@ public class CucaDiagramFileMakerHectorB1 implements CucaDiagramFileMaker {
 		final double x = getX(pin);
 		final double y = getY(pin);
 		final UEllipse circle = new UEllipse(6, 6);
-		ug.apply(new UChangeColor(HtmlColorUtils.BLACK)).apply(new UChangeBackColor(HtmlColorUtils.BLACK))
+		ug.apply(HColorUtils.BLACK).apply(HColorUtils.BLACK.bg())
 				.apply(new UTranslate(x - 3, y - 3)).draw(circle);
 	}
 
@@ -155,7 +153,7 @@ public class CucaDiagramFileMakerHectorB1 implements CucaDiagramFileMaker {
 		final double y2 = getY(pinLink.getPin2());
 
 		final Rose rose = new Rose();
-		final HtmlColor color = rose.getHtmlColor(diagram.getSkinParam(), ColorParam.arrow);
+		final HColor color = rose.getHtmlColor(diagram.getSkinParam(), ColorParam.arrow);
 		final List<Box2D> b = new ArrayList<Box2D>();
 		final SmartConnection connection = new SmartConnection(x1, y1, x2, y2, b);
 		connection.draw(ug, color);

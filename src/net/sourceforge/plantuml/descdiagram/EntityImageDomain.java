@@ -50,7 +50,6 @@ import net.sourceforge.plantuml.cucadiagram.ILeaf;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
@@ -58,14 +57,13 @@ import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.svek.AbstractEntityImage;
 import net.sourceforge.plantuml.svek.ShapeType;
 import net.sourceforge.plantuml.ugraphic.PlacementStrategyY1Y2;
-import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULayoutGroup;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class EntityImageDomain extends AbstractEntityImage {
 	final private TextBlock name;
@@ -128,14 +126,14 @@ public class EntityImageDomain extends AbstractEntityImage {
 		final Dimension2D dimTag = getTagDimension(stringBounder);
 		final double widthTotal = dimTotal.getWidth();
 		final double heightTotal = dimTotal.getHeight();
-		final URectangle rect = new URectangle(widthTotal, heightTotal, 0, 0);
+		final URectangle rect = new URectangle(widthTotal, heightTotal);
 
-		ug = ug.apply(new UChangeColor(SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.domainBorder)));
-		HtmlColor backcolor = getEntity().getColors(getSkinParam()).getColor(ColorType.BACK);
+		ug = ug.apply(SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.domainBorder));
+		HColor backcolor = getEntity().getColors(getSkinParam()).getColor(ColorType.BACK);
 		if (backcolor == null) {
 			backcolor = SkinParamUtils.getColor(getSkinParam(), getStereo(), ColorParam.domainBackground);
 		}
-		ug = ug.apply(new UChangeBackColor(backcolor));
+		ug = ug.apply(backcolor.bg());
 		if (url != null) {
 			ug.startUrl(url);
 		}
@@ -151,7 +149,7 @@ public class EntityImageDomain extends AbstractEntityImage {
 		footer.drawU(ug.apply(new UTranslate(dimTotal.getWidth() - dimTag.getWidth(), dimTitle.getHeight())),
 				dimTag.getWidth(), dimTag.getHeight());
 		if (url != null) {
-			ug.closeAction();
+			ug.closeUrl();
 		}
 	}
 

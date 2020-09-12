@@ -35,6 +35,7 @@
  */
 package net.sourceforge.plantuml.descdiagram;
 
+import net.sourceforge.plantuml.ComponentStyle;
 import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UmlDiagramType;
@@ -52,28 +53,47 @@ public class DescriptionDiagram extends AbstractEntityDiagram {
 	}
 
 	@Override
+	public Ident cleanIdent(Ident ident) {
+		String codeString = ident.getName();
+		if (codeString.startsWith("[") && codeString.endsWith("]")) {
+			return ident.eventuallyRemoveStartingAndEndingDoubleQuote("\"([:");
+		}
+		if (codeString.startsWith(":") && codeString.endsWith(":")) {
+			return ident.eventuallyRemoveStartingAndEndingDoubleQuote("\"([:");
+		}
+		if (codeString.startsWith("()")) {
+			codeString = StringUtils.trin(codeString.substring(2));
+			codeString = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(codeString);
+			return ident.parent().add(Ident.empty().add(codeString, null));
+		}
+		return ident;
+	}
+
+	@Override
 	public ILeaf getOrCreateLeaf(Ident ident, Code code, LeafType type, USymbol symbol) {
 		checkNotNull(ident);
 		if (type == null) {
 			String codeString = code.getName();
 			if (codeString.startsWith("[") && codeString.endsWith("]")) {
-				final USymbol sym = getSkinParam().useUml2ForComponent() ? USymbol.COMPONENT2 : USymbol.COMPONENT1;
+				final USymbol sym = getSkinParam().componentStyle().toUSymbol() ;
 				final Ident idNewLong = ident.eventuallyRemoveStartingAndEndingDoubleQuote("\"([:");
-				return getOrCreateLeafDefault(idNewLong, idNewLong.toCode(), LeafType.DESCRIPTION, sym);
+				return getOrCreateLeafDefault(idNewLong, idNewLong.toCode(this), LeafType.DESCRIPTION, sym);
 			}
 			if (codeString.startsWith(":") && codeString.endsWith(":")) {
 				final Ident idNewLong = ident.eventuallyRemoveStartingAndEndingDoubleQuote("\"([:");
-				return getOrCreateLeafDefault(idNewLong, idNewLong.toCode(), LeafType.DESCRIPTION, getSkinParam().getActorStyle()
-						.getUSymbol());
+				return getOrCreateLeafDefault(idNewLong, idNewLong.toCode(this), LeafType.DESCRIPTION,
+						getSkinParam().actorStyle().toUSymbol());
 			}
 			if (codeString.startsWith("()")) {
 				codeString = StringUtils.trin(codeString.substring(2));
 				codeString = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(codeString);
 				final Ident idNewLong = buildLeafIdent(codeString);
-				return getOrCreateLeafDefault(idNewLong, buildCode(codeString), LeafType.DESCRIPTION, USymbol.INTERFACE);
+				final Code code99 = this.V1972() ? idNewLong : buildCode(codeString);
+				return getOrCreateLeafDefault(idNewLong, code99, LeafType.DESCRIPTION, USymbol.INTERFACE);
 			}
-			code = buildCode(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(code.getName(), "\"([:"));
+			final String tmp4 = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(code.getName(), "\"([:");
 			final Ident idNewLong = ident.eventuallyRemoveStartingAndEndingDoubleQuote("\"([:");
+			code = this.V1972() ? idNewLong : buildCode(tmp4);
 			return getOrCreateLeafDefault(idNewLong, code, LeafType.STILL_UNKNOWN, symbol);
 		}
 		return getOrCreateLeafDefault(ident, code, type, symbol);
@@ -83,7 +103,7 @@ public class DescriptionDiagram extends AbstractEntityDiagram {
 		for (ILeaf leaf : getLeafsvalues()) {
 			final LeafType type = leaf.getLeafType();
 			final USymbol usymbol = leaf.getUSymbol();
-			if (type == LeafType.USECASE || usymbol == getSkinParam().getActorStyle().getUSymbol()) {
+			if (type == LeafType.USECASE || usymbol == getSkinParam().actorStyle().toUSymbol()) {
 				return true;
 			}
 		}
@@ -94,7 +114,7 @@ public class DescriptionDiagram extends AbstractEntityDiagram {
 	public void makeDiagramReady() {
 		super.makeDiagramReady();
 		final LeafType defaultType = isUsecase() ? LeafType.DESCRIPTION : LeafType.DESCRIPTION;
-		final USymbol defaultSymbol = isUsecase() ? getSkinParam().getActorStyle().getUSymbol() : USymbol.INTERFACE;
+		final USymbol defaultSymbol = isUsecase() ? getSkinParam().actorStyle().toUSymbol() : USymbol.INTERFACE;
 		for (ILeaf leaf : getLeafsvalues()) {
 			if (leaf.getLeafType() == LeafType.STILL_UNKNOWN) {
 				leaf.muteToType(defaultType, defaultSymbol);

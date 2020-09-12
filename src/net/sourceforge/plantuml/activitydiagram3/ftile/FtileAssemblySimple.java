@@ -125,15 +125,15 @@ public class FtileAssemblySimple extends AbstractTextBlock implements Ftile {
 
 	public FtileGeometry calculateDimension(StringBounder stringBounder) {
 		if (calculateDimension == null) {
-			calculateDimension = tile1.calculateDimension(stringBounder).appendBottom(
-					tile2.calculateDimension(stringBounder));
+			calculateDimension = tile1.calculateDimension(stringBounder)
+					.appendBottom(tile2.calculateDimension(stringBounder));
 		}
 		return calculateDimension;
 	}
 
 	private UTranslate getTranslated1(StringBounder stringBounder) {
 		final double left = calculateDimension(stringBounder).getLeft();
-		return new UTranslate(left - tile1.calculateDimension(stringBounder).getLeft(), 0);
+		return UTranslate.dx(left - tile1.calculateDimension(stringBounder).getLeft());
 	}
 
 	private UTranslate getTranslated2(StringBounder stringBounder) {

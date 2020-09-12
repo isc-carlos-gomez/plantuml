@@ -42,8 +42,6 @@ import net.sourceforge.plantuml.cucadiagram.Rankdir;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.cucadiagram.dot.DotSplines;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.HtmlColor;
-import net.sourceforge.plantuml.graphic.IHtmlColorSet;
 import net.sourceforge.plantuml.graphic.SkinParameter;
 import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.skin.ActorStyle;
@@ -55,9 +53,11 @@ import net.sourceforge.plantuml.style.StyleBuilder;
 import net.sourceforge.plantuml.svek.ConditionEndStyle;
 import net.sourceforge.plantuml.svek.ConditionStyle;
 import net.sourceforge.plantuml.svek.PackageStyle;
-import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UStroke;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 
 public class SkinParamDelegator implements ISkinParam {
 
@@ -67,12 +67,12 @@ public class SkinParamDelegator implements ISkinParam {
 		this.skinParam = skinParam;
 	}
 
-	public HtmlColor getHyperlinkColor() {
+	public HColor getHyperlinkColor() {
 		return skinParam.getHyperlinkColor();
 	}
 
-	public HtmlColor getBackgroundColor() {
-		return skinParam.getBackgroundColor();
+	public HColor getBackgroundColor(boolean replaceTransparentByWhite) {
+		return skinParam.getBackgroundColor(replaceTransparentByWhite);
 	}
 
 	public int getCircledCharacterRadius() {
@@ -83,11 +83,11 @@ public class SkinParamDelegator implements ISkinParam {
 		return skinParam.getFont(stereotype, false, fontParam);
 	}
 
-	public HtmlColor getFontHtmlColor(Stereotype stereotype, FontParam... param) {
+	public HColor getFontHtmlColor(Stereotype stereotype, FontParam... param) {
 		return skinParam.getFontHtmlColor(stereotype, param);
 	}
 
-	public HtmlColor getHtmlColor(ColorParam param, Stereotype stereotype, boolean clickable) {
+	public HColor getHtmlColor(ColorParam param, Stereotype stereotype, boolean clickable) {
 		return skinParam.getHtmlColor(param, stereotype, clickable);
 	}
 
@@ -124,16 +124,16 @@ public class SkinParamDelegator implements ISkinParam {
 		return skinParam.shadowing2(stereotype, skinParameter);
 	}
 
-	public PackageStyle getPackageStyle() {
-		return skinParam.getPackageStyle();
+	public PackageStyle packageStyle() {
+		return skinParam.packageStyle();
 	}
 
 	public Sprite getSprite(String name) {
 		return skinParam.getSprite(name);
 	}
 
-	public boolean useUml2ForComponent() {
-		return skinParam.useUml2ForComponent();
+	public ComponentStyle componentStyle() {
+		return skinParam.componentStyle();
 	}
 
 	public boolean stereotypePositionTop() {
@@ -204,7 +204,7 @@ public class SkinParamDelegator implements ISkinParam {
 		return skinParam.useOctagonForActivity(stereotype);
 	}
 
-	public IHtmlColorSet getIHtmlColorSet() {
+	public HColorSet getIHtmlColorSet() {
 		return skinParam.getIHtmlColorSet();
 	}
 
@@ -276,8 +276,8 @@ public class SkinParamDelegator implements ISkinParam {
 		return skinParam.getUmlDiagramType();
 	}
 
-	public HtmlColor getHoverPathColor() {
-		return skinParam.getHoverPathColor();
+	public HColor hoverPathColor() {
+		return skinParam.hoverPathColor();
 	}
 
 	public double getPadding(PaddingParam param) {
@@ -336,8 +336,8 @@ public class SkinParamDelegator implements ISkinParam {
 		return skinParam.getStereotypeAlignment();
 	}
 
-	public Padder getSequenceDiagramPadder() {
-		return skinParam.getSequenceDiagramPadder();
+	public Padder sequenceDiagramPadder() {
+		return skinParam.sequenceDiagramPadder();
 	}
 
 	public StyleBuilder getCurrentStyleBuilder() {
@@ -360,8 +360,8 @@ public class SkinParamDelegator implements ISkinParam {
 		skinParam.setDefaultSkin(newFileName);
 	}
 
-	public ActorStyle getActorStyle() {
-		return skinParam.getActorStyle();
+	public ActorStyle actorStyle() {
+		return skinParam.actorStyle();
 	}
 
 }

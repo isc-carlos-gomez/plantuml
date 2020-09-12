@@ -39,12 +39,12 @@ import java.awt.font.TextLayout;
 import net.sourceforge.plantuml.eps.EpsGraphics;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.graphic.UnusedSpace;
-import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.UCenteredCharacter;
 import net.sourceforge.plantuml.ugraphic.UDriver;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UParam;
 import net.sourceforge.plantuml.ugraphic.UShape;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 
 public class DriverCenteredCharacterEps implements UDriver<EpsGraphics> {
 
@@ -58,7 +58,7 @@ public class DriverCenteredCharacterEps implements UDriver<EpsGraphics> {
 		final double ypos = y - unusedSpace.getCenterY() - 0.5;
 
 		final TextLayout t = new TextLayout("" + c, font.getFont(), TextBlockUtils.getFontRenderContext());
-		eps.setStrokeColor(mapper.getMappedColor(param.getColor()));
+		eps.setStrokeColor(mapper.toColor(param.getColor()));
 		DriverTextEps.drawPathIterator(eps, xpos, ypos, t.getOutline(null));
 
 	}

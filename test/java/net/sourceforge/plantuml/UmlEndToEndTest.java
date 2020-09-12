@@ -22,7 +22,7 @@ class UmlEndToEndTest {
 
   @Test
   void generateCommunicationDiagrams() throws Exception {
-    assertThatDiagramsAreGenerated("/diagrams/communication");
+    assertThatDiagramsAreGenerated("/diagrams/communication/communication-return.puml");
   }
 
   @Test

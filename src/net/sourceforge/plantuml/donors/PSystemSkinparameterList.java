@@ -47,14 +47,14 @@ import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.graphic.GraphicStrings;
-import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.UDrawable;
-import net.sourceforge.plantuml.ugraphic.ColorMapperIdentity;
 import net.sourceforge.plantuml.ugraphic.ImageBuilder;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapperIdentity;
+import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class PSystemSkinparameterList extends AbstractPSystem {
 
@@ -62,8 +62,8 @@ public class PSystemSkinparameterList extends AbstractPSystem {
 	final protected ImageData exportDiagramNow(OutputStream os, int num, FileFormatOption fileFormat, long seed)
 			throws IOException {
 		final UDrawable result = getGraphicStrings();
-		final ImageBuilder imageBuilder = new ImageBuilder(new ColorMapperIdentity(), 1.0, HtmlColorUtils.WHITE,
-				getMetadata(), null, 0, 0, null, false);
+		final ImageBuilder imageBuilder = ImageBuilder.buildA(new ColorMapperIdentity(),
+				false, null, getMetadata(), null, 1.0, HColorUtils.WHITE);
 		imageBuilder.setUDrawable(result);
 		return imageBuilder.writeImageTOBEMOVED(fileFormat, seed, os);
 	}
@@ -77,7 +77,7 @@ public class PSystemSkinparameterList extends AbstractPSystem {
 				double y = 0;
 				for (TextBlock tb : cols) {
 					final Dimension2D dim = tb.calculateDimension(stringBounder);
-					tb.drawU(ug.apply(new UTranslate(x, 0)));
+					tb.drawU(ug.apply(UTranslate.dx(x)));
 					x += dim.getWidth() + 10;
 					y = Math.max(y, dim.getHeight());
 				}

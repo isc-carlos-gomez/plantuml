@@ -82,10 +82,10 @@ public class CommandNamespaceEmpty extends SingleLineCommand2<ClassDiagram> {
 	@Override
 	protected CommandExecutionResult executeArg(ClassDiagram diagram, LineLocation location, RegexResult arg) {
 		final String idShort = arg.get("NAME", 0);
-		final Code code = diagram.buildCode(idShort);
+		final Ident idNewLong = diagram.buildLeafIdent(idShort);
+		final Code code = diagram.V1972() ? idNewLong : diagram.buildCode(idShort);
 		final IGroup currentPackage = diagram.getCurrentGroup();
 		final Display display = Display.getWithNewlines(code);
-		final Ident idNewLong = diagram.buildLeafIdent(idShort);
 		diagram.gotoGroup(idNewLong, code, display, GroupType.PACKAGE, currentPackage, NamespaceStrategy.MULTIPLE);
 		final IEntity p = diagram.getCurrentGroup();
 		final String stereotype = arg.get("STEREOTYPE", 0);

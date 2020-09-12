@@ -49,11 +49,9 @@ import net.sourceforge.plantuml.eps.EpsGraphicsMacroAndText;
 import net.sourceforge.plantuml.eps.EpsStrategy;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.FontStyle;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.ugraphic.ClipContainer;
-import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.MinMax;
 import net.sourceforge.plantuml.ugraphic.UClip;
 import net.sourceforge.plantuml.ugraphic.UDriver;
@@ -61,6 +59,8 @@ import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UParam;
 import net.sourceforge.plantuml.ugraphic.UShape;
 import net.sourceforge.plantuml.ugraphic.UText;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class DriverTextEps implements UDriver<EpsGraphics> {
 
@@ -99,7 +99,7 @@ public class DriverTextEps implements UDriver<EpsGraphics> {
 		MinMax dim = null;
 
 		if (fontConfiguration.containsStyle(FontStyle.BACKCOLOR)) {
-			final Color extended = mapper.getMappedColor(fontConfiguration.getExtendedColor());
+			final Color extended = mapper.toColor(fontConfiguration.getExtendedColor());
 			if (extended != null) {
 				eps.setStrokeColor(extended);
 				eps.setFillColor(extended);
@@ -111,13 +111,13 @@ public class DriverTextEps implements UDriver<EpsGraphics> {
 			}
 		}
 
-		eps.setStrokeColor(mapper.getMappedColor(fontConfiguration.getColor()));
+		eps.setStrokeColor(mapper.toColor(fontConfiguration.getColor()));
 		drawPathIterator(eps, x, y, getOutline(textLayout));
 
 		if (fontConfiguration.containsStyle(FontStyle.UNDERLINE)) {
-			final HtmlColor extended = fontConfiguration.getExtendedColor();
+			final HColor extended = fontConfiguration.getExtendedColor();
 			if (extended != null) {
-				eps.setStrokeColor(mapper.getMappedColor(extended));
+				eps.setStrokeColor(mapper.toColor(extended));
 			}
 			if (dim == null) {
 				dim = getMinMax(x, y, getOutline(textLayout).getPathIterator(null));
@@ -131,9 +131,9 @@ public class DriverTextEps implements UDriver<EpsGraphics> {
 				dim = getMinMax(x, y, getOutline(textLayout).getPathIterator(null));
 			}
 			final int ypos = (int) (y + 2.5) - 1;
-			final HtmlColor extended = fontConfiguration.getExtendedColor();
+			final HColor extended = fontConfiguration.getExtendedColor();
 			if (extended != null) {
-				eps.setStrokeColor(mapper.getMappedColor(extended));
+				eps.setStrokeColor(mapper.toColor(extended));
 			}
 			eps.setStrokeWidth(1.1, 0, 0);
 			for (int i = (int) x; i < x + dim.getWidth() - 5; i += 6) {
@@ -143,9 +143,9 @@ public class DriverTextEps implements UDriver<EpsGraphics> {
 			eps.setStrokeWidth(1, 0, 0);
 		}
 		if (fontConfiguration.containsStyle(FontStyle.STRIKE)) {
-			final HtmlColor extended = fontConfiguration.getExtendedColor();
+			final HColor extended = fontConfiguration.getExtendedColor();
 			if (extended != null) {
-				eps.setStrokeColor(mapper.getMappedColor(extended));
+				eps.setStrokeColor(mapper.toColor(extended));
 			}
 			if (dim == null) {
 				dim = getMinMax(x, y, getOutline(textLayout).getPathIterator(null));
@@ -169,7 +169,7 @@ public class DriverTextEps implements UDriver<EpsGraphics> {
 		// final double ypos = y - fm.getDescent() + 0.5;
 		final double ypos = y - 1;
 
-		eps.setStrokeColor(mapper.getMappedColor(fontConfiguration.getColor()));
+		eps.setStrokeColor(mapper.toColor(fontConfiguration.getColor()));
 		((EpsGraphicsMacroAndText) eps).drawText(shape.getText(), fontConfiguration, x, ypos);
 
 	}

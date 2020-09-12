@@ -57,10 +57,10 @@ import net.sourceforge.plantuml.cucadiagram.Ident;
 import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.cucadiagram.Stereotag;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.color.ColorParser;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.graphic.color.Colors;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class CommandCreateClass extends SingleLineCommand2<ClassDiagram> {
 
@@ -77,8 +77,7 @@ public class CommandCreateClass extends SingleLineCommand2<ClassDiagram> {
 	}
 
 	private static IRegex getRegexConcat() {
-		return RegexConcat.build(CommandCreateClass.class.getName(),
-				RegexLeaf.start(), //
+		return RegexConcat.build(CommandCreateClass.class.getName(), RegexLeaf.start(), //
 				new RegexLeaf("TYPE", //
 						"(interface|enum|annotation|abstract[%s]+class|abstract|class|entity|circle|diamond)"), //
 				RegexLeaf.spaceOneOrMore(), //
@@ -97,8 +96,8 @@ public class CommandCreateClass extends SingleLineCommand2<ClassDiagram> {
 								new RegexLeaf("DISPLAY2", DISPLAY_WITH_GENERIC)), //
 						new RegexLeaf("CODE3", "(" + CODE + ")"), //
 						new RegexLeaf("CODE4", "[%g]([^%g]+)[%g]")), //
-				new RegexOptional(new RegexConcat(RegexLeaf.spaceZeroOrMore(), new RegexLeaf("GENERIC", "\\<("
-						+ GenericRegexProducer.PATTERN + ")\\>"))), //
+				new RegexOptional(new RegexConcat(RegexLeaf.spaceZeroOrMore(),
+						new RegexLeaf("GENERIC", "\\<(" + GenericRegexProducer.PATTERN + ")\\>"))), //
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("STEREO", "(\\<{2}.*\\>{2})?"), //
 				RegexLeaf.spaceZeroOrMore(), //
@@ -108,14 +107,14 @@ public class CommandCreateClass extends SingleLineCommand2<ClassDiagram> {
 				RegexLeaf.spaceZeroOrMore(), //
 				color().getRegex(), //
 				RegexLeaf.spaceZeroOrMore(), //
-				new RegexOptional(new RegexConcat(new RegexLeaf("##"), new RegexLeaf("LINECOLOR",
-						"(?:\\[(dotted|dashed|bold)\\])?(\\w+)?"))), //
-				new RegexOptional(new RegexConcat(RegexLeaf.spaceOneOrMore(), new RegexLeaf("EXTENDS",
-						"(extends)[%s]+(" + CommandCreateClassMultilines.CODES + ")"))), //
-				new RegexOptional(new RegexConcat(RegexLeaf.spaceOneOrMore(), new RegexLeaf("IMPLEMENTS",
-						"(implements)[%s]+(" + CommandCreateClassMultilines.CODES + ")"))), //
-				new RegexOptional(new RegexConcat(RegexLeaf.spaceZeroOrMore(), new RegexLeaf("\\{"), RegexLeaf
-						.spaceZeroOrMore(), new RegexLeaf("\\}"))), //
+				new RegexOptional(new RegexConcat(new RegexLeaf("##"),
+						new RegexLeaf("LINECOLOR", "(?:\\[(dotted|dashed|bold)\\])?(\\w+)?"))), //
+				new RegexOptional(new RegexConcat(RegexLeaf.spaceOneOrMore(),
+						new RegexLeaf("EXTENDS", "(extends)[%s]+(" + CommandCreateClassMultilines.CODES + ")"))), //
+				new RegexOptional(new RegexConcat(RegexLeaf.spaceOneOrMore(),
+						new RegexLeaf("IMPLEMENTS", "(implements)[%s]+(" + CommandCreateClassMultilines.CODES + ")"))), //
+				new RegexOptional(new RegexConcat(RegexLeaf.spaceZeroOrMore(), new RegexLeaf("\\{"),
+						RegexLeaf.spaceZeroOrMore(), new RegexLeaf("\\}"))), //
 				RegexLeaf.end());
 	}
 
@@ -126,27 +125,39 @@ public class CommandCreateClass extends SingleLineCommand2<ClassDiagram> {
 	@Override
 	protected CommandExecutionResult executeArg(ClassDiagram diagram, LineLocation location, RegexResult arg) {
 		final LeafType type = LeafType.getLeafType(StringUtils.goUpperCase(arg.get("TYPE", 0)));
-		final String idShort = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.getLazzy("CODE", 0), "\"([:");
-		final Code code = diagram.buildCode(idShort);
+		final String idShort = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.getLazzy("CODE", 0),
+				"\"([:");
 		final String display = arg.getLazzy("DISPLAY", 0);
 		final String genericOption = arg.getLazzy("DISPLAY", 1);
 		final String generic = genericOption != null ? genericOption : arg.get("GENERIC", 0);
 
 		final String stereotype = arg.get("STEREO", 0);
 		final ILeaf entity;
-		if (diagram.leafExist(code)) {
-			entity = diagram.getOrCreateLeaf(diagram.buildLeafIdent(idShort), code, type, null);
-			if (entity.muteToType(type, null) == false) {
-				return CommandExecutionResult.error("Bad name");
+		final Ident idNewLong = diagram.buildLeafIdent(idShort);
+		if (diagram.V1972()) {
+			if (diagram.leafExistSmart(idNewLong)) {
+				entity = diagram.getOrCreateLeaf(idNewLong, idNewLong, type, null);
+				if (entity.muteToType(type, null) == false) {
+					return CommandExecutionResult.error("Bad name");
+				}
+			} else {
+				entity = diagram.createLeaf(idNewLong, idNewLong, Display.getWithNewlines(display), type, null);
 			}
 		} else {
-			final Ident idNewLong = diagram.buildLeafIdent(idShort);
-			entity = diagram.createLeaf(idNewLong, code, Display.getWithNewlines(display), type, null);
+			final Code code = diagram.buildCode(idShort);
+			if (diagram.leafExist(code)) {
+				entity = diagram.getOrCreateLeaf(idNewLong, code, type, null);
+				if (entity.muteToType(type, null) == false) {
+					return CommandExecutionResult.error("Bad name");
+				}
+			} else {
+				entity = diagram.createLeaf(idNewLong, code, Display.getWithNewlines(display), type, null);
+			}
 		}
 		if (stereotype != null) {
-			entity.setStereotype(new Stereotype(stereotype, diagram.getSkinParam().getCircledCharacterRadius(), diagram
-					.getSkinParam().getFont(null, false, FontParam.CIRCLED_CHARACTER), diagram.getSkinParam()
-					.getIHtmlColorSet()));
+			entity.setStereotype(new Stereotype(stereotype, diagram.getSkinParam().getCircledCharacterRadius(),
+					diagram.getSkinParam().getFont(null, false, FontParam.CIRCLED_CHARACTER),
+					diagram.getSkinParam().getIHtmlColorSet()));
 		}
 		if (generic != null) {
 			entity.setGeneric(generic);
@@ -158,10 +169,11 @@ public class CommandCreateClass extends SingleLineCommand2<ClassDiagram> {
 			final Url url = urlBuilder.getUrl(urlString);
 			entity.addUrl(url);
 		}
+		entity.setCodeLine(location);
 
 		Colors colors = color().getColor(arg, diagram.getSkinParam().getIHtmlColorSet());
 
-		final HtmlColor lineColor = diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(arg.get("LINECOLOR", 1));
+		final HColor lineColor = diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(arg.get("LINECOLOR", 1));
 		if (lineColor != null) {
 			colors = colors.add(ColorType.LINE, lineColor);
 		}
@@ -171,7 +183,8 @@ public class CommandCreateClass extends SingleLineCommand2<ClassDiagram> {
 		entity.setColors(colors);
 
 		// entity.setSpecificColorTOBEREMOVED(ColorType.LINE, lineColor);
-		// entity.setSpecificColorTOBEREMOVED(ColorType.HEADER, colors.getColor(ColorType.HEADER));
+		// entity.setSpecificColorTOBEREMOVED(ColorType.HEADER,
+		// colors.getColor(ColorType.HEADER));
 		//
 		// if (colors.getLineStyle() != null) {
 		// entity.setSpecificLineStroke(LinkStyle.getStroke(colors.getLineStyle()));
@@ -188,9 +201,11 @@ public class CommandCreateClass extends SingleLineCommand2<ClassDiagram> {
 
 		return CommandExecutionResult.ok();
 	}
-	// public static void manageExtends(ClassDiagram system, RegexResult arg, final IEntity entity) {
+	// public static void manageExtends(ClassDiagram system, RegexResult arg, final
+	// IEntity entity) {
 	// if (arg.get("EXTENDS", 1) != null) {
-	// final Mode mode = arg.get("EXTENDS", 1).equalsIgnoreCase("extends") ? Mode.EXTENDS : Mode.IMPLEMENTS;
+	// final Mode mode = arg.get("EXTENDS", 1).equalsIgnoreCase("extends") ?
+	// Mode.EXTENDS : Mode.IMPLEMENTS;
 	// final Code other = diagram.buildCode(arg.get("EXTENDS", 2));
 	// LeafType type2 = LeafType.CLASS;
 	// if (mode == Mode.IMPLEMENTS) {
@@ -201,10 +216,12 @@ public class CommandCreateClass extends SingleLineCommand2<ClassDiagram> {
 	// }
 	// final IEntity cl2 = system.getOrCreateLeaf(other, type2, null);
 	// LinkType typeLink = new LinkType(LinkDecor.NONE, LinkDecor.EXTENDS);
-	// if (type2 == LeafType.INTERFACE && entity.getEntityType() != LeafType.INTERFACE) {
+	// if (type2 == LeafType.INTERFACE && entity.getEntityType() !=
+	// LeafType.INTERFACE) {
 	// typeLink = typeLink.getDashed();
 	// }
-	// final Link link = new Link(cl2, entity, typeLink, null, 2, null, null, system.getLabeldistance(),
+	// final Link link = new Link(cl2, entity, typeLink, null, 2, null, null,
+	// system.getLabeldistance(),
 	// system.getLabelangle());
 	// system.addLink(link);
 	// }

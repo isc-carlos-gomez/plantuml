@@ -44,10 +44,10 @@ import java.util.Set;
 
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
+import net.sourceforge.plantuml.LineLocation;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.cucadiagram.entity.EntityFactory;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.USymbol;
 import net.sourceforge.plantuml.graphic.color.ColorType;
@@ -56,6 +56,7 @@ import net.sourceforge.plantuml.svek.IEntityImage;
 import net.sourceforge.plantuml.svek.PackageStyle;
 import net.sourceforge.plantuml.svek.SingleStrategy;
 import net.sourceforge.plantuml.ugraphic.UStroke;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class GroupRoot implements IGroup {
 
@@ -74,6 +75,11 @@ public class GroupRoot implements IGroup {
 		}
 		return Collections.unmodifiableCollection(result);
 
+	}
+
+	@Override
+	public String toString() {
+		return "ROOT";
 	}
 
 	public boolean isGroup() {
@@ -122,7 +128,7 @@ public class GroupRoot implements IGroup {
 	public Code getCode() {
 		return CodeImpl.of("__ROOT__");
 	}
-	
+
 	public String getCodeGetName() {
 		return getCode().getName();
 	}
@@ -143,9 +149,18 @@ public class GroupRoot implements IGroup {
 
 	public Collection<IGroup> getChildren() {
 		final List<IGroup> result = new ArrayList<IGroup>();
-		for (IGroup ent : entityFactory.groups()) {
-			if (ent.getParentContainer() == this) {
-				result.add(ent);
+		if (entityFactory.namespaceSeparator.V1972()) {
+			for (IGroup ent : entityFactory.groups()) {
+				if (ent.getIdent().size() == 1) {
+					result.add(ent);
+				}
+			}
+
+		} else {
+			for (IGroup ent : entityFactory.groups()) {
+				if (ent.getParentContainer() == this) {
+					result.add(ent);
+				}
 			}
 		}
 		return Collections.unmodifiableCollection(result);
@@ -242,7 +257,7 @@ public class GroupRoot implements IGroup {
 		throw new UnsupportedOperationException();
 	}
 
-	public void setSpecificColorTOBEREMOVED(ColorType type, HtmlColor color) {
+	public void setSpecificColorTOBEREMOVED(ColorType type, HColor color) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -272,5 +287,21 @@ public class GroupRoot implements IGroup {
 
 	public Ident getIdent() {
 		return Ident.empty();
+	}
+
+	public boolean isAloneAndUnlinked() {
+		throw new UnsupportedOperationException();
+	}
+
+	public void setThisIsTogether() {
+		throw new UnsupportedOperationException();
+	}
+
+	public String getCodeLine() {
+		throw new UnsupportedOperationException();
+	}
+
+	public void setCodeLine(LineLocation codeLine) {
+		throw new UnsupportedOperationException();
 	}
 }

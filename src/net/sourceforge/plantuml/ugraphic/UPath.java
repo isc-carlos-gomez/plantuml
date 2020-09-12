@@ -30,6 +30,7 @@
  *
  *
  * Original Author:  Arnaud Roques
+ * Contribution:  Miguel Esteves
  * 
  *
  */
@@ -40,20 +41,26 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class UPath extends AbstractShadowable implements Iterable<USegment> {
+import net.sourceforge.plantuml.ugraphic.comp.CompressionMode;
+
+public class UPath extends AbstractShadowable implements Iterable<USegment>, UShapeIgnorableForCompression {
 
 	private final String comment;
+	private final String codeLine;
 	private final List<USegment> segments = new ArrayList<USegment>();
 	private MinMax minmax = MinMax.getEmpty(false);
 
 	private boolean isOpenIconic;
+	private boolean ignoreForCompressionOnX;
+	private boolean ignoreForCompressionOnY;
 
-	public UPath(String comment) {
+	public UPath(String comment, String codeLine) {
 		this.comment = comment;
+		this.codeLine = codeLine;
 	}
 
 	public UPath() {
-		this(null);
+		this(null, null);
 	}
 
 	public void add(double[] coord, USegmentType pathType) {
@@ -79,7 +86,7 @@ public class UPath extends AbstractShadowable implements Iterable<USegment> {
 	}
 
 	public UPath translate(double dx, double dy) {
-		final UPath result = new UPath(comment);
+		final UPath result = new UPath(comment, codeLine);
 		for (USegment seg : segments) {
 			result.addInternal(seg.translate(dx, dy));
 		}
@@ -87,7 +94,7 @@ public class UPath extends AbstractShadowable implements Iterable<USegment> {
 	}
 
 	public UPath rotate(double theta) {
-		final UPath result = new UPath(comment);
+		final UPath result = new UPath(comment, codeLine);
 		for (USegment seg : segments) {
 			result.addInternal(seg.rotate(theta));
 		}
@@ -177,6 +184,31 @@ public class UPath extends AbstractShadowable implements Iterable<USegment> {
 
 	public final String getComment() {
 		return comment;
+	}
+
+	public final String getCodeLine() {
+		return codeLine;
+	}
+
+	public void setIgnoreForCompressionOnX() {
+		this.ignoreForCompressionOnX = true;
+	}
+
+	public void setIgnoreForCompressionOnY() {
+		this.ignoreForCompressionOnY = true;
+	}
+
+	public void drawWhenCompressed(UGraphic ug, CompressionMode mode) {
+	}
+
+	public boolean isIgnoreForCompressionOn(CompressionMode mode) {
+		if (mode == CompressionMode.ON_X) {
+			return ignoreForCompressionOnX;
+		}
+		if (mode == CompressionMode.ON_Y) {
+			return ignoreForCompressionOnY;
+		}
+		throw new IllegalArgumentException();
 	}
 
 	// public boolean isEmpty() {

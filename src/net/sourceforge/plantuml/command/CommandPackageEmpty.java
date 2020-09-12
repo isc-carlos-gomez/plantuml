@@ -82,27 +82,24 @@ public class CommandPackageEmpty extends SingleLineCommand2<AbstractEntityDiagra
 
 	@Override
 	protected CommandExecutionResult executeArg(AbstractEntityDiagram diagram, LineLocation location, RegexResult arg) {
-		final Code code;
 		final String idShort;
 		final String display;
 		if (arg.get("CODE", 0) == null) {
 			if (StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get("DISPLAY", 0)).length() == 0) {
 				idShort = "##" + UniqueSequence.getValue();
-				code = diagram.buildCode(idShort);
 				display = null;
 			} else {
 				idShort = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get("DISPLAY", 0));
-				code = diagram.buildCode(idShort);
-				display = code.getName();
+				display = idShort;
 			}
 		} else {
 			display = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get("DISPLAY", 0));
 			idShort = arg.get("CODE", 0);
-			code = diagram.buildCode(idShort);
 		}
 		final IGroup currentPackage = diagram.getCurrentGroup();
-		final Ident idNewLong = diagram.buildLeafIdent(idShort);
-		diagram.gotoGroup(idNewLong, code, Display.getWithNewlines(display), GroupType.PACKAGE, currentPackage,
+		final Ident ident = diagram.buildLeafIdent(idShort);
+		final Code code = diagram.V1972() ? ident : diagram.buildCode(idShort);
+		diagram.gotoGroup(ident, code, Display.getWithNewlines(display), GroupType.PACKAGE, currentPackage,
 				NamespaceStrategy.SINGLE);
 		final IEntity p = diagram.getCurrentGroup();
 		final String color = arg.get("COLOR", 0);

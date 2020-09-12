@@ -102,36 +102,42 @@ public class CommandPackage extends SingleLineCommand2<AbstractEntityDiagram> {
 
 	@Override
 	protected CommandExecutionResult executeArg(AbstractEntityDiagram diagram, LineLocation location, RegexResult arg) {
-		final Code code;
 		final String idShort;
-		final String display;
+		/* final */String display;
 		final String name = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get("NAME", 0));
+		boolean override1972 = false;
 		if (arg.get("AS", 0) == null) {
 			if (name.length() == 0) {
 				idShort = "##" + UniqueSequence.getValue();
-				code = diagram.buildCode(idShort);
 				display = null;
 			} else {
 				idShort = name;
-				code = diagram.buildCode(idShort);
-				display = code.getName();
+				display = idShort;
+				override1972 = true;
 			}
 		} else {
 			display = name;
 			idShort = arg.get("AS", 0);
-			code = diagram.buildCode(idShort);
 		}
 		final IGroup currentPackage = diagram.getCurrentGroup();
-		final Ident idNewLong = diagram.buildLeafIdentSpecial(idShort);
-		diagram.gotoGroup(idNewLong, code, Display.getWithNewlines(display), GroupType.PACKAGE, currentPackage,
+		// final Ident ident = diagram.buildLeafIdentSpecial(idShort);
+		final Ident ident = diagram.buildLeafIdent(idShort);
+		final Code code = diagram.V1972() ? ident : diagram.buildCode(idShort);
+		if (diagram.V1972() && override1972)
+			display = ident.getLast();
+		diagram.gotoGroup(ident, code, Display.getWithNewlines(display), GroupType.PACKAGE, currentPackage,
 				NamespaceStrategy.SINGLE);
 		final IEntity p = diagram.getCurrentGroup();
 		final String stereotype = arg.get("STEREOTYPE", 0);
-		final USymbol type = USymbol.getFromString(arg.get("TYPE", 0), diagram.getSkinParam().getActorStyle());
-		if (type == USymbol.TOGETHER) {
-			p.setUSymbol(type);
-		} else if (stereotype != null) {
-			final USymbol usymbol = USymbol.getFromString(stereotype, diagram.getSkinParam().getActorStyle());
+		// final USymbol type = USymbol.getFromString(arg.get("TYPE", 0),
+		// diagram.getSkinParam().getActorStyle());
+//		if (type == USymbol.TOGETHER) {
+//			p.setUSymbol(type);
+//			p.setThisIsTogether();
+//		} else 
+		if (stereotype != null) {
+			final USymbol usymbol = USymbol.fromString(stereotype, diagram.getSkinParam().actorStyle(),
+					diagram.getSkinParam().componentStyle(), diagram.getSkinParam().packageStyle());
 			if (usymbol == null) {
 				p.setStereotype(new Stereotype(stereotype));
 			} else {

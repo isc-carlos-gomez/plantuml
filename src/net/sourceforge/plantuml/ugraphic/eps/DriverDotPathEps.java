@@ -37,10 +37,10 @@ package net.sourceforge.plantuml.ugraphic.eps;
 
 import net.sourceforge.plantuml.eps.EpsGraphics;
 import net.sourceforge.plantuml.posimo.DotPath;
-import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.UDriver;
 import net.sourceforge.plantuml.ugraphic.UParam;
 import net.sourceforge.plantuml.ugraphic.UShape;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 
 public class DriverDotPathEps implements UDriver<EpsGraphics> {
 
@@ -49,7 +49,7 @@ public class DriverDotPathEps implements UDriver<EpsGraphics> {
 		//DriverLineG2d.manageStroke(param, g2d);
 
 		if (param.getColor() != null) {
-			eps.setStrokeColor(mapper.getMappedColor(param.getColor()));
+			eps.setStrokeColor(mapper.toColor(param.getColor()));
 			eps.setStrokeWidth(param.getStroke().getThickness(), param.getStroke().getDashVisible(), param.getStroke()
 					.getDashSpace());
 			shape.draw(eps, x, y);

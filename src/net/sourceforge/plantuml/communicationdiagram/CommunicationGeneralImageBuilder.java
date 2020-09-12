@@ -15,6 +15,7 @@ import net.sourceforge.plantuml.cucadiagram.dot.DotData;
 import net.sourceforge.plantuml.cucadiagram.entity.EntityFactory;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.svek.DotStringFactory;
 import net.sourceforge.plantuml.svek.GeneralImageBuilder;
 import net.sourceforge.plantuml.svek.Line;
@@ -29,16 +30,17 @@ class CommunicationGeneralImageBuilder extends GeneralImageBuilder {
 
   private final Map<UUID, CommunicationLineGroup> linkGroupIdToLineGroup;
 
-  CommunicationGeneralImageBuilder(final DotData dotData, final EntityFactory entityFactory,
-      final UmlSource source, final Pragma pragma, final StringBounder stringBounder) {
-    super(dotData, entityFactory, source, pragma, stringBounder);
+  CommunicationGeneralImageBuilder(final boolean mergeIntricated, final DotData dotData,
+      final EntityFactory entityFactory,
+      final UmlSource source, final Pragma pragma, final StringBounder stringBounder, final SName styleName) {
+    super(mergeIntricated, dotData, entityFactory, source, pragma, stringBounder, styleName);
     this.linkGroupIdToLineGroup = new HashMap<>();
   }
 
   @Override
   protected Line newLine(final Link link, final ISkinParam skinParam, final FontConfiguration labelFont,
       final DotStringFactory dotStringFactory, final StringBounder stringBounder, final DotData dotData) {
-    
+
     final CommunicationLineGroup group = this.linkGroupIdToLineGroup.computeIfAbsent(
         ((CommunicationLink) link).getGroupId(), id -> new CommunicationLineGroup());
     final CommunicationLine line = CommunicationLine.builder()

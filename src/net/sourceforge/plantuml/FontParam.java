@@ -94,11 +94,11 @@ public enum FontParam {
 	SEQUENCE_GROUP_HEADER(13, Font.BOLD), //
 	PARTICIPANT(14, Font.PLAIN), //
 	PARTICIPANT_STEREOTYPE(14, Font.ITALIC), //
-	SEQUENCE_TITLE(14, Font.BOLD), //
 	STATE(14, Font.PLAIN), //
 	STATE_ATTRIBUTE(12, Font.PLAIN), //
 	LEGEND(14, Font.PLAIN), //
 	TITLE(18, Font.PLAIN), //
+	// SEQUENCE_TITLE(14, Font.BOLD), //
 	CAPTION(14, Font.PLAIN), //
 	SWIMLANE_TITLE(18, Font.PLAIN), //
 	FOOTER(10, Font.PLAIN, "#888888", FontParamConstant.FAMILY), //
@@ -181,7 +181,7 @@ public enum FontParam {
 		return new FontConfiguration(skinParam, this, null);
 	}
 
-	public StyleSignature getStyleDefinition() {
+	public StyleSignature getStyleDefinition(SName diagramType) {
 		if (this == FOOTER) {
 			return StyleSignature.of(SName.root, SName.footer);
 		}
@@ -191,8 +191,15 @@ public enum FontParam {
 		if (this == TITLE) {
 			return StyleSignature.of(SName.root, SName.title);
 		}
-		System.err.println("Warning " + this);
-		return null;
+		if (this == CLASS_ATTRIBUTE) {
+			return StyleSignature.of(SName.root, SName.element, SName.classDiagram, SName.class_);
+		}
+		if (this == RECTANGLE || this == NODE) {
+			return StyleSignature.of(SName.root, SName.element, SName.componentDiagram, SName.component);
+		}
+		return StyleSignature.of(SName.root, SName.element, diagramType, SName.component);
+//		System.err.println("Warning " + this);
+//		throw new UnsupportedOperationException();
 	}
 
 }

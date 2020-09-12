@@ -44,6 +44,8 @@ import java.util.Map;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.LineBreakStrategy;
+import net.sourceforge.plantuml.creole.atom.Atom;
+import net.sourceforge.plantuml.creole.legacy.StripeSimple;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.InnerStrategy;
@@ -58,7 +60,7 @@ public class SheetBlock1 extends AbstractTextBlock implements TextBlock, Atom, S
 	public List<Atom> splitInTwo(StringBounder stringBounder, double width) {
 		throw new UnsupportedOperationException(getClass().toString());
 	}
-	
+
 	private final Sheet sheet;
 	private List<Stripe> stripes;
 	private Map<Stripe, Double> heights;
@@ -76,7 +78,7 @@ public class SheetBlock1 extends AbstractTextBlock implements TextBlock, Atom, S
 			throw new IllegalArgumentException();
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		return sheet.toString();

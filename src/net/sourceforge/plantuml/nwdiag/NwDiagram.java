@@ -35,6 +35,7 @@
 package net.sourceforge.plantuml.nwdiag;
 
 import java.awt.geom.Dimension2D;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -45,9 +46,12 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.sourceforge.plantuml.AnnotatedWorker;
 import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.FileFormatOption;
+import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.Scale;
+import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.SpriteContainerEmpty;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.UmlDiagramType;
@@ -57,19 +61,22 @@ import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.HtmlColor;
-import net.sourceforge.plantuml.graphic.HtmlColorUtils;
+import net.sourceforge.plantuml.graphic.InnerStrategy;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
+import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.graphic.UDrawable;
-import net.sourceforge.plantuml.ugraphic.ColorMapperIdentity;
+import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
+import net.sourceforge.plantuml.svek.TextBlockBackcolored;
 import net.sourceforge.plantuml.ugraphic.ImageBuilder;
-import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
+import net.sourceforge.plantuml.ugraphic.MinMax;
 import net.sourceforge.plantuml.ugraphic.UEmpty;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapperIdentity;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 public class NwDiagram extends UmlDiagram {
 
@@ -135,7 +142,7 @@ public class NwDiagram extends UmlDiagram {
 		if (currentNetwork() != null) {
 			DiagElement element = elements.get(name);
 			if (element == null) {
-				element = new DiagElement(name, currentNetwork());
+				element = new DiagElement(name, currentNetwork(), this.getSkinParam());
 				elements.put(name, element);
 			}
 			final Map<String, String> props = toSet(definition);
@@ -178,19 +185,47 @@ public class NwDiagram extends UmlDiagram {
 		final Scale scale = getScale();
 
 		final double dpiFactor = scale == null ? 1 : scale.getScale(100, 100);
-		final ImageBuilder imageBuilder = new ImageBuilder(new ColorMapperIdentity(), dpiFactor, null, "", "", 0, 0,
-				null, false);
-		final UDrawable result = getUDrawable();
+		final ISkinParam skinParam = getSkinParam();
+		final int margin1;
+		final int margin2;
+		if (SkinParam.USE_STYLES()) {
+			margin1 = SkinParam.zeroMargin(0);
+			margin2 = SkinParam.zeroMargin(0);
+		} else {
+			margin1 = 0;
+			margin2 = 0;
+		}
+		final ImageBuilder imageBuilder = ImageBuilder.buildB(new ColorMapperIdentity(), false,
+				ClockwiseTopRightBottomLeft.margin1margin2(margin1, margin2), null, "", "", dpiFactor, null);
+		TextBlock result = getTextBlock();
+		result = new AnnotatedWorker(this, skinParam, fileFormatOption.getDefaultStringBounder()).addAdd(result);
 		imageBuilder.setUDrawable(result);
 
 		return imageBuilder.writeImageTOBEMOVED(fileFormatOption, 0, os);
 	}
 
-	private UDrawable getUDrawable() {
-		return new UDrawable() {
+	private TextBlockBackcolored getTextBlock() {
+		return new TextBlockBackcolored() {
 			public void drawU(UGraphic ug) {
 				drawMe(ug);
 			}
+
+			public Rectangle2D getInnerPosition(String member, StringBounder stringBounder, InnerStrategy strategy) {
+				return null;
+			}
+
+			public Dimension2D calculateDimension(StringBounder stringBounder) {
+				return getTotalDimension(stringBounder);
+			}
+
+			public MinMax getMinMax(StringBounder stringBounder) {
+				throw new UnsupportedOperationException();
+			}
+
+			public HColor getBackcolor() {
+				return null;
+			}
+
 		};
 	}
 
@@ -204,30 +239,24 @@ public class NwDiagram extends UmlDiagram {
 
 	private FontConfiguration getFontConfiguration() {
 		final UFont font = UFont.serif(11);
-		return new FontConfiguration(font, HtmlColorUtils.BLACK, HtmlColorUtils.BLACK, false);
+		return new FontConfiguration(font, HColorUtils.BLACK, HColorUtils.BLACK, false);
 	}
 
+	private Dimension2D getTotalDimension(StringBounder stringBounder) {
+		return TextBlockUtils.getMinMax(new UDrawable() {
+			public void drawU(UGraphic ug) {
+				drawMe(ug);
+			}
+		}, stringBounder, true).getDimension();
+	}
+
+	private final double margin = 5;
+
 	private void drawMe(UGraphic ug) {
-		final double margin = 5;
 		ug = ug.apply(new UTranslate(margin, margin));
 
 		final StringBounder stringBounder = ug.getStringBounder();
-		final GridTextBlockDecorated grid = new GridTextBlockDecorated(networks.size(), elements.size(), groups);
-
-		for (int i = 0; i < networks.size(); i++) {
-			final Network current = networks.get(i);
-			final Network next = i + 1 < networks.size() ? networks.get(i + 1) : null;
-			int j = 0;
-			for (Map.Entry<String, DiagElement> ent : elements.entrySet()) {
-				final DiagElement element = ent.getValue();
-				if (element.getMainNetwork() == current && current.constainsLocally(ent.getKey())) {
-					final String ad1 = current.getAdress(element);
-					final String ad2 = next == null ? null : next.getAdress(element);
-					grid.add(i, j, element.asTextBlock(ad1, ad2));
-				}
-				j++;
-			}
-		}
+		final GridTextBlockDecorated grid = buildGrid();
 
 		double deltaX = 0;
 		double deltaY = 0;
@@ -253,14 +282,43 @@ public class NwDiagram extends UmlDiagram {
 		}
 		deltaX += 5;
 
-		grid.drawU(ug.apply(new UChangeColor(ColorParam.activityBorder.getDefaultValue()))
-				.apply(new UChangeBackColor(ColorParam.activityBackground.getDefaultValue()))
-				.apply(new UTranslate(deltaX, deltaY)));
+		grid.drawU(ug.apply(ColorParam.activityBorder.getDefaultValue())
+				.apply(ColorParam.activityBackground.getDefaultValue().bg()).apply(new UTranslate(deltaX, deltaY)));
 		final Dimension2D dimGrid = grid.calculateDimension(stringBounder);
 
-		ug.apply(new UTranslate(dimGrid.getWidth() + deltaX + margin, dimGrid.getHeight() + deltaY + margin)).draw(
-				new UEmpty(1, 1));
+		ug.apply(new UTranslate(dimGrid.getWidth() + deltaX + margin, dimGrid.getHeight() + deltaY + margin))
+				.draw(new UEmpty(1, 1));
 
+	}
+
+	private Map<Network, String> getLinks(DiagElement element) {
+		final Map<Network, String> result = new LinkedHashMap<Network, String>();
+		for (Network network : networks) {
+			final String s = network.getAdress(element);
+			if (s != null) {
+				result.put(network, s);
+			}
+		}
+		return result;
+	}
+
+	private GridTextBlockDecorated buildGrid() {
+		final GridTextBlockDecorated grid = new GridTextBlockDecorated(networks.size(), elements.size(), groups, networks);
+
+		for (int i = 0; i < networks.size(); i++) {
+			final Network current = networks.get(i);
+			final Network next = i + 1 < networks.size() ? networks.get(i + 1) : null;
+			int j = 0;
+			for (Map.Entry<String, DiagElement> ent : elements.entrySet()) {
+				final DiagElement element = ent.getValue();
+				if (element.getMainNetwork() == current) {
+					final Map<Network, String> conns = getLinks(element);
+					grid.add(i, j, element.asTextBlock(conns, next));
+				}
+				j++;
+			}
+		}
+		return grid;
 	}
 
 	public CommandExecutionResult setProperty(String property, String value) {
@@ -271,7 +329,7 @@ public class NwDiagram extends UmlDiagram {
 			currentNetwork().setOwnAdress(value);
 		}
 		if ("color".equalsIgnoreCase(property)) {
-			final HtmlColor color = GridTextBlockDecorated.colors.getColorIfValid(value);
+			final HColor color = GridTextBlockDecorated.colors.getColorIfValid(value);
 			if (currentGroup != null) {
 				currentGroup.setColor(color);
 			} else if (currentNetwork() != null) {

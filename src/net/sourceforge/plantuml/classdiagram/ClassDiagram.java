@@ -40,6 +40,7 @@ import java.io.OutputStream;
 
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.ISkinSimple;
+import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.creole.CreoleMode;
@@ -55,6 +56,7 @@ import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.USymbol;
 import net.sourceforge.plantuml.objectdiagram.AbstractClassOrObjectDiagram;
+import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
 import net.sourceforge.plantuml.svek.image.EntityImageClass;
 import net.sourceforge.plantuml.ugraphic.ImageBuilder;
 
@@ -80,6 +82,12 @@ public class ClassDiagram extends AbstractClassOrObjectDiagram {
 	@Override
 	public ILeaf getOrCreateLeaf(Ident ident, Code code, LeafType type, USymbol symbol) {
 		checkNotNull(ident);
+		if (this.V1972()) {
+			if (type == null) {
+				type = LeafType.CLASS;
+			}
+			return getOrCreateLeafDefault(ident, code, type, symbol);
+		}
 		if (type == null) {
 			code = code.eventuallyRemoveStartingAndEndingDoubleQuote("\"([:");
 			if (getNamespaceSeparator() == null) {
@@ -110,6 +118,9 @@ public class ClassDiagram extends AbstractClassOrObjectDiagram {
 				&& type != LeafType.LOLLIPOP_HALF && type != LeafType.NOTE) {
 			return super.createLeaf(idNewLong, code, display, type, symbol);
 		}
+		if (this.V1972()) {
+			return super.createLeaf(idNewLong, code, display, type, symbol);
+		}
 		if (getNamespaceSeparator() == null) {
 			return super.createLeaf(idNewLong, code, display, type, symbol);
 		}
@@ -120,7 +131,10 @@ public class ClassDiagram extends AbstractClassOrObjectDiagram {
 		return createEntityWithNamespace1972(idNewLong, code, display, type, symbol);
 	}
 
-	private ILeaf createEntityWithNamespace1972(Ident id, Code fullyCode, Display display, LeafType type, USymbol symbol) {
+	private ILeaf createEntityWithNamespace1972(Ident id, Code fullyCode, Display display, LeafType type,
+			USymbol symbol) {
+		if (this.V1972())
+			throw new UnsupportedOperationException();
 		checkNotNull(id);
 		final IGroup backupCurrentGroup = getCurrentGroup();
 		final IGroup group = backupCurrentGroup;
@@ -130,6 +144,7 @@ public class ClassDiagram extends AbstractClassOrObjectDiagram {
 			final Code namespace = buildCode(namespaceString);
 			final Display tmp = Display.getWithNewlines(namespaceString);
 			final Ident newIdLong = buildLeafIdentSpecial(namespaceString);
+			// final Ident newIdLong = buildLeafIdentSpecial2(namespaceString);
 			gotoGroupExternal(newIdLong, namespace, tmp, namespace, GroupType.PACKAGE, getRootGroup());
 		}
 		final Display tmpDisplay;
@@ -189,7 +204,17 @@ public class ClassDiagram extends AbstractClassOrObjectDiagram {
 			final RowLayout rawLayout = getRawLayout(i);
 			fullLayout.addRowLayout(rawLayout);
 		}
-		final ImageBuilder imageBuilder = new ImageBuilder(getSkinParam(), 1, null, null, 0, 10, null);
+		final int margin1;
+		final int margin2;
+		if (SkinParam.USE_STYLES()) {
+			margin1 = SkinParam.zeroMargin(0);
+			margin2 = SkinParam.zeroMargin(10);
+		} else {
+			margin1 = 0;
+			margin2 = 10;
+		}
+		final ImageBuilder imageBuilder = ImageBuilder.buildD(getSkinParam(),
+				ClockwiseTopRightBottomLeft.margin1margin2(margin1, margin2), null, null, null, 1);
 		imageBuilder.setUDrawable(fullLayout);
 		return imageBuilder.writeImageTOBEMOVED(fileFormatOption, seed(), os);
 	}

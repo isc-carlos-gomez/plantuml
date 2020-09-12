@@ -39,17 +39,16 @@ import java.io.OutputStream;
 
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.TikzFontDistortion;
-import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.ugraphic.AbstractCommonUGraphic;
 import net.sourceforge.plantuml.ugraphic.AbstractUGraphic;
 import net.sourceforge.plantuml.ugraphic.ClipContainer;
-import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.UGraphic2;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UText;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 
 public class UGraphicHtml5 extends AbstractUGraphic<Html5Drawer> implements ClipContainer, UGraphic2 {
 
@@ -77,16 +76,6 @@ public class UGraphicHtml5 extends AbstractUGraphic<Html5Drawer> implements Clip
 
 	public StringBounder getStringBounder() {
 		return stringBounder;
-	}
-
-	public void startUrl(Url url) {
-		// throw new UnsupportedOperationException();
-
-	}
-
-	public void closeAction() {
-		// throw new UnsupportedOperationException();
-
 	}
 
 	// public void close() {
@@ -122,7 +111,7 @@ public class UGraphicHtml5 extends AbstractUGraphic<Html5Drawer> implements Clip
 	// }
 	//
 	// static public void copyEpsToFile(ColorMapper colorMapper, UDrawable udrawable, File f) throws IOException {
-	// final PrintWriter pw = new PrintWriter(f);
+	// final PrintWriter pw = SecurityUtils.PrintWriter(f);
 	// final EpsStrategy epsStrategy = EpsStrategy.getDefault2();
 	// pw.print(UGraphicHtml5.getEpsString(colorMapper, epsStrategy, udrawable));
 	// pw.close();

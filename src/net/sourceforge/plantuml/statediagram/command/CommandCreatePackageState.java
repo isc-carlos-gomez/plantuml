@@ -55,11 +55,11 @@ import net.sourceforge.plantuml.cucadiagram.IGroup;
 import net.sourceforge.plantuml.cucadiagram.Ident;
 import net.sourceforge.plantuml.cucadiagram.NamespaceStrategy;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.color.ColorParser;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.statediagram.StateDiagram;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class CommandCreatePackageState extends SingleLineCommand2<StateDiagram> {
 
@@ -111,12 +111,12 @@ public class CommandCreatePackageState extends SingleLineCommand2<StateDiagram> 
 	protected CommandExecutionResult executeArg(StateDiagram diagram, LineLocation location, RegexResult arg) {
 		final IGroup currentPackage = diagram.getCurrentGroup();
 		final String idShort = getNotNull(arg, "CODE1", "CODE2");
-		final Code code = diagram.buildCode(idShort);
+		final Ident idNewLong = diagram.buildLeafIdentSpecial(idShort);
+		final Code code = diagram.V1972() ? idNewLong : diagram.buildCode(idShort);
 		String display = getNotNull(arg, "DISPLAY1", "DISPLAY2");
 		if (display == null) {
 			display = code.getName();
 		}
-		final Ident idNewLong = diagram.buildLeafIdentSpecial(idShort);
 		diagram.gotoGroup(idNewLong, code, Display.getWithNewlines(display), GroupType.STATE, currentPackage,
 				NamespaceStrategy.SINGLE);
 		final IEntity p = diagram.getCurrentGroup();
@@ -133,7 +133,7 @@ public class CommandCreatePackageState extends SingleLineCommand2<StateDiagram> 
 
 		Colors colors = color().getColor(arg, diagram.getSkinParam().getIHtmlColorSet());
 
-		final HtmlColor lineColor = diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(arg.get("LINECOLOR", 1));
+		final HColor lineColor = diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(arg.get("LINECOLOR", 1));
 		if (lineColor != null) {
 			colors = colors.add(ColorType.LINE, lineColor);
 		}

@@ -42,7 +42,6 @@ import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.skin.Area;
@@ -51,14 +50,14 @@ import net.sourceforge.plantuml.skin.Context2D;
 import net.sourceforge.plantuml.skin.rose.Rose;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleSignature;
-import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.ugraphic.color.HColorNone;
 
 public class Frame implements Component {
 	
@@ -82,9 +81,9 @@ public class Frame implements Component {
 
 	public void drawU(UGraphic ug, Area area, Context2D context) {
 		final Dimension2D dimensionToUse = area.getDimensionToUse();
-		final HtmlColor lineColor = rose.getHtmlColor(skinParam, ColorParam.packageBorder);
-		ug = ug.apply(new UChangeColor(lineColor));
-		ug = ug.apply(new UChangeBackColor(null));
+		final HColor lineColor = rose.getHtmlColor(skinParam, ColorParam.packageBorder);
+		ug = ug.apply(lineColor);
+		ug = ug.apply(new HColorNone().bg());
 		ug.apply(new UStroke(1.4)).draw(new URectangle(dimensionToUse.getWidth(), dimensionToUse.getHeight()));
 
 		final TextBlock textBlock = createTextBloc();
@@ -120,7 +119,7 @@ public class Frame implements Component {
 
 	private TextBlock createTextBloc() {
 		final UFont font = skinParam.getFont(null, false, FontParam.PACKAGE);
-		final HtmlColor textColor = skinParam.getFontHtmlColor(null, FontParam.PACKAGE);
+		final HColor textColor = skinParam.getFontHtmlColor(null, FontParam.PACKAGE);
 		// final TextBlock bloc = Display.create(name).create(new FontConfiguration(font, textColor,
 		// skinParam.getHyperlinkColor(), skinParam.useUnderlineForHyperlink()), HorizontalAlignment.LEFT, new
 		// SpriteContainerEmpty());

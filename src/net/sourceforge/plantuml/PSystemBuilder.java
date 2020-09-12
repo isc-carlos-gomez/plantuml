@@ -47,11 +47,10 @@ import net.sourceforge.plantuml.bpm.BpmDiagramFactory;
 import net.sourceforge.plantuml.classdiagram.ClassDiagramFactory;
 import net.sourceforge.plantuml.command.regex.RegexConcat;
 import net.sourceforge.plantuml.communicationdiagram.CommunicationDiagramFactory;
-import net.sourceforge.plantuml.compositediagram.CompositeDiagramFactory;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.core.DiagramType;
 import net.sourceforge.plantuml.core.UmlSource;
-import net.sourceforge.plantuml.creole.PSystemCreoleFactory;
+import net.sourceforge.plantuml.creole.legacy.PSystemCreoleFactory;
 import net.sourceforge.plantuml.dedication.PSystemDedicationFactory;
 import net.sourceforge.plantuml.definition.PSystemDefinitionFactory;
 import net.sourceforge.plantuml.descdiagram.DescriptionDiagramFactory;
@@ -63,6 +62,7 @@ import net.sourceforge.plantuml.eggs.PSystemAppleTwoFactory;
 import net.sourceforge.plantuml.eggs.PSystemCharlieFactory;
 import net.sourceforge.plantuml.eggs.PSystemColorsFactory;
 import net.sourceforge.plantuml.eggs.PSystemEggFactory;
+import net.sourceforge.plantuml.eggs.PSystemPathFactory;
 import net.sourceforge.plantuml.eggs.PSystemRIPFactory;
 import net.sourceforge.plantuml.eggs.PSystemWelcomeFactory;
 import net.sourceforge.plantuml.error.PSystemError;
@@ -70,6 +70,7 @@ import net.sourceforge.plantuml.error.PSystemErrorUtils;
 import net.sourceforge.plantuml.flowdiagram.FlowDiagramFactory;
 import net.sourceforge.plantuml.font.PSystemListFontsFactory;
 import net.sourceforge.plantuml.help.HelpFactory;
+import net.sourceforge.plantuml.jcckit.PSystemJcckitFactory;
 import net.sourceforge.plantuml.math.PSystemLatexFactory;
 import net.sourceforge.plantuml.math.PSystemMathFactory;
 import net.sourceforge.plantuml.mindmap.MindMapDiagramFactory;
@@ -77,11 +78,14 @@ import net.sourceforge.plantuml.nwdiag.NwDiagramFactory;
 import net.sourceforge.plantuml.openiconic.PSystemListOpenIconicFactory;
 import net.sourceforge.plantuml.openiconic.PSystemOpenIconicFactory;
 import net.sourceforge.plantuml.oregon.PSystemOregonFactory;
-import net.sourceforge.plantuml.project3.GanttDiagramFactory;
+import net.sourceforge.plantuml.project.GanttDiagramFactory;
 import net.sourceforge.plantuml.salt.PSystemSaltFactory;
+import net.sourceforge.plantuml.security.SecurityProfile;
+import net.sourceforge.plantuml.security.SecurityUtils;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagramFactory;
 import net.sourceforge.plantuml.sprite.ListSpriteDiagramFactory;
 import net.sourceforge.plantuml.sprite.PSystemListInternalSpritesFactory;
+import net.sourceforge.plantuml.sprite.StdlibDiagramFactory;
 import net.sourceforge.plantuml.statediagram.StateDiagramFactory;
 import net.sourceforge.plantuml.stats.StatsUtilsIncrement;
 import net.sourceforge.plantuml.sudoku.PSystemSudokuFactory;
@@ -90,28 +94,30 @@ import net.sourceforge.plantuml.version.License;
 import net.sourceforge.plantuml.version.PSystemLicenseFactory;
 import net.sourceforge.plantuml.version.PSystemVersionFactory;
 import net.sourceforge.plantuml.wbs.WBSDiagramFactory;
+import net.sourceforge.plantuml.wire.WireDiagramFactory;
 
 public class PSystemBuilder {
 
 	public static final long startTime = System.currentTimeMillis();
 
-	final public Diagram createPSystem(ISkinSimple skinParam, final List<StringLocated> strings2) {
+	final public Diagram createPSystem(ISkinSimple skinParam, List<StringLocated> source,
+			List<StringLocated> rawSource) {
 
 		final long now = System.currentTimeMillis();
 
 		Diagram result = null;
 		try {
-			final DiagramType type = DiagramType.getTypeFromArobaseStart(strings2.get(0).getString());
-			final UmlSource umlSource = new UmlSource(strings2, type == DiagramType.UML);
+			final DiagramType type = DiagramType.getTypeFromArobaseStart(source.get(0).getString());
+			final UmlSource umlSource = new UmlSource(source, type == DiagramType.UML, rawSource);
 
-			for (StringLocated s : strings2) {
+			for (StringLocated s : source) {
 				if (s.getPreprocessorError() != null) {
 					// Dead code : should not append
+					assert false;
 					Log.error("Preprocessor Error: " + s.getPreprocessorError());
 					final ErrorUml err = new ErrorUml(ErrorUmlType.SYNTAX_ERROR, s.getPreprocessorError(), /* cpt */
-					s.getLocation());
-					// return PSystemErrorUtils.buildV1(umlSource, err, Collections.<String> emptyList());
-					return PSystemErrorUtils.buildV2(umlSource, err, Collections.<String> emptyList(), strings2);
+							s.getLocation());
+					return PSystemErrorUtils.buildV2(umlSource, err, Collections.<String>emptyList(), source);
 				}
 			}
 
@@ -174,13 +180,14 @@ public class PSystemBuilder {
 		factories.add(new PSystemDitaaFactory(DiagramType.DITAA));
 		factories.add(new PSystemDitaaFactory(DiagramType.UML));
 		if (License.getCurrent() == License.GPL || License.getCurrent() == License.GPLV2) {
-			// factories.add(new PSystemJcckitFactory(DiagramType.JCCKIT));
-			// factories.add(new PSystemJcckitFactory(DiagramType.UML));
+			factories.add(new PSystemJcckitFactory(DiagramType.JCCKIT));
+			factories.add(new PSystemJcckitFactory(DiagramType.UML));
 			// factories.add(new PSystemLogoFactory());
 			factories.add(new PSystemSudokuFactory());
 		}
 		factories.add(new PSystemDefinitionFactory());
 		factories.add(new ListSpriteDiagramFactory(skinParam));
+		factories.add(new StdlibDiagramFactory(skinParam));
 		factories.add(new PSystemMathFactory(DiagramType.MATH));
 		factories.add(new PSystemLatexFactory(DiagramType.LATEX));
 		// factories.add(new PSystemStatsFactory());
@@ -189,7 +196,9 @@ public class PSystemBuilder {
 		factories.add(new PSystemAppleTwoFactory());
 		factories.add(new PSystemRIPFactory());
 		// factories.add(new PSystemLostFactory());
-		// factories.add(new PSystemPathFactory());
+		if (SecurityUtils.getSecurityProfile() == SecurityProfile.UNSECURE) {
+			factories.add(new PSystemPathFactory());
+		}
 		factories.add(new PSystemOregonFactory());
 		factories.add(new PSystemCharlieFactory());
 		if (License.getCurrent() == License.GPL || License.getCurrent() == License.GPLV2) {
@@ -203,6 +212,7 @@ public class PSystemBuilder {
 		factories.add(new PSystemDedicationFactory());
 		factories.add(new TimingDiagramFactory());
 		factories.add(new HelpFactory());
+		factories.add(new WireDiagramFactory());
 		return factories;
 	}
 

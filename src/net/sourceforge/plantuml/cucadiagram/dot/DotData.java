@@ -51,11 +51,10 @@ import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.IGroup;
 import net.sourceforge.plantuml.cucadiagram.ILeaf;
 import net.sourceforge.plantuml.cucadiagram.Link;
-import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.PortionShower;
 import net.sourceforge.plantuml.cucadiagram.entity.EntityFactory;
 import net.sourceforge.plantuml.svek.DotMode;
-import net.sourceforge.plantuml.ugraphic.ColorMapper;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 
 final public class DotData implements PortionShower {
 
@@ -74,6 +73,10 @@ final public class DotData implements PortionShower {
 
 	private final ColorMapper colorMapper;
 	private final EntityFactory entityFactory;
+
+	public EntityFactory getEntityFactory() {
+		return entityFactory;
+	}
 
 	public DotData(IGroup topParent, List<Link> links, Collection<ILeaf> leafs, UmlDiagramType umlDiagramType,
 			ISkinParam skinParam, GroupHierarchy groupHierarchy, PortionShower portionShower, ColorMapper colorMapper,
@@ -171,7 +174,7 @@ final public class DotData implements PortionShower {
 	public void removeIrrelevantSametail() {
 		final Map<String, Integer> sametails = new HashMap<String, Integer>();
 		for (Link link : links) {
-			if (link.getType().getDecor2() == LinkDecor.EXTENDS) {
+			if (link.getType().getDecor2().isExtendsLike()) {
 				link.setSametail(link.getEntity1().getUid());
 			}
 			final String sametail = link.getSametail();

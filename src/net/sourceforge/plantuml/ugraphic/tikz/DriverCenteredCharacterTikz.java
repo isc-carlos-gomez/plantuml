@@ -39,12 +39,12 @@ import java.awt.font.TextLayout;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.graphic.UnusedSpace;
 import net.sourceforge.plantuml.tikz.TikzGraphics;
-import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.UCenteredCharacter;
 import net.sourceforge.plantuml.ugraphic.UDriver;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UParam;
 import net.sourceforge.plantuml.ugraphic.UShape;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 
 public class DriverCenteredCharacterTikz implements UDriver<TikzGraphics> {
 
@@ -58,7 +58,7 @@ public class DriverCenteredCharacterTikz implements UDriver<TikzGraphics> {
 		final double ypos = y - unusedSpace.getCenterY() - 0.5;
 
 		final TextLayout t = new TextLayout("" + c, font.getFont(), TextBlockUtils.getFontRenderContext());
-		tikz.setStrokeColor(mapper.getMappedColor(param.getColor()));
+		tikz.setStrokeColor(mapper.toColor(param.getColor()));
 		tikz.drawPathIterator(xpos, ypos, t.getOutline(null).getPathIterator(null));
 
 	}

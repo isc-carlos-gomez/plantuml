@@ -42,7 +42,6 @@ import net.sourceforge.plantuml.command.regex.IRegex;
 import net.sourceforge.plantuml.command.regex.RegexConcat;
 import net.sourceforge.plantuml.command.regex.RegexLeaf;
 import net.sourceforge.plantuml.command.regex.RegexResult;
-import net.sourceforge.plantuml.cucadiagram.Code;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.objectdiagram.AbstractClassOrObjectDiagram;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
@@ -73,7 +72,7 @@ public class CommandAddData extends SingleLineCommand2<AbstractClassOrObjectDiag
 		if (field.length() > 0 && VisibilityModifier.isVisibilityCharacter(field)) {
 			diagram.setVisibilityModifierPresent(true);
 		}
-		entity.getBodier().addFieldOrMethod(field, entity);
+		entity.getBodier().addFieldOrMethod(field);
 		return CommandExecutionResult.ok();
 	}
 }

@@ -79,15 +79,15 @@ public class CommandCreateEntityObject extends SingleLineCommand2<AbstractClassO
 	protected CommandExecutionResult executeArg(AbstractClassOrObjectDiagram diagram, LineLocation location,
 			RegexResult arg) {
 		final String idShort = arg.get("NAME", 1);
-		final Code code = diagram.buildCode(idShort);
+		final Ident ident = diagram.buildLeafIdent(idShort);
+		final Code code = diagram.V1972() ? ident : diagram.buildCode(idShort);
 		final String display = arg.get("NAME", 0);
 		final String stereotype = arg.get("STEREO", 0);
-		if (diagram.leafExist(code)) {
+		final boolean leafExist = diagram.V1972() ? diagram.leafExistSmart(ident) : diagram.leafExist(code);
+		if (leafExist) {
 			return CommandExecutionResult.error("Object already exists : " + code);
 		}
-		final Ident idNewLong = diagram.buildLeafIdent(idShort);
-		final IEntity entity = diagram.createLeaf(idNewLong, code, Display.getWithNewlines(display),
-				LeafType.OBJECT, null);
+		final IEntity entity = diagram.createLeaf(ident, code, Display.getWithNewlines(display), LeafType.OBJECT, null);
 		if (stereotype != null) {
 			entity.setStereotype(new Stereotype(stereotype, diagram.getSkinParam().getCircledCharacterRadius(), diagram
 					.getSkinParam().getFont(null, false, FontParam.CIRCLED_CHARACTER), diagram.getSkinParam()
@@ -103,5 +103,4 @@ public class CommandCreateEntityObject extends SingleLineCommand2<AbstractClassO
 				diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(arg.get("COLOR", 0)));
 		return CommandExecutionResult.ok();
 	}
-
 }

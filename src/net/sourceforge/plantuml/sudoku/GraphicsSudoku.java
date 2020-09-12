@@ -54,16 +54,15 @@ import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.eps.EpsStrategy;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.png.PngIO;
-import net.sourceforge.plantuml.ugraphic.ColorMapperIdentity;
-import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapperIdentity;
+import net.sourceforge.plantuml.ugraphic.color.HColorNone;
+import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 import net.sourceforge.plantuml.ugraphic.eps.UGraphicEps;
 import net.sourceforge.plantuml.ugraphic.g2d.UGraphicG2d;
 import net.sourceforge.plantuml.ugraphic.svg.UGraphicSvg;
@@ -103,7 +102,7 @@ public class GraphicsSudoku {
 	}
 
 	public ImageData writeImagePng(OutputStream os) throws IOException {
-		final EmptyImageBuilder builder = new EmptyImageBuilder(sudoWidth, sudoHeight + textTotalHeight, Color.WHITE);
+		final EmptyImageBuilder builder = new EmptyImageBuilder(null, sudoWidth, sudoHeight + textTotalHeight, Color.WHITE);
 		final BufferedImage im = builder.getBufferedImage();
 		final Graphics2D g3d = builder.getGraphics2D();
 
@@ -145,19 +144,19 @@ public class GraphicsSudoku {
 			}
 		}
 
-		ug = ug.apply(new UChangeBackColor(HtmlColorUtils.BLACK)).apply(new UChangeColor(null));
+		ug = ug.apply(HColorUtils.BLACK.bg()).apply(new HColorNone());
 		for (int i = 0; i < 10; i++) {
 			final boolean bold = i % boldWidth == 0;
 			final int w = bold ? boldWidth : 1;
-			ug.apply(new UTranslate(0, i * cellHeight)).draw(new URectangle(9 * cellWidth + boldWidth, w));
+			ug.apply(UTranslate.dy(i * cellHeight)).draw(new URectangle(9 * cellWidth + boldWidth, w));
 		}
 		for (int i = 0; i < 10; i++) {
 			final boolean bold = i % boldWidth == 0;
 			final int w = bold ? boldWidth : 1;
-			ug.apply(new UTranslate(i * cellWidth, 0)).draw(new URectangle(w, 9 * cellHeight + boldWidth));
+			ug.apply(UTranslate.dx(i * cellWidth)).draw(new URectangle(w, 9 * cellHeight + boldWidth));
 		}
 
-		ug = ug.apply(new UTranslate(0, sudoHeight));
+		ug = ug.apply(UTranslate.dy(sudoHeight));
 		final List<String> texts = new ArrayList<String>();
 		texts.add("http://plantuml.com");
 		texts.add("Seed " + Long.toString(sudoku.getSeed(), 36));

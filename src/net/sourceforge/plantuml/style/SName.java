@@ -36,55 +36,75 @@
 package net.sourceforge.plantuml.style;
 
 public enum SName {
-	   root,
-	   title,
-	   header,
-	   footer,
-	   legend,
-	   caption,
-	   element,
-	   clickable,
-	   sequenceDiagram,
-	   destroy,
-	   lifeLine,
-	   group,
-	   groupHeader,
-	   reference,
-	   referenceHeader,
-	   box,
-	   separator,
-	   delay,
-	   arrow,
-	   participant,
-	   actor,
-	   boundary,
-	   control,
-	   entity,
-	   queue,
-	   database,
-	   collections,
-	   class_,
-	   classDiagram,
-	   activityDiagram,
-	   activity,
-	   activityBar,
-	   note,
-	   stereotype,
-	   swimlane,
-	   diamond,
-	   partition,
-	   circle,
-	   mindmapDiagram,
-	   node,
-	   rootNode,
-	   leafNode,
-	   wbsDiagram,
-	   objectDiagram,
-	   componentDiagram,
-	   stateDiagram;
-	   
-		public static String depth(int level) {
-			return "depth(" + level + ")";
-		}
+	activity, //
+	activityBar, //
+	activityDiagram, //
+	actor, //
+	agent, //
+	archimate, //
+	arrow, //
+	artifact, //
+	boundary, //
+	box, //
+	caption, //
+	card, //
+	circle, //
+	classDiagram, //
+	class_, //
+	clickable, //
+	cloud, //
+	collection, //
+	collections, //
+	component, //
+	componentDiagram, //
+	control, //
+	database, //
+	databse, //
+	delay, //
+	destroy, //
+	diamond, //
+	document, //
+	element, //
+	entity, //
+	file, //
+	folder, //
+	footer, //
+	frame, //
+	ganttDiagram, //
+	group, //
+	groupHeader, //
+	header, //
+	interface_, //
+	leafNode, //
+	legend, //
+	lifeLine, //
+	milestone, //
+	mindmapDiagram, //
+	node, //
+	note, //
+	objectDiagram, //
+	package_, //
+	participant, //
+	partition, //
+	queue, //
+	rectangle, //
+	reference, //
+	referenceHeader, //
+	root, //
+	rootNode, //
+	separator, //
+	sequenceDiagram, //
+	stack, //
+	stateDiagram, //
+	stereotype, //
+	storage, //
+	swimlane, //
+	task, //
+	title, //
+	usecase, //
+	wbsDiagram; //
 
+	public static String depth(int level) {
+		return "depth(" + level + ")";
+	}
 }

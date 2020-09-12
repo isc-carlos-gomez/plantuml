@@ -39,15 +39,13 @@ import java.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class CircleInterface2 extends AbstractTextBlock implements TextBlock {
 
@@ -55,13 +53,13 @@ public class CircleInterface2 extends AbstractTextBlock implements TextBlock {
 
 	private final double radius = 8;
 
-	private final HtmlColor backgroundColor;
-	private final HtmlColor foregroundColor;
+	private final HColor backgroundColor;
+	private final HColor foregroundColor;
 	private final float thickness = 2;
 
 	private final double deltaShadow;
 
-	public CircleInterface2(HtmlColor backgroundColor, HtmlColor foregroundColor, double deltaShadow) {
+	public CircleInterface2(HColor backgroundColor, HColor foregroundColor, double deltaShadow) {
 		this.backgroundColor = backgroundColor;
 		this.foregroundColor = foregroundColor;
 		this.deltaShadow = deltaShadow;
@@ -72,8 +70,8 @@ public class CircleInterface2 extends AbstractTextBlock implements TextBlock {
 		double y = 0;
 		x += margin;
 		y += margin;
-		ug = ug.apply(new UStroke(thickness)).apply(new UChangeBackColor(backgroundColor))
-				.apply(new UChangeColor(foregroundColor));
+		ug = ug.apply(new UStroke(thickness)).apply(backgroundColor.bg())
+				.apply(foregroundColor);
 		final UEllipse circle = new UEllipse(radius * 2, radius * 2);
 		circle.setDeltaShadow(deltaShadow);
 		ug.apply(new UTranslate(x, y)).draw(circle);

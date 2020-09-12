@@ -57,5 +57,12 @@ public class CommunicationLineGroup {
     return new MessagePositionCalculator(line, this.group.orientation(), this.group.focalPoint())
         .calculate();
   }
+  
+  /**
+   * @return the group
+   */
+  public LineGroup operations() {
+    return group;
+  }
 
 }

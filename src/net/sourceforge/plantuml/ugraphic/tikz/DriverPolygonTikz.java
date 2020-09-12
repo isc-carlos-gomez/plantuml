@@ -36,14 +36,14 @@ package net.sourceforge.plantuml.ugraphic.tikz;
 
 import java.awt.Color;
 
-import net.sourceforge.plantuml.graphic.HtmlColor;
-import net.sourceforge.plantuml.graphic.HtmlColorGradient;
 import net.sourceforge.plantuml.tikz.TikzGraphics;
-import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.UDriver;
 import net.sourceforge.plantuml.ugraphic.UParam;
 import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.UShape;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.ugraphic.color.HColorGradient;
 
 public class DriverPolygonTikz implements UDriver<TikzGraphics> {
 
@@ -51,16 +51,16 @@ public class DriverPolygonTikz implements UDriver<TikzGraphics> {
 		final UPolygon poly = (UPolygon) shape;
 		final double points[] = poly.getPointArray(x, y);
 
-		final HtmlColor back = param.getBackcolor();
-		if (back instanceof HtmlColorGradient) {
-			final HtmlColorGradient gr = (HtmlColorGradient) back;
-			final Color color1 = mapper.getMappedColor(gr.getColor1());
-			final Color color2 = mapper.getMappedColor(gr.getColor2());
+		final HColor back = param.getBackcolor();
+		if (back instanceof HColorGradient) {
+			final HColorGradient gr = (HColorGradient) back;
+			final Color color1 = mapper.toColor(gr.getColor1());
+			final Color color2 = mapper.toColor(gr.getColor2());
 			tikz.setGradientColor(color1, color2, gr.getPolicy());
 		} else {
-			tikz.setFillColor(mapper.getMappedColor(back));
+			tikz.setFillColor(mapper.toColor(back));
 		}
-		tikz.setStrokeColor(mapper.getMappedColor(param.getColor()));
+		tikz.setStrokeColor(mapper.toColor(param.getColor()));
 		tikz.setStrokeWidth(param.getStroke().getThickness(), param.getStroke().getDashTikz());
 
 		tikz.polygon(points);

@@ -51,7 +51,7 @@ public abstract class AbstractTile implements Tile {
 		return result;
 	}
 	
-	public boolean matchAnchor(String anchor) {
+	public boolean matchAnchorV1(String anchor) {
 		final Event event = this.getEvent();
 		if (event instanceof AbstractMessage) {
 			final AbstractMessage msg = (AbstractMessage) event;

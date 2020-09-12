@@ -51,14 +51,13 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileGeometry;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
 import net.sourceforge.plantuml.creole.CreoleMode;
-import net.sourceforge.plantuml.creole.CreoleParser;
+import net.sourceforge.plantuml.creole.Parser;
 import net.sourceforge.plantuml.creole.Sheet;
 import net.sourceforge.plantuml.creole.SheetBlock1;
 import net.sourceforge.plantuml.creole.SheetBlock2;
 import net.sourceforge.plantuml.creole.Stencil;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
@@ -72,6 +71,7 @@ import net.sourceforge.plantuml.svek.image.Opale;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.utils.MathUtils;
 
 public class FtileWithNotes extends AbstractFtile {
@@ -110,8 +110,8 @@ public class FtileWithNotes extends AbstractFtile {
 			if (note.getColors() != null) {
 				skinParam2 = note.getColors().mute(skinParam2);
 			}
-			final HtmlColor noteBackgroundColor;
-			final HtmlColor borderColor;
+			final HColor noteBackgroundColor;
+			final HColor borderColor;
 			final FontConfiguration fc;
 			final double shadowing;
 
@@ -129,8 +129,9 @@ public class FtileWithNotes extends AbstractFtile {
 				shadowing = skinParam.shadowing(null) ? 4 : 0;
 			}
 
-			final Sheet sheet = new CreoleParser(fc, skinParam.getDefaultTextAlignment(HorizontalAlignment.LEFT),
-					skinParam, CreoleMode.FULL).createSheet(note.getDisplay());
+			final Sheet sheet = Parser
+					.build(fc, skinParam.getDefaultTextAlignment(HorizontalAlignment.LEFT), skinParam, CreoleMode.FULL)
+					.createSheet(note.getDisplay());
 			final SheetBlock1 sheet1 = new SheetBlock1(sheet, LineBreakStrategy.NONE, skinParam.getPadding());
 			final SheetBlock2 sheet2 = new SheetBlock2(sheet1, new Stencil() {
 				// -6 and 15 value comes from Opale: this is very ugly!

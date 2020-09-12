@@ -50,13 +50,14 @@ import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.cucadiagram.Code;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
+import net.sourceforge.plantuml.cucadiagram.Ident;
 import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.color.ColorParser;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.graphic.color.Colors;
 import net.sourceforge.plantuml.statediagram.StateDiagram;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class CommandCreateState extends SingleLineCommand2<StateDiagram> {
 
@@ -104,14 +105,15 @@ public class CommandCreateState extends SingleLineCommand2<StateDiagram> {
 	@Override
 	protected CommandExecutionResult executeArg(StateDiagram diagram, LineLocation location, RegexResult arg) {
 		final String idShort = arg.getLazzy("CODE", 0);
-		final Code code = diagram.buildCode(idShort);
+		final Ident ident = diagram.buildLeafIdent(idShort);
+		final Code code = diagram.V1972() ? ident : diagram.buildCode(idShort);
 		String display = arg.getLazzy("DISPLAY", 0);
 		if (display == null) {
 			display = code.getName();
 		}
 		final String stereotype = arg.get("STEREOTYPE", 0);
 		final LeafType type = getTypeFromStereotype(stereotype);
-		if (diagram.checkConcurrentStateOk(diagram.buildLeafIdent(idShort), code) == false) {
+		if (diagram.checkConcurrentStateOk(ident, code) == false) {
 			return CommandExecutionResult.error("The state " + code.getName()
 					+ " has been created in a concurrent state : it cannot be used here.");
 		}
@@ -130,7 +132,7 @@ public class CommandCreateState extends SingleLineCommand2<StateDiagram> {
 
 		Colors colors = color().getColor(arg, diagram.getSkinParam().getIHtmlColorSet());
 
-		final HtmlColor lineColor = diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(arg.get("LINECOLOR", 1));
+		final HColor lineColor = diagram.getSkinParam().getIHtmlColorSet().getColorIfValid(arg.get("LINECOLOR", 1));
 		if (lineColor != null) {
 			colors = colors.add(ColorType.LINE, lineColor);
 		}
@@ -147,7 +149,7 @@ public class CommandCreateState extends SingleLineCommand2<StateDiagram> {
 
 		final String addFields = arg.get("ADDFIELD", 0);
 		if (addFields != null) {
-			ent.getBodier().addFieldOrMethod(addFields, ent);
+			ent.getBodier().addFieldOrMethod(addFields);
 		}
 		return CommandExecutionResult.ok();
 	}

@@ -41,6 +41,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.sourceforge.plantuml.BackSlash;
 import net.sourceforge.plantuml.EmbeddedDiagram;
@@ -57,24 +59,24 @@ import net.sourceforge.plantuml.command.regex.Matcher2;
 import net.sourceforge.plantuml.command.regex.MyPattern;
 import net.sourceforge.plantuml.command.regex.Pattern2;
 import net.sourceforge.plantuml.creole.CreoleMode;
-import net.sourceforge.plantuml.creole.CreoleParser;
+import net.sourceforge.plantuml.creole.Parser;
 import net.sourceforge.plantuml.creole.Sheet;
 import net.sourceforge.plantuml.creole.SheetBlock1;
 import net.sourceforge.plantuml.creole.SheetBlock2;
 import net.sourceforge.plantuml.graphic.CircledCharacter;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.graphic.TextBlockSimple;
 import net.sourceforge.plantuml.graphic.TextBlockSprited;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.graphic.VerticalAlignment;
 import net.sourceforge.plantuml.sequencediagram.MessageNumber;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
+import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UStroke;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class Display implements Iterable<CharSequence> {
 
@@ -85,7 +87,11 @@ public class Display implements Iterable<CharSequence> {
 
 	public final static Display NULL = new Display(null, null, true, CreoleMode.FULL);
 
-	public Display withoutStereotype(Style usedStyle) {
+	public Display withoutStereotypeIfNeeded(Style usedStyle) {
+		final boolean showStereotype = usedStyle.value(PName.ShowStereotype).asBoolean();
+		if (showStereotype) {
+			return this;
+		}
 		final List<CharSequence> copy = new ArrayList<CharSequence>(displayData);
 		final Display result = new Display(naturalHorizontalAlignment, isNull, defaultCreoleMode);
 		for (Iterator<CharSequence> it = copy.iterator(); it.hasNext();) {
@@ -96,6 +102,16 @@ public class Display implements Iterable<CharSequence> {
 		}
 		result.displayData.addAll(copy);
 		return result;
+	}
+
+	public Stereotype getStereotypeIfAny() {
+		for (CharSequence cs : displayData) {
+			if (cs instanceof Stereotype) {
+				return (Stereotype) cs;
+			}
+		}
+		return null;
+
 	}
 
 	public Display replaceBackslashT() {
@@ -299,6 +315,23 @@ public class Display implements Iterable<CharSequence> {
 		return new Display(result, this.naturalHorizontalAlignment, this.isNull, this.defaultCreoleMode);
 	}
 
+	public Display underlinedName() {
+		final Pattern p = Pattern.compile("^([^:]+?)(\\s*:.+)$");
+		final List<CharSequence> result = new ArrayList<CharSequence>();
+		for (CharSequence line : displayData) {
+			if (result.size() == 0) {
+				final Matcher m = p.matcher(line);
+				if (m.matches())
+					result.add("<u>" + m.group(1) + "</u>" + m.group(2));
+				else
+					result.add("<u>" + line);
+			} else {
+				result.add("<u>" + line);
+			}
+		}
+		return new Display(result, this.naturalHorizontalAlignment, this.isNull, this.defaultCreoleMode);
+	}
+
 	public Display withCreoleMode(CreoleMode mode) {
 		if (isNull) {
 			throw new IllegalArgumentException();
@@ -432,80 +465,65 @@ public class Display implements Iterable<CharSequence> {
 
 	public TextBlock create(FontConfiguration fontConfiguration, HorizontalAlignment horizontalAlignment,
 			ISkinSimple spriteContainer) {
-		return create(fontConfiguration, horizontalAlignment, spriteContainer, CreoleMode.FULL);
+		return create7(fontConfiguration, horizontalAlignment, spriteContainer, CreoleMode.FULL);
 	}
 
 	public TextBlock createWithNiceCreoleMode(FontConfiguration fontConfiguration,
 			HorizontalAlignment horizontalAlignment, ISkinSimple spriteContainer) {
-		return create(fontConfiguration, horizontalAlignment, spriteContainer, defaultCreoleMode);
+		return create7(fontConfiguration, horizontalAlignment, spriteContainer, defaultCreoleMode);
 	}
 
-	public TextBlock create(FontConfiguration fontConfiguration, HorizontalAlignment horizontalAlignment,
+	public TextBlock create7(FontConfiguration fontConfiguration, HorizontalAlignment horizontalAlignment,
 			ISkinSimple spriteContainer, CreoleMode creoleMode) {
-		return create(fontConfiguration, horizontalAlignment, spriteContainer, LineBreakStrategy.NONE, creoleMode,
+		return create0(fontConfiguration, horizontalAlignment, spriteContainer, LineBreakStrategy.NONE, creoleMode,
 				null, null);
 	}
 
-	public TextBlock create(FontConfiguration fontConfiguration, HorizontalAlignment horizontalAlignment,
+	public TextBlock create8(FontConfiguration fontConfiguration, HorizontalAlignment horizontalAlignment,
 			ISkinSimple spriteContainer, CreoleMode modeSimpleLine, LineBreakStrategy maxMessageSize) {
-		return create(fontConfiguration, horizontalAlignment, spriteContainer, maxMessageSize, modeSimpleLine, null,
+		return create0(fontConfiguration, horizontalAlignment, spriteContainer, maxMessageSize, modeSimpleLine, null,
 				null);
 	}
 
-	public TextBlock create(FontConfiguration fontConfiguration, HorizontalAlignment horizontalAlignment,
+	public TextBlock create9(FontConfiguration fontConfiguration, HorizontalAlignment horizontalAlignment,
 			ISkinSimple spriteContainer, LineBreakStrategy maxMessageSize) {
-		return create(fontConfiguration, horizontalAlignment, spriteContainer, maxMessageSize, defaultCreoleMode, null,
+		return create0(fontConfiguration, horizontalAlignment, spriteContainer, maxMessageSize, defaultCreoleMode, null,
 				null);
 	}
 
-	public TextBlock create(FontConfiguration fontConfiguration, HorizontalAlignment horizontalAlignment,
+	public TextBlock create0(FontConfiguration fontConfiguration, HorizontalAlignment horizontalAlignment,
 			ISkinSimple spriteContainer, LineBreakStrategy maxMessageSize, CreoleMode creoleMode,
-			UFont fontForStereotype, HtmlColor htmlColorForStereotype) {
+			UFont fontForStereotype, HColor htmlColorForStereotype) {
 		if (maxMessageSize == null) {
 			throw new IllegalArgumentException();
 		}
 		if (getNaturalHorizontalAlignment() != null) {
 			horizontalAlignment = getNaturalHorizontalAlignment();
 		}
+		final FontConfiguration stereotypeConfiguration = fontConfiguration.forceFont(fontForStereotype,
+				htmlColorForStereotype);
 		if (size() > 0) {
 			if (get(0) instanceof Stereotype) {
 				return createStereotype(fontConfiguration, horizontalAlignment, spriteContainer, 0, fontForStereotype,
-						htmlColorForStereotype);
+						htmlColorForStereotype, maxMessageSize, creoleMode);
 			}
 			if (get(size() - 1) instanceof Stereotype) {
 				return createStereotype(fontConfiguration, horizontalAlignment, spriteContainer, size() - 1,
-						fontForStereotype, htmlColorForStereotype);
+						fontForStereotype, htmlColorForStereotype, maxMessageSize, creoleMode);
 			}
 			if (get(0) instanceof MessageNumber) {
-				return createMessageNumber(fontConfiguration, horizontalAlignment, spriteContainer, maxMessageSize);
+				return createMessageNumber(fontConfiguration, horizontalAlignment, spriteContainer, maxMessageSize,
+						stereotypeConfiguration);
 			}
 		}
 
-		return getCreole(fontConfiguration, horizontalAlignment, spriteContainer, maxMessageSize, creoleMode);
-	}
-
-	private TextBlock getCreole(FontConfiguration fontConfiguration, HorizontalAlignment horizontalAlignment,
-			ISkinSimple spriteContainer, LineBreakStrategy maxMessageSize, CreoleMode creoleMode) {
-		final Sheet sheet = new CreoleParser(fontConfiguration, horizontalAlignment, spriteContainer, creoleMode)
-				.createSheet(this);
-		final SheetBlock1 sheetBlock1 = new SheetBlock1(sheet, maxMessageSize, spriteContainer == null ? 0
-				: spriteContainer.getPadding());
-		return new SheetBlock2(sheetBlock1, sheetBlock1, new UStroke(1.5));
-	}
-
-	private TextBlock createMessageNumber(FontConfiguration fontConfiguration, HorizontalAlignment horizontalAlignment,
-			ISkinSimple spriteContainer, LineBreakStrategy maxMessageSize) {
-		TextBlock tb1 = subList(0, 1).getCreole(fontConfiguration, horizontalAlignment, spriteContainer,
-				maxMessageSize, CreoleMode.FULL);
-		tb1 = TextBlockUtils.withMargin(tb1, 0, 4, 0, 0);
-		final TextBlock tb2 = subList(1, size()).getCreole(fontConfiguration, horizontalAlignment, spriteContainer,
-				maxMessageSize, CreoleMode.FULL);
-		return TextBlockUtils.mergeLR(tb1, tb2, VerticalAlignment.CENTER);
-
+		return getCreole(fontConfiguration, horizontalAlignment, spriteContainer, maxMessageSize, creoleMode,
+				stereotypeConfiguration);
 	}
 
 	private TextBlock createStereotype(FontConfiguration fontConfiguration, HorizontalAlignment horizontalAlignment,
-			SpriteContainer spriteContainer, int position, UFont fontForStereotype, HtmlColor htmlColorForStereotype) {
+			SpriteContainer spriteContainer, int position, UFont fontForStereotype, HColor htmlColorForStereotype,
+			LineBreakStrategy maxMessageSize, CreoleMode creoleMode) {
 		final Stereotype stereotype = (Stereotype) get(position);
 		TextBlock circledCharacter = null;
 		if (stereotype.isSpotted()) {
@@ -514,15 +532,67 @@ public class Display implements Iterable<CharSequence> {
 		} else {
 			circledCharacter = stereotype.getSprite(spriteContainer);
 		}
-		if (circledCharacter != null) {
-			if (stereotype.getLabel(Guillemet.DOUBLE_COMPARATOR) == null) {
-				return new TextBlockSprited(circledCharacter, this.subList(1, this.size()), fontConfiguration,
-						horizontalAlignment, spriteContainer);
-			}
-			return new TextBlockSprited(circledCharacter, this, fontConfiguration, horizontalAlignment, spriteContainer);
-		}
-		return new TextBlockSimple(this, fontConfiguration, horizontalAlignment, spriteContainer, 0, fontForStereotype,
+		final FontConfiguration stereotypeConfiguration = fontConfiguration.forceFont(fontForStereotype,
 				htmlColorForStereotype);
+		final TextBlock result = getCreole(fontConfiguration, horizontalAlignment, (ISkinSimple) spriteContainer,
+				maxMessageSize, creoleMode, stereotypeConfiguration);
+		if (circledCharacter != null) {
+			return new TextBlockSprited(circledCharacter, result);
+		}
+		return result;
+	}
+
+	private TextBlock getCreole(FontConfiguration fontConfiguration, HorizontalAlignment horizontalAlignment,
+			ISkinSimple spriteContainer, LineBreakStrategy maxMessageSize, CreoleMode creoleMode,
+			FontConfiguration stereotypeConfiguration) {
+		final Sheet sheet = Parser
+				.build(fontConfiguration, horizontalAlignment, spriteContainer, creoleMode, stereotypeConfiguration)
+				.createSheet(this);
+		final double padding = spriteContainer == null ? 0 : spriteContainer.getPadding();
+		final SheetBlock1 sheetBlock1 = new SheetBlock1(sheet, maxMessageSize, padding);
+		return new SheetBlock2(sheetBlock1, sheetBlock1, new UStroke(1.5));
+	}
+
+	private TextBlock createMessageNumber(FontConfiguration fontConfiguration, HorizontalAlignment horizontalAlignment,
+			ISkinSimple spriteContainer, LineBreakStrategy maxMessageSize, FontConfiguration stereotypeConfiguration) {
+		TextBlock tb1 = subList(0, 1).getCreole(fontConfiguration, horizontalAlignment, spriteContainer, maxMessageSize,
+				CreoleMode.FULL, stereotypeConfiguration);
+		tb1 = TextBlockUtils.withMargin(tb1, 0, 4, 0, 0);
+		final TextBlock tb2 = subList(1, size()).getCreole(fontConfiguration, horizontalAlignment, spriteContainer,
+				maxMessageSize, CreoleMode.FULL, stereotypeConfiguration);
+		return TextBlockUtils.mergeLR(tb1, tb2, VerticalAlignment.CENTER);
+
+	}
+
+	public boolean hasSeveralGuideLines() {
+		return hasSeveralGuideLines(displayData);
+	}
+
+	public static boolean hasSeveralGuideLines(String s) {
+		final List<String> splitted = Arrays.asList(s.split("\\\\n"));
+		return hasSeveralGuideLines(splitted);
+	}
+
+	private static boolean hasSeveralGuideLines(Collection<? extends CharSequence> all) {
+		if (all.size() <= 1) {
+			return false;
+		}
+		for (CharSequence cs : all) {
+			final String s = cs.toString();
+			if (s.startsWith("< ")) {
+				return true;
+			}
+			if (s.startsWith("> ")) {
+				return true;
+			}
+			if (s.endsWith(" <")) {
+				return true;
+			}
+			if (s.endsWith(" >")) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

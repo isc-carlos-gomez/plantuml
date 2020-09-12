@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.ISkinParam;
@@ -51,9 +52,8 @@ import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.IGroup;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
+import net.sourceforge.plantuml.cucadiagram.SuperGroup;
 import net.sourceforge.plantuml.cucadiagram.dot.DotData;
-import net.sourceforge.plantuml.graphic.FontConfiguration;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.color.ColorType;
 import net.sourceforge.plantuml.skin.rose.Rose;
@@ -62,6 +62,7 @@ import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleSignature;
 import net.sourceforge.plantuml.svek.image.EntityImageState;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public final class GroupPngMakerActivity {
 
@@ -70,6 +71,18 @@ public final class GroupPngMakerActivity {
 	private final StringBounder stringBounder;
 
 	class InnerGroupHierarchy implements GroupHierarchy {
+
+		public Set<SuperGroup> getAllSuperGroups() {
+			throw new UnsupportedOperationException();
+		}
+
+		public IGroup getRootGroup() {
+			throw new UnsupportedOperationException();
+		}
+
+		public SuperGroup getRootSuperGroup() {
+			throw new UnsupportedOperationException();
+		}
 
 		public Collection<IGroup> getChildrenGroups(IGroup parent) {
 			if (EntityUtils.groupRoot(parent)) {
@@ -118,18 +131,18 @@ public final class GroupPngMakerActivity {
 				skinParam, new InnerGroupHierarchy(), diagram.getColorMapper(), diagram.getEntityFactory(), false,
 				DotMode.NORMAL, diagram.getNamespaceSeparator(), diagram.getPragma());
 
-		final GeneralImageBuilder svek2 = new GeneralImageBuilder(dotData, diagram.getEntityFactory(),
-				diagram.getSource(), diagram.getPragma(), stringBounder);
+		final GeneralImageBuilder svek2 = new GeneralImageBuilder(false, dotData, diagram.getEntityFactory(),
+				diagram.getSource(), diagram.getPragma(), stringBounder, SName.activityDiagram);
 
 		if (group.getGroupType() == GroupType.INNER_ACTIVITY) {
 			final Stereotype stereo = group.getStereotype();
-			final HtmlColor borderColor = getColor(ColorParam.activityBorder, stereo);
-			final HtmlColor backColor = group.getColors(skinParam).getColor(ColorType.BACK) == null ? getColor(
-					ColorParam.background, stereo) : group.getColors(skinParam).getColor(ColorType.BACK);
+			final HColor borderColor = getColor(ColorParam.activityBorder, stereo);
+			final HColor backColor = group.getColors(skinParam).getColor(ColorType.BACK) == null
+					? getColor(ColorParam.background, stereo)
+					: group.getColors(skinParam).getColor(ColorType.BACK);
 			final double shadowing;
 			if (SkinParam.USE_STYLES()) {
-				final Style style = getDefaultStyleDefinitionGroup().getMergedStyle(
-						skinParam.getCurrentStyleBuilder());
+				final Style style = getDefaultStyleDefinitionGroup().getMergedStyle(skinParam.getCurrentStyleBuilder());
 				shadowing = style.value(PName.Shadowing).asDouble();
 			} else {
 				shadowing = skinParam.shadowing(group.getStereotype()) ? 4 : 0;
@@ -143,7 +156,7 @@ public final class GroupPngMakerActivity {
 
 	private final Rose rose = new Rose();
 
-	protected final HtmlColor getColor(ColorParam colorParam, Stereotype stereo) {
+	protected final HColor getColor(ColorParam colorParam, Stereotype stereo) {
 		final ISkinParam skinParam = diagram.getSkinParam();
 		return rose.getHtmlColor(skinParam, stereo, colorParam);
 	}

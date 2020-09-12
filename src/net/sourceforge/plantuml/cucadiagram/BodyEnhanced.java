@@ -49,7 +49,7 @@ import net.sourceforge.plantuml.ISkinSimple;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.creole.CreoleMode;
-import net.sourceforge.plantuml.creole.CreoleParser;
+import net.sourceforge.plantuml.creole.Parser;
 import net.sourceforge.plantuml.graphic.AbstractTextBlock;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
@@ -59,13 +59,14 @@ import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockLineBefore;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.graphic.TextBlockVertical2;
+import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.svek.Ports;
 import net.sourceforge.plantuml.svek.WithPorts;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 
 public class BodyEnhanced extends AbstractTextBlock implements TextBlock, WithPorts {
 
-	private TextBlock area2;
+	private TextBlock area;
 	private final FontConfiguration titleConfig;
 	private final List<CharSequence> rawBody;
 	private final FontParam fontParam;
@@ -78,9 +79,12 @@ public class BodyEnhanced extends AbstractTextBlock implements TextBlock, WithPo
 	private final Stereotype stereotype;
 	private final ILeaf entity;
 	private final boolean inEllipse;
+	private final double minClassWidth;
+	private final SName diagramType;
 
 	public BodyEnhanced(List<String> rawBody, FontParam fontParam, ISkinParam skinParam, boolean manageModifier,
-			Stereotype stereotype, ILeaf entity) {
+			Stereotype stereotype, ILeaf entity, SName diagramType) {
+		this.diagramType = diagramType;
 		this.rawBody = new ArrayList<CharSequence>(rawBody);
 		this.stereotype = stereotype;
 		this.fontParam = fontParam;
@@ -93,10 +97,21 @@ public class BodyEnhanced extends AbstractTextBlock implements TextBlock, WithPo
 		this.manageModifier = manageModifier;
 		this.entity = entity;
 		this.inEllipse = false;
+		this.minClassWidth = 0;
 	}
 
 	public BodyEnhanced(Display display, FontParam fontParam, ISkinParam skinParam, HorizontalAlignment align,
-			Stereotype stereotype, boolean manageHorizontalLine, boolean manageModifier, ILeaf entity) {
+			Stereotype stereotype, boolean manageHorizontalLine, boolean manageModifier, ILeaf entity,
+			SName diagramType) {
+		this(display, fontParam, skinParam, align, stereotype, manageHorizontalLine, manageHorizontalLine, entity, 0,
+				diagramType);
+	}
+
+	public BodyEnhanced(Display display, FontParam fontParam, ISkinParam skinParam, HorizontalAlignment align,
+			Stereotype stereotype, boolean manageHorizontalLine, boolean manageModifier, ILeaf entity,
+			double minClassWidth, SName diagramType) {
+		this.diagramType = diagramType;
+		this.minClassWidth = minClassWidth;
 		this.entity = entity;
 		this.stereotype = stereotype;
 		this.rawBody = new ArrayList<CharSequence>();
@@ -137,8 +152,8 @@ public class BodyEnhanced extends AbstractTextBlock implements TextBlock, WithPo
 	}
 
 	private TextBlock getArea(StringBounder stringBounder) {
-		if (area2 != null) {
-			return area2;
+		if (area != null) {
+			return area;
 		}
 		urls.clear();
 		final List<TextBlock> blocks = new ArrayList<TextBlock>();
@@ -155,22 +170,22 @@ public class BodyEnhanced extends AbstractTextBlock implements TextBlock, WithPo
 				final String s = s2.toString();
 				if (manageHorizontalLine && isBlockSeparator(s)) {
 					blocks.add(decorate(stringBounder, new MethodsOrFieldsArea(members, fontParam, skinParam, align,
-							stereotype, entity), separator, title));
+							stereotype, entity, diagramType), separator, title));
 					separator = s.charAt(0);
 					title = getTitle(s, skinParam);
 					members = new ArrayList<Member>();
-				} else if (CreoleParser.isTreeStart(s)) {
+				} else if (Parser.isTreeStart(s)) {
 					if (members.size() > 0) {
-						blocks.add(decorate(stringBounder, new MethodsOrFieldsArea(members, fontParam, skinParam,
-								align, stereotype, entity), separator, title));
+						blocks.add(decorate(stringBounder, new MethodsOrFieldsArea(members, fontParam, skinParam, align,
+								stereotype, entity, diagramType), separator, title));
 					}
 					members = new ArrayList<Member>();
 					final List<CharSequence> allTree = buildAllTree(s, it);
-					final TextBlock bloc = Display.create(allTree).create(fontParam.getFontConfiguration(skinParam),
+					final TextBlock bloc = Display.create(allTree).create7(fontParam.getFontConfiguration(skinParam),
 							align, skinParam, CreoleMode.FULL);
 					blocks.add(bloc);
 				} else {
-					final Member m = new MemberImpl(s, MemberImpl.isMethod(s), manageModifier);
+					final Member m = new Member(s, Member.isMethod(s), manageModifier);
 					members.add(m);
 					if (m.getUrl() != null) {
 						urls.add(m.getUrl());
@@ -179,18 +194,23 @@ public class BodyEnhanced extends AbstractTextBlock implements TextBlock, WithPo
 			}
 		}
 		if (inEllipse && members.size() == 0) {
-			members.add(new MemberImpl("", false, false));
+			members.add(new Member("", false, false));
 		}
-		blocks.add(decorate(stringBounder, new MethodsOrFieldsArea(members, fontParam, skinParam, align, stereotype,
-				entity), separator, title));
+		blocks.add(decorate(stringBounder,
+				new MethodsOrFieldsArea(members, fontParam, skinParam, align, stereotype, entity, diagramType),
+				separator, title));
 
 		if (blocks.size() == 1) {
-			this.area2 = blocks.get(0);
+			this.area = blocks.get(0);
 		} else {
-			this.area2 = new TextBlockVertical2(blocks, align);
+			this.area = new TextBlockVertical2(blocks, align);
+		}
+		if (minClassWidth > 0) {
+			this.area = TextBlockUtils.withMinWidth(this.area, minClassWidth,
+					skinParam.getDefaultTextAlignment(HorizontalAlignment.LEFT));
 		}
 
-		return area2;
+		return area;
 	}
 
 	private static List<CharSequence> buildAllTree(String init, ListIterator<CharSequence> it) {
@@ -198,7 +218,7 @@ public class BodyEnhanced extends AbstractTextBlock implements TextBlock, WithPo
 		result.add(init);
 		while (it.hasNext()) {
 			final CharSequence s = it.next();
-			if (CreoleParser.isTreeStart(StringUtils.trinNoTrace(s))) {
+			if (Parser.isTreeStart(StringUtils.trinNoTrace(s))) {
 				result.add(s);
 			} else {
 				it.previous();

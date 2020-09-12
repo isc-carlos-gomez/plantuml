@@ -39,10 +39,10 @@ import java.awt.Graphics2D;
 
 import net.sourceforge.plantuml.EnsureVisible;
 import net.sourceforge.plantuml.posimo.DotPath;
-import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.UDriver;
 import net.sourceforge.plantuml.ugraphic.UParam;
 import net.sourceforge.plantuml.ugraphic.UShape;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 
 public class DriverDotPathG2d implements UDriver<Graphics2D> {
 
@@ -57,7 +57,7 @@ public class DriverDotPathG2d implements UDriver<Graphics2D> {
 		DriverLineG2d.manageStroke(param, g2d);
 
 		if (param.getColor() != null) {
-			g2d.setColor(mapper.getMappedColor(param.getColor()));
+			g2d.setColor(mapper.toColor(param.getColor()));
 			shape.draw(g2d, x, y);
 			shape.manageEnsureVisible(x, y, visible);
 		}

@@ -55,7 +55,7 @@ class USymbolComponent1 extends USymbol {
 	private void drawComponent1(UGraphic ug, double widthTotal, double heightTotal, boolean shadowing,
 			double roundCorner) {
 
-		final URectangle form = new URectangle(widthTotal, heightTotal, roundCorner, roundCorner);
+		final URectangle form = new URectangle(widthTotal, heightTotal).rounded(roundCorner);
 		if (shadowing) {
 			form.setDeltaShadow(4);
 		}
@@ -99,9 +99,10 @@ class USymbolComponent1 extends USymbol {
 	}
 
 	@Override
-	public TextBlock asBig(final TextBlock title, HorizontalAlignment labelAlignment, final TextBlock stereotype,
-			final double width, final double height, final SymbolContext symbolContext, final HorizontalAlignment stereoAlignment) {
-		throw new UnsupportedOperationException();
+	public TextBlock asBig(TextBlock title, HorizontalAlignment labelAlignment, TextBlock stereotype, double width,
+			double height, SymbolContext symbolContext, HorizontalAlignment stereoAlignment) {
+		return USymbol.COMPONENT2.asBig(title, labelAlignment, stereotype, width, height, symbolContext,
+				stereoAlignment);
 	}
 
 	@Override

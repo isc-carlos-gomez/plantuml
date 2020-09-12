@@ -42,7 +42,7 @@ import java.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.ugraphic.ColorMapper;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 
 class EntityImageActivityBranch extends AbstractEntityImage {
 
@@ -65,9 +65,9 @@ class EntityImageActivityBranch extends AbstractEntityImage {
 		p.addPoint(size, size * 2);
 		p.addPoint(0, size);
 
-		g2d.setColor(colorMapper.getMappedColor(getYellow()));
+		g2d.setColor(colorMapper.toColor(getYellow()));
 		g2d.fill(p);
-		g2d.setColor(colorMapper.getMappedColor(getRed()));
+		g2d.setColor(colorMapper.toColor(getRed()));
 		g2d.draw(p);
 	}
 }

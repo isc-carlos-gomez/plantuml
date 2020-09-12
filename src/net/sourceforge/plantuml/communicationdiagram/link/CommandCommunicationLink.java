@@ -46,7 +46,7 @@ public class CommandCommunicationLink implements Command<CommunicationDiagram> {
     if (lines.size() != 1) {
       throw new IllegalArgumentException("Unsupported command: " + lines);
     }
-    this.commandString = lines.getFirst499().getString();
+    this.commandString = lines.getFirst().getString();
   }
 
   private class CommunicationCommandLinkClass extends CommandLinkClass {

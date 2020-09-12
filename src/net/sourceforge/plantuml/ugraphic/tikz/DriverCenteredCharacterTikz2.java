@@ -35,11 +35,11 @@
 package net.sourceforge.plantuml.ugraphic.tikz;
 
 import net.sourceforge.plantuml.tikz.TikzGraphics;
-import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.UCenteredCharacter;
 import net.sourceforge.plantuml.ugraphic.UDriver;
 import net.sourceforge.plantuml.ugraphic.UParam;
 import net.sourceforge.plantuml.ugraphic.UShape;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 
 public class DriverCenteredCharacterTikz2 implements UDriver<TikzGraphics> {
 
@@ -47,7 +47,7 @@ public class DriverCenteredCharacterTikz2 implements UDriver<TikzGraphics> {
 		final UCenteredCharacter centeredCharacter = (UCenteredCharacter) ushape;
 		final char c = centeredCharacter.getChar();
 
-		tikz.setStrokeColor(mapper.getMappedColor(param.getColor()));
+		tikz.setStrokeColor(mapper.toColor(param.getColor()));
 		tikz.drawSingleCharacter(x, y, c);
 
 	}

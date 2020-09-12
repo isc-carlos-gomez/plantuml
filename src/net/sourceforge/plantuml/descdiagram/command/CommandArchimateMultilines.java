@@ -51,6 +51,7 @@ import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.cucadiagram.Code;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
+import net.sourceforge.plantuml.cucadiagram.Ident;
 import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graphic.USymbol;
@@ -98,15 +99,16 @@ public class CommandArchimateMultilines extends CommandMultilines2<AbstractEntit
 
 	@Override
 	protected CommandExecutionResult executeNow(AbstractEntityDiagram diagram, BlocLines lines) {
-		lines = lines.trim(false);
-		final RegexResult line0 = getStartingPattern().matcher(lines.getFirst499().getTrimmed().getString());
+		lines = lines.trim();
+		final RegexResult line0 = getStartingPattern().matcher(lines.getFirst().getTrimmed().getString());
 		final String codeRaw = line0.getLazzy("CODE", 0);
 
 		final String idShort = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(codeRaw);
-		final Code code = diagram.buildCode(idShort);
+		final Ident ident = diagram.buildLeafIdent(idShort);
+		final Code code = diagram.V1972() ? ident : diagram.buildCode(idShort);
 		final String icon = line0.getLazzy("STEREOTYPE", 0);
 
-		final IEntity entity = diagram.getOrCreateLeaf(diagram.buildLeafIdent(idShort), code, LeafType.DESCRIPTION, USymbol.RECTANGLE);
+		final IEntity entity = diagram.getOrCreateLeaf(ident, code, LeafType.DESCRIPTION, USymbol.RECTANGLE);
 
 		lines = lines.subExtract(1, 1);
 		Display display = lines.toDisplay();

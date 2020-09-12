@@ -115,8 +115,8 @@ public class CommandLinkLongActivity extends CommandMultilines2<ActivityDiagram>
 
 	@Override
 	protected CommandExecutionResult executeNow(final ActivityDiagram diagram, BlocLines lines) {
-		lines = lines.trim(false);
-		final RegexResult line0 = getStartingPattern().matcher(lines.getFirst499().getTrimmed().getString());
+		lines = lines.trim();
+		final RegexResult line0 = getStartingPattern().matcher(lines.getFirst().getTrimmed().getString());
 
 		final IEntity entity1 = CommandLinkActivity.getEntity(diagram, line0, true);
 		if (entity1 == null) {
@@ -157,7 +157,7 @@ public class CommandLinkLongActivity extends CommandMultilines2<ActivityDiagram>
 			}
 		}
 
-		final List<String> lineLast = StringUtils.getSplit(MyPattern.cmpile(getPatternEnd()), lines.getLast499()
+		final List<String> lineLast = StringUtils.getSplit(MyPattern.cmpile(getPatternEnd()), lines.getLast()
 				.getString());
 		if (StringUtils.isNotEmpty(lineLast.get(0))) {
 			if (sb.length() > 0 && sb.toString().endsWith(BackSlash.BS_BS_N) == false) {
@@ -168,7 +168,6 @@ public class CommandLinkLongActivity extends CommandMultilines2<ActivityDiagram>
 
 		final String display = sb.toString();
 		final String idShort = lineLast.get(1) == null ? display : lineLast.get(1);
-		final Code code = diagram.buildCode(idShort);
 
 		String partition = null;
 		if (lineLast.get(3) != null) {
@@ -177,11 +176,12 @@ public class CommandLinkLongActivity extends CommandMultilines2<ActivityDiagram>
 		}
 		if (partition != null) {
 			final Ident idNewLong = diagram.buildLeafIdent(partition);
-			diagram.gotoGroup(idNewLong, diagram.buildCode(partition),
-					Display.getWithNewlines(partition), GroupType.PACKAGE, null, NamespaceStrategy.SINGLE);
+			diagram.gotoGroup(idNewLong, diagram.buildCode(partition), Display.getWithNewlines(partition),
+					GroupType.PACKAGE, null, NamespaceStrategy.SINGLE);
 		}
-		final IEntity entity2 = diagram.getOrCreate(diagram.buildLeafIdent(idShort), code,
-				Display.getWithNewlines(display), LeafType.ACTIVITY);
+		final Ident ident = diagram.buildLeafIdent(idShort);
+		final Code code = diagram.V1972() ? ident : diagram.buildCode(idShort);
+		final IEntity entity2 = diagram.getOrCreate(ident, code, Display.getWithNewlines(display), LeafType.ACTIVITY);
 		if (entity2 == null) {
 			return CommandExecutionResult.error("No such entity");
 		}

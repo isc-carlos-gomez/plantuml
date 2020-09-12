@@ -4,12 +4,11 @@ import java.awt.geom.Point2D;
 
 import net.sourceforge.plantuml.Direction;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
-import net.sourceforge.plantuml.graphic.HtmlColorUtils;
 import net.sourceforge.plantuml.graphic.UDrawable;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 /**
  * A drawable message arrow floating around a Communication Diagram Link.
@@ -41,7 +40,7 @@ public class MessageArrow implements UDrawable {
   @Override
   public void drawU(final UGraphic ug) {
     ug.apply(new UTranslate(this.startPoint.getX(), this.startPoint.getY()))
-        .apply(new UChangeColor(HtmlColorUtils.BLACK))
+        .apply(HColorUtils.BLACK)
         .draw(new ULine(this.startPoint, this.endPoint));
 
     final Point2D arrowHeadPosition;
@@ -51,9 +50,9 @@ public class MessageArrow implements UDrawable {
       arrowHeadPosition = this.startPoint;
     }
 
-    LinkDecor.ARROW.getExtremityFactory(HtmlColorUtils.BLACK)
+    LinkDecor.ARROW.getExtremityFactory(HColorUtils.BLACK)
         .createUDrawable(arrowHeadPosition, arrowHeadAngle(), null)
-        .drawU(ug.apply(new UChangeColor(HtmlColorUtils.BLACK)));
+        .drawU(ug.apply(HColorUtils.BLACK));
   }
 
   private double arrowHeadAngle() {

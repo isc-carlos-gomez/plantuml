@@ -153,6 +153,8 @@ public class Pipe {
 			final String s = readOneLine();
 			if (s == null) {
 				closed = true;
+			} else if (s.startsWith("@@@format ")) {
+				manageFormat(s);
 			} else {
 				sb.append(s);
 				sb.append(BackSlash.NEWLINE);
@@ -161,14 +163,22 @@ public class Pipe {
 				break;
 			}
 		}
+		String source = sb.toString().trim();
 		if (sb.length() == 0) {
 			return null;
 		}
-		String source = sb.toString();
 		if (source.startsWith("@start") == false) {
 			source = "@startuml\n" + source + "\n@enduml";
 		}
 		return source;
+	}
+
+	private void manageFormat(String s) {
+		if (s.contains("png")) {
+			option.setFileFormatOption(new FileFormatOption(FileFormat.PNG));
+		} else if (s.contains("svg")) {
+			option.setFileFormatOption(new FileFormatOption(FileFormat.SVG));
+		}
 	}
 
 	private String readOneLine() throws IOException {

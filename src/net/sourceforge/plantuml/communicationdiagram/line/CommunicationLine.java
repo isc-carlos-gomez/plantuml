@@ -9,7 +9,6 @@ import net.sourceforge.plantuml.cucadiagram.IGroup;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.NoteLinkStrategy;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.color.Colors;
@@ -18,9 +17,14 @@ import net.sourceforge.plantuml.svek.Bibliotekon;
 import net.sourceforge.plantuml.svek.Cluster;
 import net.sourceforge.plantuml.svek.ColorSequence;
 import net.sourceforge.plantuml.svek.Line;
+import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
+import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UStroke;
+import net.sourceforge.plantuml.ugraphic.UText;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
+import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 
 /**
  * A {@link Line} for a Communication Diagram.
@@ -44,15 +48,33 @@ public class CommunicationLine extends Line {
   }
 
   @Override
-  protected void drawRainbow(final UGraphic ug, final HtmlColor color, final DotPath todraw,
+  protected void drawRainbow(final UGraphic ug, final HColor color, final DotPath todraw,
       final List<Colors> supplementaryColors, final UStroke stroke) {
-    if (this.group.isLineVisible(this)) {
-      super.drawRainbow(ug.apply(stroke.onlyThickness()), color, todraw, supplementaryColors, stroke);
-    }
+     if (this.group.isLineVisible(this)) {
+    super.drawRainbow(ug.apply(stroke.onlyThickness()), color, todraw, supplementaryColors, stroke);
+     }
   }
 
   @Override
-  protected void drawLabelText(final UGraphic ug, final TextBlock labelText) {
+  protected void drawLabelText( UGraphic ug, final TextBlock labelText, final double dx, final double dy) {
+//    ug = ug.apply(new UTranslate(dx, dy));
+
+//    final Rectangle messageBox = messageBox();
+//    ug.apply(new UTranslate(messageBox.center()))
+//        .apply(HColorUtils.BLUE)
+//        .apply(HColorUtils.BLUE.bg())
+//        .draw(new URectangle(4, 4));
+//    ug.apply(new UTranslate(messageBox.topLeft().x, messageBox.topLeft().y))
+//        .apply(HColorUtils.BLUE)
+//        .draw(new URectangle(messageBox.width(), messageBox.height()));
+//    ug.apply(new UTranslate(this.group.operations().focalPoint()))
+//        .apply(HColorUtils.GREEN)
+//        .apply(HColorUtils.GREEN.bg())
+//        .draw(new URectangle(5, 5));
+//    
+//     ug.draw(new UText(""+this.group.operations().focalPoint(), FontConfiguration.blackBlueTrue(UFont.byDefault(8))));
+     
+     
     if (isLabelVisible(labelText)) {
       final Point messagePosition = this.group.calculateMessagePosition(this);
       labelText.drawU(ug.apply(new UTranslate(messagePosition.getX(), messagePosition.getY())));

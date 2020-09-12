@@ -48,7 +48,6 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.Diamond;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileGeometry;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
@@ -57,15 +56,14 @@ import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleSignature;
 import net.sourceforge.plantuml.style.Styleable;
-import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class FtileDiamondInside extends AbstractFtile implements Styleable {
 
-	private final HtmlColor backColor;
-	private final HtmlColor borderColor;
+	private final HColor backColor;
+	private final HColor borderColor;
 	private final Swimlane swimlane;
 	private final TextBlock label;
 	private final TextBlock west;
@@ -83,7 +81,7 @@ public class FtileDiamondInside extends AbstractFtile implements Styleable {
 		return StyleSignature.of(SName.root, SName.element, SName.activityDiagram, SName.activity, SName.diamond);
 	}
 
-	public FtileDiamondInside(ISkinParam skinParam, HtmlColor backColor, HtmlColor borderColor, Swimlane swimlane,
+	public FtileDiamondInside(ISkinParam skinParam, HColor backColor, HColor borderColor, Swimlane swimlane,
 			TextBlock label) {
 		this(skinParam, backColor, borderColor, swimlane, label, TextBlockUtils.empty(0, 0),
 				TextBlockUtils.empty(0, 0), TextBlockUtils.empty(0, 0), TextBlockUtils.empty(0, 0));
@@ -109,7 +107,7 @@ public class FtileDiamondInside extends AbstractFtile implements Styleable {
 		return new FtileDiamondInside(skinParam(), backColor, borderColor, swimlane, label, north, south, west, east);
 	}
 
-	private FtileDiamondInside(ISkinParam skinParam, HtmlColor backColor, HtmlColor borderColor, Swimlane swimlane,
+	private FtileDiamondInside(ISkinParam skinParam, HColor backColor, HColor borderColor, Swimlane swimlane,
 			TextBlock label, TextBlock north, TextBlock south, TextBlock west, TextBlock east) {
 		super(skinParam);
 		if (SkinParam.USE_STYLES()) {
@@ -149,7 +147,7 @@ public class FtileDiamondInside extends AbstractFtile implements Styleable {
 		final StringBounder stringBounder = ug.getStringBounder();
 		final Dimension2D dimLabel = label.calculateDimension(stringBounder);
 		final Dimension2D dimTotal = calculateDimensionAlone(stringBounder);
-		ug = ug.apply(new UChangeColor(borderColor)).apply(getThickness()).apply(new UChangeBackColor(backColor));
+		ug = ug.apply(borderColor).apply(getThickness()).apply(backColor.bg());
 		ug.draw(Diamond.asPolygon(shadowing, dimTotal.getWidth(), dimTotal.getHeight()));
 
 		north.drawU(ug.apply(new UTranslate(4 + dimTotal.getWidth() / 2, dimTotal.getHeight())));

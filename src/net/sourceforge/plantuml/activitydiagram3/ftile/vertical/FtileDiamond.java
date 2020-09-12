@@ -48,7 +48,6 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.Diamond;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileGeometry;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
@@ -56,15 +55,14 @@ import net.sourceforge.plantuml.style.PName;
 import net.sourceforge.plantuml.style.SName;
 import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleSignature;
-import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class FtileDiamond extends AbstractFtile {
 
-	private final HtmlColor backColor;
-	private final HtmlColor borderColor;
+	private final HColor backColor;
+	private final HColor borderColor;
 	private final Swimlane swimlane;
 	private final TextBlock north;
 	private final TextBlock south;
@@ -72,7 +70,7 @@ public class FtileDiamond extends AbstractFtile {
 	private final TextBlock east1;
 	private final double shadowing;
 
-	public FtileDiamond(ISkinParam skinParam, HtmlColor backColor, HtmlColor borderColor, Swimlane swimlane) {
+	public FtileDiamond(ISkinParam skinParam, HColor backColor, HColor borderColor, Swimlane swimlane) {
 		this(skinParam, backColor, borderColor, swimlane, TextBlockUtils.empty(0, 0), TextBlockUtils.empty(0, 0),
 				TextBlockUtils.empty(0, 0), TextBlockUtils.empty(0, 0));
 	}
@@ -108,7 +106,7 @@ public class FtileDiamond extends AbstractFtile {
 		return new FtileDiamond(skinParam(), backColor, borderColor, swimlane, north, south, east1, west1);
 	}
 
-	private FtileDiamond(ISkinParam skinParam, HtmlColor backColor, HtmlColor borderColor, Swimlane swimlane,
+	private FtileDiamond(ISkinParam skinParam, HColor backColor, HColor borderColor, Swimlane swimlane,
 			TextBlock north, TextBlock south, TextBlock east1, TextBlock west1) {
 		super(skinParam);
 		if (SkinParam.USE_STYLES()) {
@@ -145,8 +143,8 @@ public class FtileDiamond extends AbstractFtile {
 	public void drawU(UGraphic ug) {
 
 		final double suppY1 = north.calculateDimension(ug.getStringBounder()).getHeight();
-		ug = ug.apply(new UTranslate(0, suppY1));
-		ug.apply(new UChangeColor(borderColor)).apply(getThickness()).apply(new UChangeBackColor(backColor))
+		ug = ug.apply(UTranslate.dy(suppY1));
+		ug.apply(borderColor).apply(getThickness()).apply(backColor.bg())
 				.draw(Diamond.asPolygon(shadowing));
 		// final Dimension2D dimNorth = north.calculateDimension(ug.getStringBounder());
 		north.drawU(ug.apply(new UTranslate(Diamond.diamondHalfSize * 1.5, -suppY1)));
@@ -161,7 +159,7 @@ public class FtileDiamond extends AbstractFtile {
 
 		final Dimension2D dimEast1 = east1.calculateDimension(ug.getStringBounder());
 		east1.drawU(ug.apply(new UTranslate(Diamond.diamondHalfSize * 2, -dimEast1.getHeight()
-				+ Diamond.diamondHalfSize)));
+						+ Diamond.diamondHalfSize)));
 	}
 
 	@Override

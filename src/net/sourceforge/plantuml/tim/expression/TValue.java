@@ -77,6 +77,9 @@ public class TValue {
 
 	@Override
 	public String toString() {
+		if (jsonValue != null && jsonValue.isString()) {
+			return jsonValue.asString();
+		}
 		if (jsonValue != null) {
 			return jsonValue.toString();
 		}
@@ -142,9 +145,12 @@ public class TValue {
 
 	public Token toToken() {
 		if (isNumber()) {
-			return new Token(toString(), TokenType.NUMBER);
+			return new Token(toString(), TokenType.NUMBER, null);
 		}
-		return new Token(toString(), TokenType.QUOTED_STRING);
+		if (isJson()) {
+			return new Token(toString(), TokenType.JSON_DATA, jsonValue);
+		}
+		return new Token(toString(), TokenType.QUOTED_STRING, null);
 	}
 
 	public TValue greaterThanOrEquals(TValue v2) {

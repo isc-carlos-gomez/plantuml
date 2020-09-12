@@ -97,7 +97,7 @@ class ArrowAndParticipant extends Arrow implements InGroupable {
 			arrow.drawInternalU(ug, maxX, context);
 		} else {
 			final double boxWidth = participantBox.getPreferredWidth(ug.getStringBounder());
-			arrow.drawInternalU(ug.apply(new UTranslate(boxWidth / 2 - paddingParticipant, 0)), maxX, context);
+			arrow.drawInternalU(ug.apply(UTranslate.dx(boxWidth / 2 - paddingParticipant)), maxX, context);
 		}
 
 		final double arrowHeight = arrow.getPreferredHeight(ug.getStringBounder());
@@ -107,7 +107,10 @@ class ArrowAndParticipant extends Arrow implements InGroupable {
 		if (arrowHeight > boxHeight) {
 			diff = arrowHeight - boxHeight;
 		}
-		participantBox.drawParticipantHead(ug.apply(new UTranslate(participantBoxStartingX, getStartingY() + diff)));
+		if (context.isBackground() == false) {
+			participantBox
+					.drawParticipantHead(ug.apply(new UTranslate(participantBoxStartingX, getStartingY() + diff)));
+		}
 	}
 
 	private double getDiff(UGraphic ug) {

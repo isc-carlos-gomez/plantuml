@@ -50,7 +50,7 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileGeometry;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
 import net.sourceforge.plantuml.creole.CreoleMode;
-import net.sourceforge.plantuml.creole.CreoleParser;
+import net.sourceforge.plantuml.creole.Parser;
 import net.sourceforge.plantuml.creole.Sheet;
 import net.sourceforge.plantuml.creole.SheetBlock1;
 import net.sourceforge.plantuml.creole.SheetBlock2;
@@ -58,7 +58,6 @@ import net.sourceforge.plantuml.creole.Stencil;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.skin.rose.Rose;
@@ -70,6 +69,7 @@ import net.sourceforge.plantuml.style.Styleable;
 import net.sourceforge.plantuml.svek.image.Opale;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UStroke;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class FtileNoteAlone extends AbstractFtile implements Stencil, Styleable {
 
@@ -107,8 +107,8 @@ public class FtileNoteAlone extends AbstractFtile implements Stencil, Styleable 
 		this.withOutPoint = withOutPoint;
 		final Rose rose = new Rose();
 
-		final HtmlColor noteBackgroundColor;
-		final HtmlColor borderColor;
+		final HColor noteBackgroundColor;
+		final HColor borderColor;
 		final double shadowing;
 		if (SkinParam.USE_STYLES()) {
 			final Style style = getDefaultStyleDefinition().getMergedStyle(skinParam.getCurrentStyleBuilder());
@@ -123,8 +123,9 @@ public class FtileNoteAlone extends AbstractFtile implements Stencil, Styleable 
 
 		final FontConfiguration fc = new FontConfiguration(skinParam, FontParam.NOTE, null);
 
-		final Sheet sheet = new CreoleParser(fc, skinParam.getDefaultTextAlignment(HorizontalAlignment.LEFT),
-				skinParam, CreoleMode.FULL).createSheet(note);
+		final Sheet sheet = Parser
+				.build(fc, skinParam.getDefaultTextAlignment(HorizontalAlignment.LEFT), skinParam, CreoleMode.FULL)
+				.createSheet(note);
 		final TextBlock text = new SheetBlock2(new SheetBlock1(sheet, LineBreakStrategy.NONE, skinParam.getPadding()),
 				this, new UStroke(1));
 		opale = new Opale(shadowing, borderColor, noteBackgroundColor, text, false);

@@ -37,6 +37,7 @@ package net.sourceforge.plantuml.ugraphic;
 
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 
 public interface UGraphic {
 
@@ -52,10 +53,14 @@ public interface UGraphic {
 
 	public void startUrl(Url url);
 
-	public void closeAction();
+	public void closeUrl();
+
+	public void startGroup(String id);
+
+	public void closeGroup();
 
 	public void flushUg();
 
 	public boolean matchesProperty(String propertyName);
-	
+
 }

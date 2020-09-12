@@ -35,11 +35,11 @@
 package net.sourceforge.plantuml.ugraphic.tikz;
 
 import net.sourceforge.plantuml.tikz.TikzGraphics;
-import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.UDriver;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UParam;
 import net.sourceforge.plantuml.ugraphic.UShape;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 
 public class DriverLineTikz implements UDriver<TikzGraphics> {
 
@@ -48,7 +48,7 @@ public class DriverLineTikz implements UDriver<TikzGraphics> {
 
 		double x2 = x + line.getDX();
 		double y2 = y + line.getDY();
-		tikz.setStrokeColor(mapper.getMappedColor(param.getColor()));
+		tikz.setStrokeColor(mapper.toColor(param.getColor()));
 		tikz.setStrokeWidth(param.getStroke().getThickness(), param.getStroke().getDashTikz());
 		tikz.line(x, y, x2, y2);
 	}

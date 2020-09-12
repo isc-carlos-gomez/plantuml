@@ -38,12 +38,12 @@ package net.sourceforge.plantuml.ugraphic.g2d;
 import java.awt.Graphics2D;
 
 import net.sourceforge.plantuml.graphic.UnusedSpace;
-import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.UCenteredCharacter;
 import net.sourceforge.plantuml.ugraphic.UDriver;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UParam;
 import net.sourceforge.plantuml.ugraphic.UShape;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 
 public class DriverCenteredCharacterG2d implements UDriver<Graphics2D> {
 
@@ -53,7 +53,7 @@ public class DriverCenteredCharacterG2d implements UDriver<Graphics2D> {
 		final UFont font = characterCircled.getFont();
 		final UnusedSpace unusedSpace = UnusedSpace.getUnusedSpace(font, c);
 
-		g2d.setColor(mapper.getMappedColor(param.getColor()));
+		g2d.setColor(mapper.toColor(param.getColor()));
 		final double xpos = x - unusedSpace.getCenterX();
 		final double ypos = y - unusedSpace.getCenterY() - 0.5;
 

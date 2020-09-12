@@ -46,20 +46,18 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.Diamond;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileGeometry;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileOverpassing;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Swimlane;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
-import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 import net.sourceforge.plantuml.utils.MathUtils;
 
 public class FtileDiamondInside3 extends AbstractFtile implements FtileOverpassing {
 
-	private final HtmlColor backColor;
-	private final HtmlColor borderColor;
+	private final HColor backColor;
+	private final HColor borderColor;
 	private final Swimlane swimlane;
 	private final TextBlock label;
 	private final TextBlock west;
@@ -67,7 +65,7 @@ public class FtileDiamondInside3 extends AbstractFtile implements FtileOverpassi
 	private final TextBlock north;
 	private final TextBlock south;
 
-	public FtileDiamondInside3(ISkinParam skinParam, HtmlColor backColor, HtmlColor borderColor, Swimlane swimlane,
+	public FtileDiamondInside3(ISkinParam skinParam, HColor backColor, HColor borderColor, Swimlane swimlane,
 			TextBlock label) {
 		this(skinParam, backColor, borderColor, swimlane, label, TextBlockUtils.empty(0, 0),
 				TextBlockUtils.empty(0, 0), TextBlockUtils.empty(0, 0), TextBlockUtils.empty(0, 0));
@@ -89,7 +87,7 @@ public class FtileDiamondInside3 extends AbstractFtile implements FtileOverpassi
 		return new FtileDiamondInside3(skinParam(), backColor, borderColor, swimlane, label, north, south, west, east);
 	}
 
-	private FtileDiamondInside3(ISkinParam skinParam, HtmlColor backColor, HtmlColor borderColor, Swimlane swimlane,
+	private FtileDiamondInside3(ISkinParam skinParam, HColor backColor, HColor borderColor, Swimlane swimlane,
 			TextBlock label, TextBlock north, TextBlock south, TextBlock west, TextBlock east) {
 		super(skinParam);
 		this.backColor = backColor;
@@ -121,7 +119,7 @@ public class FtileDiamondInside3 extends AbstractFtile implements FtileOverpassi
 		final StringBounder stringBounder = ug.getStringBounder();
 		final Dimension2D dimLabel = label.calculateDimension(stringBounder);
 		final Dimension2D dimTotal = calculateDimensionAlone(stringBounder);
-		ug = ug.apply(new UChangeColor(borderColor)).apply(getThickness()).apply(new UChangeBackColor(backColor));
+		ug = ug.apply(borderColor).apply(getThickness()).apply(backColor.bg());
 		final double shadowing = skinParam().shadowing(null) ? 3 : 0;
 		ug.draw(Diamond.asPolygon(shadowing, dimTotal.getWidth(), dimTotal.getHeight()));
 

@@ -53,6 +53,7 @@ public class CommandExoArrowRight extends CommandExoArrowAny {
 	static IRegex getRegexConcat() {
 		return RegexConcat.build(CommandExoArrowRight.class.getName(), RegexLeaf.start(), //
 				new RegexLeaf("PARALLEL", "(&[%s]*)?"), //
+				new RegexLeaf("ANCHOR", CommandArrow.ANCHOR), //
 				new RegexLeaf("PARTICIPANT", "([\\p{L}0-9_.@]+|[%g][^%g]+[%g])"), //
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("ARROW_SUPPCIRCLE", "([%s]+[ox])?"), //
@@ -69,6 +70,10 @@ public class CommandExoArrowRight extends CommandExoArrowAny {
 								new RegexLeaf("ARROW_STYLE2", CommandArrow.getColorOrStylePattern()), //
 								new RegexLeaf("ARROW_BODYA2", "(-+)"))), //
 				new RegexLeaf("SHORT", "([ox]?[?\\]\\[])?"), //
+				RegexLeaf.spaceZeroOrMore(), //
+				new RegexLeaf("ACTIVATION", "(?:([+*!-]+)?)"), //
+				RegexLeaf.spaceZeroOrMore(), //
+				new RegexLeaf("LIFECOLOR", "(?:(#\\w+)?)"), //
 				RegexLeaf.spaceZeroOrMore(), //
 				new RegexLeaf("URL", "(" + UrlBuilder.getRegexp() + ")?"), //
 				RegexLeaf.spaceZeroOrMore(), //

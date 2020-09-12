@@ -7,13 +7,14 @@ import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.anim.Animation;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.UDrawable;
+import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
 import net.sourceforge.plantuml.ugraphic.ImageBuilder;
 import net.sourceforge.plantuml.ugraphic.LimitFinder;
 import net.sourceforge.plantuml.ugraphic.UGraphic2;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 /**
  * Customize {@link ImageBuilder} to support Communication Diagrams.
@@ -28,16 +29,14 @@ import net.sourceforge.plantuml.ugraphic.UTranslate;
 class CommunicationImageBuilder extends ImageBuilder {
 
   private UDrawable udrawable;
-  private final double margin1;
-  private final double margin2;
+  private final ClockwiseTopRightBottomLeft margins;
   private Point2D.Double overflow;
 
-  CommunicationImageBuilder(final ISkinParam skinParam, final double dpiFactor, final String metadata,
-      final String warningOrError, final double margin1, final double margin2, final Animation animation,
-      final HtmlColor backColor) {
-    super(skinParam, dpiFactor, metadata, warningOrError, margin1, margin2, animation, backColor);
-    this.margin1 = margin1;
-    this.margin2 = margin2;
+  CommunicationImageBuilder(final ISkinParam skinParam, final Animation animation, final String metadata,
+      final String warningOrError, final double dpiFactor, final HColor mybackcolor,
+      final ClockwiseTopRightBottomLeft margins) {
+    super(skinParam, animation, metadata, warningOrError, dpiFactor, mybackcolor, margins);
+    this.margins = margins;
     this.overflow = new Point2D.Double();
   }
 
@@ -58,8 +57,8 @@ class CommunicationImageBuilder extends ImageBuilder {
         Math.abs(limitFinder.getMinY()));
 
     return new Dimension2DDouble(
-        dim.getWidth() + 1 + this.margin1 + this.margin2 + this.overflow.x,
-        dim.getHeight() + 1 + this.margin1 + this.margin2 + this.overflow.y);
+        dim.getWidth() + 1 + this.margins.getRight() + this.margins.getLeft() + this.overflow.x,
+        dim.getHeight() + 1 + this.margins.getTop() + this.margins.getBottom() + this.overflow.y);
   }
 
   @Override

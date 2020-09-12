@@ -36,17 +36,17 @@ package net.sourceforge.plantuml.ugraphic.tikz;
 
 import net.sourceforge.plantuml.posimo.DotPath;
 import net.sourceforge.plantuml.tikz.TikzGraphics;
-import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.UDriver;
 import net.sourceforge.plantuml.ugraphic.UParam;
 import net.sourceforge.plantuml.ugraphic.UShape;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 
 public class DriverDotPathTikz implements UDriver<TikzGraphics> {
 
 	public void draw(UShape shape, double x, double y, ColorMapper mapper, UParam param, TikzGraphics tikz) {
 		final DotPath path = (DotPath) shape;
 		tikz.setFillColor(null);
-		tikz.setStrokeColor(mapper.getMappedColor(param.getColor()));
+		tikz.setStrokeColor(mapper.toColor(param.getColor()));
 		tikz.setStrokeWidth(param.getStroke().getThickness(), param.getStroke().getDashTikz());
 		tikz.upath(x, y, path.toUPath());
 	}

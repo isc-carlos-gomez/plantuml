@@ -53,14 +53,14 @@ public class CompressionZlib implements Compression {
 			return null;
 		}
 		int len = in.length * 2;
-		if (len < 100) {
-			len = 100;
+		if (len < 1000) {
+			len = 1000;
 		}
 		byte[] result = null;
-		while (result == null) {
-			result = tryCompress(in, len);
-			len *= 2;
-		}
+//		while (result == null) {
+		result = tryCompress(in, len);
+//			len *= 2;
+//		}
 		return result;
 	}
 
@@ -75,24 +75,36 @@ public class CompressionZlib implements Compression {
 		if (compresser.finished() == false) {
 			return null;
 		}
-		final byte[] result = copyArray(output, compressedDataLength);
-		return result;
+		return copyArray(output, compressedDataLength);
 	}
 
-	public byte[] decompress(byte[] in) throws IOException {
+	public ByteArray decompress(byte[] in) throws NoPlantumlCompressionException {
+		try {
+			final byte in2[] = new byte[in.length + 256];
+			System.arraycopy(in, 0, in2, 0, in.length);
+//		for (int i = 0; i < in.length; i++) {
+//			in2[i] = in[i];
+//		}
 
-		final byte in2[] = new byte[in.length + 256];
-		for (int i = 0; i < in.length; i++) {
-			in2[i] = in[i];
-		}
-
-		int len = in.length * 5;
-		byte[] result = null;
-		while (result == null) {
+			int len = 100000;
+			byte[] result = null;
 			result = tryDecompress(in2, len);
-			len *= 2;
+			if (result == null) {
+				throw new NoPlantumlCompressionException("Too big?");
+
+			}
+//		int len = in.length * 5;
+//		byte[] result = null;
+//		while (result == null) {
+//			result = tryDecompress(in2, len);
+//			len *= 2;
+//		}
+			return ByteArray.from(result);
+		} catch (IOException e) {
+			// e.printStackTrace();
+			throw new NoPlantumlCompressionException(e);
 		}
-		return result;
+
 	}
 
 	private byte[] tryDecompress(byte[] in, final int len) throws IOException {
@@ -120,9 +132,10 @@ public class CompressionZlib implements Compression {
 
 	private byte[] copyArray(final byte[] data, final int len) {
 		final byte[] result = new byte[len];
-		for (int i = 0; i < result.length; i++) {
-			result[i] = data[i];
-		}
+		System.arraycopy(data, 0, result, 0, len);
+//		for (int i = 0; i < result.length; i++) {
+//			result[i] = data[i];
+//		}
 		return result;
 	}
 

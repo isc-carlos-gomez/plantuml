@@ -8,10 +8,13 @@
 out
 gen
 
-# Maven output directory
-/target
+# Ant result file
+plantuml.jar
 
-# Eclipse project files
-.project
-.classpath
+# Maven target folder
+target/
+
+# Eclipse Project files
 .settings/
+.classpath
+.project

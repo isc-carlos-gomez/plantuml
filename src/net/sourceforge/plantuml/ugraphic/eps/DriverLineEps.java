@@ -38,12 +38,12 @@ import java.awt.geom.Line2D;
 
 import net.sourceforge.plantuml.eps.EpsGraphics;
 import net.sourceforge.plantuml.ugraphic.ClipContainer;
-import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.UClip;
 import net.sourceforge.plantuml.ugraphic.UDriver;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UParam;
 import net.sourceforge.plantuml.ugraphic.UShape;
+import net.sourceforge.plantuml.ugraphic.color.ColorMapper;
 
 public class DriverLineEps implements UDriver<EpsGraphics> {
 
@@ -71,7 +71,7 @@ public class DriverLineEps implements UDriver<EpsGraphics> {
 			y2 = line.y2;
 		}
 
-		eps.setStrokeColor(mapper.getMappedColor(param.getColor()));
+		eps.setStrokeColor(mapper.toColor(param.getColor()));
 		eps.setStrokeWidth(param.getStroke().getThickness(), param.getStroke().getDashVisible(), param.getStroke()
 				.getDashSpace());
 		eps.epsLine(x, y, x2, y2);

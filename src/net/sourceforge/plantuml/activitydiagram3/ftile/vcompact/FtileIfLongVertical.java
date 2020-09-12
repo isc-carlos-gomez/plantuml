@@ -53,7 +53,7 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.Connection;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Ftile;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileFactory;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileGeometry;
-import net.sourceforge.plantuml.activitydiagram3.ftile.FtileMinWidth;
+import net.sourceforge.plantuml.activitydiagram3.ftile.FtileMinWidthCentered;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileOverpassing;
 import net.sourceforge.plantuml.activitydiagram3.ftile.FtileUtils;
 import net.sourceforge.plantuml.activitydiagram3.ftile.Snake;
@@ -63,13 +63,13 @@ import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileDiamond;
 import net.sourceforge.plantuml.activitydiagram3.ftile.vertical.FtileDiamondInside3;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.Rainbow;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.svek.ConditionStyle;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 class FtileIfLongVertical extends AbstractFtile {
 
@@ -127,16 +127,16 @@ class FtileIfLongVertical extends AbstractFtile {
 		return getSwimlaneIn();
 	}
 
-	static Ftile create(Swimlane swimlane, HtmlColor borderColor, HtmlColor backColor, Rainbow arrowColor,
+	static Ftile create(Swimlane swimlane, HColor borderColor, HColor backColor, Rainbow arrowColor,
 			FtileFactory ftileFactory, ConditionStyle conditionStyle, List<Branch> thens, Branch branch2,
 			FontConfiguration fc, LinkRendering topInlinkRendering, LinkRendering afterEndwhile) {
 		final List<Ftile> tiles = new ArrayList<Ftile>();
 
 		for (Branch branch : thens) {
-			tiles.add(new FtileMinWidth(branch.getFtile(), 30));
+			tiles.add(new FtileMinWidthCentered(branch.getFtile(), 30));
 		}
 
-		final Ftile tile2 = new FtileMinWidth(branch2.getFtile(), 30);
+		final Ftile tile2 = new FtileMinWidthCentered(branch2.getFtile(), 30);
 
 		List<Ftile> diamonds = new ArrayList<Ftile>();
 		for (Branch branch : thens) {

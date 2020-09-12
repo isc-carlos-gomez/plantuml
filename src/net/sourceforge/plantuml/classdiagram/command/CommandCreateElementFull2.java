@@ -30,6 +30,7 @@
  *
  *
  * Original Author:  Arnaud Roques
+ * Contribution :  Hisashi Miyashita
  * 
  *
  */
@@ -52,6 +53,7 @@ import net.sourceforge.plantuml.command.regex.RegexResult;
 import net.sourceforge.plantuml.cucadiagram.Code;
 import net.sourceforge.plantuml.cucadiagram.Display;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
+import net.sourceforge.plantuml.cucadiagram.Ident;
 import net.sourceforge.plantuml.cucadiagram.LeafType;
 import net.sourceforge.plantuml.cucadiagram.Stereotag;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
@@ -176,7 +178,10 @@ public class CommandCreateElementFull2 extends SingleLineCommand2<ClassDiagram> 
 
 		if (symbol == null) {
 			type = LeafType.DESCRIPTION;
-			usymbol = diagram.getSkinParam().getActorStyle().getUSymbol();
+			usymbol = diagram.getSkinParam().actorStyle().toUSymbol();
+		} else if (symbol.equalsIgnoreCase("port")) {
+			type = LeafType.PORT;
+			usymbol = null;
 		} else if (symbol.equalsIgnoreCase("usecase")) {
 			type = LeafType.USECASE;
 			usymbol = null;
@@ -185,21 +190,22 @@ public class CommandCreateElementFull2 extends SingleLineCommand2<ClassDiagram> 
 			usymbol = null;
 		} else {
 			type = LeafType.DESCRIPTION;
-			usymbol = USymbol.getFromString(symbol, diagram.getSkinParam());
+			usymbol = USymbol.fromString(symbol, diagram.getSkinParam());
 			if (usymbol == null) {
 				throw new IllegalStateException();
 			}
 		}
 
 		final String idShort = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(codeRaw);
-		final Code code = diagram.buildCode(idShort);
+		final Ident ident = diagram.buildLeafIdent(idShort);
+		final Code code = diagram.V1972() ? ident : diagram.buildCode(idShort);
 		String display = displayRaw;
 		if (display == null) {
 			display = code.getName();
 		}
 		display = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(display);
 		final String stereotype = arg.getLazzy("STEREOTYPE", 0);
-		final IEntity entity = diagram.getOrCreateLeaf(diagram.buildLeafIdent(idShort), code, type, usymbol);
+		final IEntity entity = diagram.getOrCreateLeaf(ident, code, type, usymbol);
 		entity.setDisplay(Display.getWithNewlines(display));
 		entity.setUSymbol(usymbol);
 		if (stereotype != null) {

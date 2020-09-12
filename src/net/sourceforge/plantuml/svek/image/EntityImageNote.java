@@ -59,7 +59,6 @@ import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graph2.GeomUtils;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockEmpty;
@@ -73,20 +72,19 @@ import net.sourceforge.plantuml.style.Style;
 import net.sourceforge.plantuml.style.StyleSignature;
 import net.sourceforge.plantuml.svek.AbstractEntityImage;
 import net.sourceforge.plantuml.svek.Line;
-import net.sourceforge.plantuml.svek.Shape;
+import net.sourceforge.plantuml.svek.Node;
 import net.sourceforge.plantuml.svek.ShapeType;
-import net.sourceforge.plantuml.ugraphic.UChangeBackColor;
-import net.sourceforge.plantuml.ugraphic.UChangeColor;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UGraphicStencil;
 import net.sourceforge.plantuml.ugraphic.UPath;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 import net.sourceforge.plantuml.ugraphic.UTranslate;
+import net.sourceforge.plantuml.ugraphic.color.HColor;
 
 public class EntityImageNote extends AbstractEntityImage implements Stencil {
 
-	private final HtmlColor noteBackgroundColor;
-	private final HtmlColor borderColor;
+	private final HColor noteBackgroundColor;
+	private final HColor borderColor;
 	private final double shadowing;
 	private final int marginX1 = 6;
 	private final int marginX2 = 15;
@@ -141,7 +139,7 @@ public class EntityImageNote extends AbstractEntityImage implements Stencil {
 
 	static ISkinParam getSkin(ISkinParam skinParam, IEntity entity) {
 		final Stereotype stereotype = entity.getStereotype();
-		HtmlColor back = entity.getColors(skinParam).getColor(ColorType.BACK);
+		HColor back = entity.getColors(skinParam).getColor(ColorType.BACK);
 		if (back != null) {
 			return new SkinParamBackcolored(skinParam, back);
 		}
@@ -152,7 +150,7 @@ public class EntityImageNote extends AbstractEntityImage implements Stencil {
 		return skinParam;
 	}
 
-	private static HtmlColor getColorStatic(ISkinParam skinParam, ColorParam colorParam, Stereotype stereo) {
+	private static HColor getColorStatic(ISkinParam skinParam, ColorParam colorParam, Stereotype stereo) {
 		final Rose rose = new Rose();
 		return rose.getHtmlColor(skinParam, stereo, colorParam);
 	}
@@ -211,7 +209,7 @@ public class EntityImageNote extends AbstractEntityImage implements Stencil {
 		} else {
 			final StringBounder stringBounder = ug.getStringBounder();
 			DotPath path = opaleLine.getDotPath();
-			path.moveSvek(-shape.getMinX(), -shape.getMinY());
+			path.moveSvek(-node.getMinX(), -node.getMinY());
 			Point2D p1 = path.getStartPoint();
 			Point2D p2 = path.getEndPoint();
 			final double textWidth = getTextWidth(stringBounder);
@@ -225,9 +223,9 @@ public class EntityImageNote extends AbstractEntityImage implements Stencil {
 			final Direction strategy = getOpaleStrategy(textWidth, textHeight, p1);
 			final Point2D pp1 = path.getStartPoint();
 			final Point2D pp2 = path.getEndPoint();
-			final Point2D newRefpp2 = move(pp2, shape.getMinX(), shape.getMinY());
-			final Point2D projection = move(other.projection(newRefpp2, stringBounder), -shape.getMinX(),
-					-shape.getMinY());
+			final Point2D newRefpp2 = move(pp2, node.getMinX(), node.getMinY());
+			final Point2D projection = move(other.projection(newRefpp2, stringBounder), -node.getMinX(),
+					-node.getMinY());
 			final Opale opale = new Opale(shadowing, borderColor, noteBackgroundColor, textBlock, true);
 			opale.setRoundCorner(getRoundCorner());
 			opale.setOpale(strategy, pp1, projection);
@@ -235,7 +233,7 @@ public class EntityImageNote extends AbstractEntityImage implements Stencil {
 			opale.drawU(Colors.applyStroke(stroked, getEntity().getColors(skinParam)));
 		}
 		if (url != null) {
-			ug.closeAction();
+			ug.closeUrl();
 		}
 	}
 
@@ -254,7 +252,7 @@ public class EntityImageNote extends AbstractEntityImage implements Stencil {
 		if (withShadow) {
 			polygon.setDeltaShadow(4);
 		}
-		ug = ug.apply(new UChangeBackColor(noteBackgroundColor)).apply(new UChangeColor(borderColor));
+		ug = ug.apply(noteBackgroundColor.bg()).apply(borderColor);
 		final UGraphic stroked = applyStroke(ug);
 		stroked.draw(polygon);
 		ug.draw(Opale.getCorner(getTextWidth(stringBounder), getRoundCorner()));
@@ -296,15 +294,15 @@ public class EntityImageNote extends AbstractEntityImage implements Stencil {
 	}
 
 	private Line opaleLine;
-	private Shape shape;
-	private Shape other;
+	private Node node;
+	private Node other;
 
-	public void setOpaleLine(Line line, Shape shape, Shape other) {
+	public void setOpaleLine(Line line, Node node, Node other) {
 		if (other == null) {
 			throw new IllegalArgumentException();
 		}
 		this.opaleLine = line;
-		this.shape = shape;
+		this.node = node;
 		this.other = other;
 	}
 

@@ -58,12 +58,12 @@ public class TextBlockTitle implements TextBlock {
 			throw new IllegalArgumentException();
 		}
 		final LineBreakStrategy lineBreak = LineBreakStrategy.NONE;
-		textBlock = stringsToDisplay.create(font, HorizontalAlignment.CENTER, spriteContainer, lineBreak,
+		textBlock = stringsToDisplay.create0(font, HorizontalAlignment.CENTER, spriteContainer, lineBreak,
 				CreoleMode.FULL, null, null);
 	}
 
 	public final void drawU(UGraphic ug) {
-		textBlock.drawU(ug.apply(new UTranslate(outMargin, 0)));
+		textBlock.drawU(ug.apply(UTranslate.dx(outMargin)));
 	}
 
 	public Dimension2D calculateDimension(StringBounder stringBounder) {
