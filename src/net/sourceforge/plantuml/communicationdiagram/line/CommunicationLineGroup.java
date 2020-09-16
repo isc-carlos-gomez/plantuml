@@ -47,4 +47,15 @@ public class CommunicationLineGroup {
         .calculate();
   }
 
+  /**
+   * @param line
+   *        the line the message arrow is created for
+   * @return a new {@link MessageArrow} whose position corresponds with the position of the line
+   *         message
+   */
+  MessageArrow buildMessageArrow(final CommunicationLine line) {
+    return new MessageArrowBuilder(line, this.group.orientation(), this.group.focalPoint())
+        .build();
+  }
+
 }
