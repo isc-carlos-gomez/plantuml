@@ -3,6 +3,7 @@ package net.sourceforge.plantuml.communicationdiagram.line;
 import java.util.List;
 
 import net.sourceforge.plantuml.ISkinParam;
+import net.sourceforge.plantuml.LineParam;
 import net.sourceforge.plantuml.Pragma;
 import net.sourceforge.plantuml.cucadiagram.IGroup;
 import net.sourceforge.plantuml.cucadiagram.Link;
@@ -31,6 +32,7 @@ public class CommunicationLine extends Line {
   private final CommunicationLineGroup group;
   private final Link link;
   private final Bibliotekon bibliotekon;
+  private final ISkinParam skinParam;
 
   private CommunicationLine(final Builder builder) {
     super(builder.link, builder.colorSequence, builder.skinParam, builder.stringBounder, builder.labelFont,
@@ -38,6 +40,7 @@ public class CommunicationLine extends Line {
     this.group = builder.group;
     this.link = builder.link;
     this.bibliotekon = builder.bibliotekon;
+    this.skinParam = builder.skinParam;
   }
 
   @Override
@@ -53,6 +56,8 @@ public class CommunicationLine extends Line {
     if (isLabelVisible(labelText)) {
       final Point messagePosition = this.group.calculateMessagePosition(this);
       labelText.drawU(ug.apply(new UTranslate(messagePosition.getX(), messagePosition.getY())));
+      this.group.buildMessageArrow(this)
+          .drawU(ug.apply(getStroke()));
     }
   }
 
@@ -78,6 +83,11 @@ public class CommunicationLine extends Line {
     return !this.link.getLabel().isWhite()
         && labelText != null
         && this.link.getNoteLinkStrategy() != NoteLinkStrategy.HALF_NOT_PRINTED;
+  }
+
+  private UStroke getStroke() {
+    final UStroke defaultThickness = this.skinParam.getThickness(LineParam.arrow, null);
+    return this.link.getType().getStroke3(defaultThickness);
   }
 
   /**
