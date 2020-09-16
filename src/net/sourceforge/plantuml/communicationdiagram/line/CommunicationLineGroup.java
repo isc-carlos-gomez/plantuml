@@ -38,24 +38,18 @@ public class CommunicationLineGroup {
   }
 
   /**
-   * @param line
-   *        the line containing the message to position
-   * @return the point corresponding to the top left corner of the line message
+   * @return the {@link Orientation} of this line group considering the position of its lines and
+   *         labels in the Communication Diagram
    */
-  Point calculateMessagePosition(final CommunicationLine line) {
-    return new MessagePositionCalculator(line, this.group.orientation(), this.group.focalPoint())
-        .calculate();
+  Orientation orientation() {
+    return this.group.orientation();
   }
 
   /**
-   * @param line
-   *        the line the message arrow is created for
-   * @return a new {@link MessageArrow} whose position corresponds with the position of the line
-   *         message
+   * @return the focal point where the messages of this group of lines converge
    */
-  MessageArrow buildMessageArrow(final CommunicationLine line) {
-    return new MessageArrowBuilder(line, this.group.orientation(), this.group.focalPoint())
-        .build();
+  Point focalPoint() {
+    return this.group.focalPoint();
   }
 
 }
