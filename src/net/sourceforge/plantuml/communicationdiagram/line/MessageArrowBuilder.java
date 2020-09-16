@@ -1,6 +1,7 @@
 package net.sourceforge.plantuml.communicationdiagram.line;
 
 import java.awt.geom.Point2D;
+import java.util.Objects;
 
 import net.sourceforge.plantuml.Direction;
 
@@ -14,48 +15,74 @@ class MessageArrowBuilder {
   private static final double ARROW_LENGTH = 20;
   private static final int LINK_CENTER_GAP = 10;
 
-  private final CommunicationLine line;
-  private final Orientation linkOrientation;
-  private final Point linkFocalPoint;
+  private Point2D lineStart;
+  private Point2D lineEnd;
+  private Rectangle lineMessageBox;
+  private boolean lineInverted;
+  private Orientation linkOrientation;
+  private Point linkFocalPoint;
 
-  /**
-   * Creates a new builder.
-   *
-   * @param line
-   *        the line the {@link MessageArrow} will be created for
-   * @param linkOrientation
-   *        orientation of the communication link building the {@link MessageArrow}
-   * @param linkFocalPoint
-   *        the focal point where the communication link and its message(s) converge
-   */
-  MessageArrowBuilder(final CommunicationLine line, final Orientation linkOrientation, final Point linkFocalPoint) {
-    this.line = line;
+  MessageArrowBuilder withLineStart(final Point2D lineStart) {
+    this.lineStart = lineStart;
+    return this;
+  }
+
+  MessageArrowBuilder withLineEnd(final Point2D lineEnd) {
+    this.lineEnd = lineEnd;
+    return this;
+  }
+
+  MessageArrowBuilder withLineMessageBox(final Rectangle lineMessageBox) {
+    this.lineMessageBox = lineMessageBox;
+    return this;
+  }
+
+  MessageArrowBuilder withLineInverted(final boolean lineInverted) {
+    this.lineInverted = lineInverted;
+    return this;
+  }
+
+  MessageArrowBuilder withLinkOrientation(final Orientation linkOrientation) {
     this.linkOrientation = linkOrientation;
+    return this;
+  }
+
+  MessageArrowBuilder withLinkFocalPoint(final Point linkFocalPoint) {
     this.linkFocalPoint = linkFocalPoint;
+    return this;
   }
 
   /**
    * @return a new {@link MessageArrow}
    */
   MessageArrow build() {
+    checkAllPropertiesPresent();
     final Direction direction = calculateDirection();
     final Point startPoint = calculateStartPoint();
     final Point endPoint = calculateEndPoint(startPoint);
     return new MessageArrow(startPoint, endPoint, direction);
   }
 
+  private void checkAllPropertiesPresent() {
+    Objects.requireNonNull(this.lineStart);
+    Objects.requireNonNull(this.lineEnd);
+    Objects.requireNonNull(this.lineMessageBox);
+    Objects.requireNonNull(this.lineInverted);
+    Objects.requireNonNull(this.linkOrientation);
+    Objects.requireNonNull(this.linkFocalPoint);
+  }
+
   private Direction calculateDirection() {
     final Direction direction = naturalDirection();
-    if (this.line.isInverted()) {
+    if (this.lineInverted) {
       return direction.getInv();
     }
     return direction;
   }
 
   private Direction naturalDirection() {
-    final Point2D start = this.line.getDotPath().getStartPoint();
-    final Point2D end = this.line.getDotPath().getEndPoint();
-    final double angle = Math.atan2(-end.getY() + start.getY(), end.getX() - start.getX());
+    final double angle =
+        Math.atan2(-this.lineEnd.getY() + this.lineStart.getY(), this.lineEnd.getX() - this.lineStart.getX());
     if (this.linkOrientation == Orientation.HORIZONTAL) {
       if (Math.abs(angle) <= Math.PI / 2) {
         return Direction.RIGHT;
@@ -76,10 +103,10 @@ class MessageArrowBuilder {
   }
 
   private Point calculateHorizontalStartPoint() {
-    final double labelCenter = this.line.messageBox().center().getX();
+    final double labelCenter = this.lineMessageBox.center().getX();
     final double x = labelCenter - ARROW_LENGTH / 2;
     double y = this.linkFocalPoint.getY();
-    if (this.line.messageBox().topLeft().getY() < y) {
+    if (this.lineMessageBox.topLeft().getY() < y) {
       y -= LINK_CENTER_GAP;
     } else {
       y += LINK_CENTER_GAP;
@@ -88,10 +115,10 @@ class MessageArrowBuilder {
   }
 
   private Point calculateVerticalStartPoint() {
-    final double labelCenter = this.line.messageBox().center().getY();
+    final double labelCenter = this.lineMessageBox.center().getY();
     final double y = labelCenter - ARROW_LENGTH / 2;
     double x = this.linkFocalPoint.getX();
-    if (this.line.messageBox().topLeft().getX() < x) {
+    if (this.lineMessageBox.topLeft().getX() < x) {
       x -= LINK_CENTER_GAP;
     } else {
       x += LINK_CENTER_GAP;

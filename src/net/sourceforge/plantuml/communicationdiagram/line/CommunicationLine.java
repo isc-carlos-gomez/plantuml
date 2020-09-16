@@ -33,6 +33,7 @@ public class CommunicationLine extends Line {
   private final Link link;
   private final Bibliotekon bibliotekon;
   private final ISkinParam skinParam;
+  private Rectangle messageBox;
 
   private CommunicationLine(final Builder builder) {
     super(builder.link, builder.colorSequence, builder.skinParam, builder.stringBounder, builder.labelFont,
@@ -53,18 +54,54 @@ public class CommunicationLine extends Line {
 
   @Override
   protected void drawLabelText(final UGraphic ug, final TextBlock labelText, final double dx, final double dy) {
-    if (isLabelVisible(labelText)) {
-      final Point messagePosition = this.group.calculateMessagePosition(this);
-      labelText.drawU(ug.apply(new UTranslate(messagePosition.getX(), messagePosition.getY())));
-      this.group.buildMessageArrow(this)
+    if (isMessageVisible(labelText)) {
+      final Rectangle messageBox = messageBox();
+      final Orientation orientation = this.group.orientation();
+      final Point focalPoint = this.group.focalPoint();
+      final Point messagePosition = new MessagePositionCalculator(messageBox, orientation, focalPoint)
+          .calculate();
+      labelText.drawU(ug.apply(new UTranslate(messagePosition)));
+      new MessageArrowBuilder()
+          .withLineStart(this.getDotPath().getStartPoint())
+          .withLineEnd(this.getDotPath().getEndPoint())
+          .withLineMessageBox(messageBox)
+          .withLineInverted(isInverted())
+          .withLinkOrientation(orientation)
+          .withLinkFocalPoint(focalPoint)
+          .build()
           .drawU(ug.apply(getStroke()));
     }
   }
 
+  @Override
+  public void moveSvek(final double deltaX, final double deltaY) {
+    super.moveSvek(deltaX, deltaY);
+    this.messageBox = null;
+  }
+
   /**
-   * @return the rectangular area occupied by the message label of this line
+   * @return the rectangular area occupied by the message label of this line before being positioned
+   *         for the communication link
    */
   Rectangle messageBox() {
+    if (this.messageBox == null) {
+      this.messageBox = calculateMessageBox();
+    }
+    return this.messageBox;
+  }
+
+  private boolean isMessageVisible(final TextBlock labelText) {
+    return !this.link.getLabel().isWhite()
+        && labelText != null
+        && this.link.getNoteLinkStrategy() != NoteLinkStrategy.HALF_NOT_PRINTED;
+  }
+
+  private UStroke getStroke() {
+    final UStroke defaultThickness = this.skinParam.getThickness(LineParam.arrow, null);
+    return this.link.getType().getStroke3(defaultThickness);
+  }
+
+  private Rectangle calculateMessageBox() {
     double x = 0;
     double y = 0;
     if (this.link.isAutoLinkOfAGroup()) {
@@ -77,17 +114,6 @@ public class CommunicationLine extends Line {
     x += getDx();
     y += getDy();
     return new Rectangle(getLabelXY()).withDelta(x, y);
-  }
-
-  private boolean isLabelVisible(final TextBlock labelText) {
-    return !this.link.getLabel().isWhite()
-        && labelText != null
-        && this.link.getNoteLinkStrategy() != NoteLinkStrategy.HALF_NOT_PRINTED;
-  }
-
-  private UStroke getStroke() {
-    final UStroke defaultThickness = this.skinParam.getThickness(LineParam.arrow, null);
-    return this.link.getType().getStroke3(defaultThickness);
   }
 
   /**

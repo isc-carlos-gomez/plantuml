@@ -12,6 +12,7 @@ import net.sourceforge.plantuml.communicationdiagram.line.Rectangle.Overlap;
 public class OneLineGroup implements LineGroup {
 
   private final CommunicationLine line;
+  private Orientation orientation;
 
   OneLineGroup(final CommunicationLine line) {
     this.line = Objects.requireNonNull(line);
@@ -29,6 +30,19 @@ public class OneLineGroup implements LineGroup {
 
   @Override
   public Orientation orientation() {
+    if (this.orientation == null) {
+      this.orientation = calculateOrientation();
+    }
+    return this.orientation;
+  }
+
+  @Override
+  public Point focalPoint() {
+    return new FocalPointCalculator(this.line, orientation())
+        .calculate();
+  }
+
+  private Orientation calculateOrientation() {
     final Rectangle centralLineBox = new Rectangle(this.line.getDotPath().getMinMax());
     final Rectangle messageBoxes = this.line.messageBox();
     final Overlap overlap = centralLineBox.overlap(messageBoxes);
@@ -40,12 +54,6 @@ public class OneLineGroup implements LineGroup {
       default:
         throw new IllegalStateException("Unexpected overlap: " + overlap);
     }
-  }
-
-  @Override
-  public Point focalPoint() {
-    return new FocalPointCalculator(this.line, orientation())
-        .calculate();
   }
 
 }
