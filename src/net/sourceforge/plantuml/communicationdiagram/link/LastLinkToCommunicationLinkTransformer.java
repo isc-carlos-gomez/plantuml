@@ -1,6 +1,5 @@
 package net.sourceforge.plantuml.communicationdiagram.link;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import net.sourceforge.plantuml.communicationdiagram.CommunicationDiagram;
@@ -40,30 +39,33 @@ class LastLinkToCommunicationLinkTransformer {
    */
   void transform() {
     final Link nonCommunicationLink = this.diagram.removeLastLink();
-    tryToUpdateExistingLink(nonCommunicationLink)
-        .map(Optional::of)
-        .orElse(tryToAddEmptyAndOppositeLinks(nonCommunicationLink))
-        .orElse(addNewLink(nonCommunicationLink))
-        .run();
+    if (!tryToUpdateExistingLink(nonCommunicationLink)
+        && !tryToAddEmptyAndOppositeLinks(nonCommunicationLink)) {
+      addNewLink(nonCommunicationLink);
+    }
   }
 
-  private Optional<Runnable> tryToUpdateExistingLink(final Link nonCommunicationLink) {
-    return this.diagram.findLinkWithSameEnds(nonCommunicationLink)
-        .map(link -> () -> {
-          this.diagram.replaceLink(link, link.withAppendedLabel(nonCommunicationLink.getLabel()));
-        });
+  private boolean tryToUpdateExistingLink(final Link nonCommunicationLink) {
+    final CommunicationLink linkWithSameEnds = this.diagram.findLinkWithSameEnds(nonCommunicationLink);
+    if (linkWithSameEnds != null) {
+      this.diagram.replaceLink(linkWithSameEnds, linkWithSameEnds.withAppendedLabel(nonCommunicationLink.getLabel()));
+      return true;
+    }
+    return false;
   }
 
-  private Optional<Runnable> tryToAddEmptyAndOppositeLinks(final Link nonCommunicationLink) {
-    return this.diagram.findLinkWithOppositeEnds(nonCommunicationLink)
-        .map(link -> () -> {
-          this.diagram.addLink(link.withLabel(Display.create(" ")));
-          this.diagram.addLink(toCommunicationLink(nonCommunicationLink, link.getGroupId()));
-        });
+  private boolean tryToAddEmptyAndOppositeLinks(final Link nonCommunicationLink) {
+    final CommunicationLink linkWithOppositeEnds = this.diagram.findLinkWithOppositeEnds(nonCommunicationLink);
+    if (linkWithOppositeEnds != null) {
+      this.diagram.addLink(linkWithOppositeEnds.withLabel(Display.create(" ")));
+      this.diagram.addLink(toCommunicationLink(nonCommunicationLink, linkWithOppositeEnds.getGroupId()));
+      return true;
+    }
+    return false;
   }
 
-  private Runnable addNewLink(final Link nonCommunicationLink) {
-    return () -> this.diagram.addLink(toCommunicationLink(nonCommunicationLink, UUID.randomUUID()));
+  private void addNewLink(final Link nonCommunicationLink) {
+    this.diagram.addLink(toCommunicationLink(nonCommunicationLink, UUID.randomUUID()));
   }
 
   private CommunicationLink toCommunicationLink(final Link nonCommunicationLink, final UUID linkGroupId) {

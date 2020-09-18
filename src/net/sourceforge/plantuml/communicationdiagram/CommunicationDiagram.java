@@ -1,7 +1,6 @@
 package net.sourceforge.plantuml.communicationdiagram;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.ISkinSimple;
@@ -60,13 +59,16 @@ public class CommunicationDiagram extends ClassDiagram {
    *
    * @param link
    *        the link to compare
-   * @return the found link, if any
+   * @return the found link if any, null otherwise
    */
-  public Optional<CommunicationLink> findLinkWithSameEnds(final Link link) {
-    return getLinks().stream()
-        .map(CommunicationLink.class::cast)
-        .filter(communicationLink -> communicationLink.hasSameEnds(link))
-        .findFirst();
+  public CommunicationLink findLinkWithSameEnds(final Link link) {
+    for (final Link existingLink : getLinks()) {
+      final CommunicationLink communicationLink = (CommunicationLink) existingLink;
+      if (communicationLink.hasSameEnds(link)) {
+        return communicationLink;
+      }
+    }
+    return null;
   }
 
   /**
@@ -74,13 +76,16 @@ public class CommunicationDiagram extends ClassDiagram {
    *
    * @param link
    *        the link to compare
-   * @return the found link, if any
+   * @return the found link if any, null otherwise
    */
-  public Optional<CommunicationLink> findLinkWithOppositeEnds(final Link link) {
-    return getLinks().stream()
-        .map(CommunicationLink.class::cast)
-        .filter(communicationLink -> communicationLink.hasOppositeEnds(link))
-        .findFirst();
+  public CommunicationLink findLinkWithOppositeEnds(final Link link) {
+    for (final Link existingLink : getLinks()) {
+      final CommunicationLink communicationLink = (CommunicationLink) existingLink;
+      if (communicationLink.hasOppositeEnds(link)) {
+        return communicationLink;
+      }
+    }
+    return null;
   }
 
   @Override

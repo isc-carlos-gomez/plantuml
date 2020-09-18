@@ -2,8 +2,6 @@ package net.sourceforge.plantuml.communicationdiagram.line;
 
 import java.awt.geom.CubicCurve2D;
 import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.IntStream;
 
 /**
  * Service used by {@link LineGroup} to calculate the focal point of a line, i.e. the point where
@@ -35,36 +33,48 @@ class FocalPointCalculator {
   Point calculate() {
     if (this.orientation == Orientation.HORIZONTAL) {
       final double x = this.line.messageBox().center().getX();
-      return findPointFromX(x)
-          .orElseThrow(() -> new IllegalStateException("Expected focal point not found"));
+      return findPointFromX(x);
     }
     final double y = this.line.messageBox().center().getY();
-    return findPointFromY(y)
-        .orElseThrow(() -> new IllegalStateException("Expected focal point not found"));
+    return findPointFromY(y);
   }
 
-  private Optional<Point> findPointFromX(final double x) {
-    return this.line.getDotPath().getBeziers()
-        .stream()
-        .filter(bezier -> bezier.x2 >= x)
-        .findFirst()
-        .map(bezier -> findBezierPoint(bezier, comparingX(x)));
+  private Point findPointFromX(final double x) {
+    return findBezierPoint(findBezierCurveAtX(x), comparingX(x));
   }
 
-  private Optional<Point> findPointFromY(final double y) {
-    return this.line.getDotPath().getBeziers()
-        .stream()
-        .filter(bezier -> bezier.y2 >= y)
-        .findFirst()
-        .map(bezier -> findBezierPoint(bezier, comparingY(y)));
+  private Point findPointFromY(final double y) {
+    return findBezierPoint(findBezierCurveAtY(y), comparingY(y));
+  }
+
+  private CubicCurve2D.Double findBezierCurveAtX(final double x) {
+    for (final CubicCurve2D.Double bezier : this.line.getDotPath().getBeziers()) {
+      if (bezier.x2 >= x) {
+        return bezier;
+      }
+    }
+    throw new IllegalStateException("Expected bezier curve not found");
+  }
+
+  private CubicCurve2D.Double findBezierCurveAtY(final double y) {
+    for (final CubicCurve2D.Double bezier : this.line.getDotPath().getBeziers()) {
+      if (bezier.y2 >= y) {
+        return bezier;
+      }
+    }
+    throw new IllegalStateException("Expected bezier curve not found");
   }
 
   private Point findBezierPoint(final CubicCurve2D.Double bezier, final Comparator<Point> comparator) {
-    return IntStream.rangeClosed(0, 10)
-        .mapToDouble(i -> i / 10.0)
-        .mapToObj(t -> bezierPoint(bezier, t))
-        .min(comparator)
-        .orElseThrow(() -> new IllegalStateException("Expected Bezier point not found"));
+    Point foundPoint = bezierPoint(bezier, 0);
+    for (int i = 1; i <= 10; i++) {
+      final double time = i / 10.0;
+      final Point bezierPoint = bezierPoint(bezier, time);
+      if (comparator.compare(foundPoint, bezierPoint) > 0) {
+        foundPoint = bezierPoint;
+      }
+    }
+    return foundPoint;
   }
 
   private Point bezierPoint(final CubicCurve2D.Double bezier, final double t) {
@@ -79,11 +89,27 @@ class FocalPointCalculator {
   }
 
   private static Comparator<Point> comparingX(final double x) {
-    return Comparator.comparing(point -> Math.abs(x - point.getX()));
+    return new Comparator<Point>() {
+
+      @Override
+      public int compare(final Point point1, final Point point2) {
+        return Double.compare(
+            Math.abs(x - point1.getX()),
+            Math.abs(x - point2.getX()));
+      }
+    };
   }
 
   private static Comparator<Point> comparingY(final double y) {
-    return Comparator.comparing(point -> Math.abs(y - point.getY()));
+    return new Comparator<Point>() {
+
+      @Override
+      public int compare(final Point point1, final Point point2) {
+        return Double.compare(
+            Math.abs(y - point1.getY()),
+            Math.abs(y - point2.getY()));
+      }
+    };
   }
 
 }

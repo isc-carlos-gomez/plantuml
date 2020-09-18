@@ -22,4 +22,19 @@ class TwoLineGroup implements LineGroup {
     return new ThreeLineGroup(this.line1, this.line2, line3);
   }
 
+  @Override
+  public boolean isLineVisible(final CommunicationLine line) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Orientation orientation() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Point focalPoint() {
+    throw new UnsupportedOperationException();
+  }
+
 }

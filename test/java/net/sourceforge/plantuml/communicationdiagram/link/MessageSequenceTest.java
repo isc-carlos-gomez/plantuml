@@ -1,15 +1,15 @@
 package net.sourceforge.plantuml.communicationdiagram.link;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 /**
  * Unit tests {@link MessageSequence}.
  *
  * @author Carlos Gomez
  */
-class MessageSequenceTest {
+public class MessageSequenceTest {
 
   /**
    * <pre>
@@ -24,27 +24,27 @@ class MessageSequenceTest {
    * </pre>
    */
   @Test
-  void generatesNextSequence() {
+  public void generatesNextSequence() {
     MessageSequence sequence = new MessageSequence();
-    assertThat(sequence).hasToString("0: ");
+    assertEquals(sequence.toString(), "0: ");
 
     sequence = sequence.next(0);
-    assertThat(sequence).hasToString("1: ");
+    assertEquals(sequence.toString(), "1: ");
 
     sequence = sequence.next(1);
-    assertThat(sequence).hasToString("1.1: ");
+    assertEquals(sequence.toString(), "1.1: ");
 
     sequence = sequence.next(1);
-    assertThat(sequence).hasToString("1.2: ");
+    assertEquals(sequence.toString(), "1.2: ");
 
     sequence = sequence.next(2);
-    assertThat(sequence).hasToString("1.2.1: ");
+    assertEquals(sequence.toString(), "1.2.1: ");
 
     sequence = sequence.next(0);
-    assertThat(sequence).hasToString("2: ");
+    assertEquals(sequence.toString(), "2: ");
 
     sequence = sequence.next(3);
-    assertThat(sequence).hasToString("2.0.0.1: ");
+    assertEquals(sequence.toString(), "2.0.0.1: ");
   }
 
 }

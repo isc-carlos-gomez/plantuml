@@ -1,12 +1,11 @@
 package net.sourceforge.plantuml.communicationdiagram.line;
 
-import java.awt.geom.Dimension2D;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-import net.sourceforge.plantuml.posimo.DotPath;
 import net.sourceforge.plantuml.ugraphic.MinMax;
 
 /**
@@ -50,29 +49,40 @@ class ThreeLineGroupLazyData {
 
   private void sortLines() {
     if (horizontallyOrientedLines()) {
-      Collections.sort(this.lines, ThreeLineGroupLazyData::sortByCentralY);
+      Collections.sort(this.lines, sortByCentralY());
     } else {
-      Collections.sort(this.lines, ThreeLineGroupLazyData::sortByCentralX);
+      Collections.sort(this.lines, sortByCentralX());
     }
   }
 
   private boolean horizontallyOrientedLines() {
-    final Dimension2D groupDimension = this.lines.stream()
-        .map(CommunicationLine::getDotPath)
-        .map(DotPath::getMinMax)
-        .reduce(MinMax.getEmpty(true), MinMax::addMinMax)
-        .getDimension();
+    final MinMax groupDimension = MinMax.getEmpty(true);
+    for (final CommunicationLine line : this.lines) {
+      groupDimension.addMinMax(line.getDotPath().getMinMax());
+    }
     return groupDimension.getWidth() >= groupDimension.getHeight();
   }
 
-  private static int sortByCentralY(final CommunicationLine line1, final CommunicationLine line2) {
-    final double diff = line1.messageBox().center().getY() - line2.messageBox().center().getY();
-    return (int) diff;
+  private static Comparator<CommunicationLine> sortByCentralY() {
+    return new Comparator<CommunicationLine>() {
+
+      @Override
+      public int compare(final CommunicationLine line1, final CommunicationLine line2) {
+        final double diff = line1.messageBox().center().getY() - line2.messageBox().center().getY();
+        return (int) diff;
+      }
+    };
   }
 
-  private static int sortByCentralX(final CommunicationLine line1, final CommunicationLine line2) {
-    final double diff = line1.messageBox().center().getX() - line2.messageBox().center().getX();
-    return (int) diff;
+  private static Comparator<CommunicationLine> sortByCentralX() {
+    return new Comparator<CommunicationLine>() {
+
+      @Override
+      public int compare(final CommunicationLine line1, final CommunicationLine line2) {
+        final double diff = line1.messageBox().center().getX() - line2.messageBox().center().getX();
+        return (int) diff;
+      }
+    };
   }
 
 }

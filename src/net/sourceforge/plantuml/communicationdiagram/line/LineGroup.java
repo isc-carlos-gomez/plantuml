@@ -16,32 +16,24 @@ interface LineGroup {
    *        the line to add
    * @return a new group that contains this group's lines and the added line
    */
-  default LineGroup addLine(final CommunicationLine line) {
-    throw new UnsupportedOperationException();
-  }
+  LineGroup addLine(final CommunicationLine line);
 
   /**
    * @param line
    *        the line to analyze
    * @return whether a line is visible in this group or not
    */
-  default boolean isLineVisible(final CommunicationLine line) {
-    throw new UnsupportedOperationException();
-  }
+  boolean isLineVisible(final CommunicationLine line);
 
   /**
    * @return the {@link Orientation} of this line group considering the position of its lines and
    *         labels in the Communication Diagram
    */
-  default Orientation orientation() {
-    throw new UnsupportedOperationException();
-  }
+  Orientation orientation();
 
   /**
    * @return the focal point where the messages of this group of lines converge
    */
-  default Point focalPoint() {
-    throw new UnsupportedOperationException();
-  }
+  Point focalPoint();
 
 }

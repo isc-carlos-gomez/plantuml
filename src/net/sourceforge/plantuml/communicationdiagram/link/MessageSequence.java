@@ -2,8 +2,6 @@ package net.sourceforge.plantuml.communicationdiagram.link;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * Immutable object representing a zero-based and multi-level numeric sequence.
@@ -44,16 +42,17 @@ class MessageSequence {
    * | 2:      | 3     | 2.0.0.1: |
    * </pre>
    *
-   * @param level
+   * @param maxLevel
    *        the maximum level of the next sequence
    * @return the next sequence produced by incrementing the current sequence at the given level
    */
-  MessageSequence next(final int level) {
-    checkLevelIsPositive(level);
-    final List<Integer> nextLevels = IntStream.range(0, level)
-        .mapToObj(this::currentValue)
-        .collect(Collectors.toList());
-    nextLevels.add(nextValue(level));
+  MessageSequence next(final int maxLevel) {
+    checkLevelIsPositive(maxLevel);
+    final List<Integer> nextLevels = new ArrayList<>();
+    for (int level = 0; level < maxLevel; level++) {
+      nextLevels.add(currentValue(level));
+    }
+    nextLevels.add(nextValue(maxLevel));
     return new MessageSequence(nextLevels);
   }
 
@@ -63,9 +62,16 @@ class MessageSequence {
    */
   @Override
   public String toString() {
-    return this.levels.stream()
-        .map(Object::toString)
-        .collect(Collectors.joining(".", "", ": "));
+    final StringBuilder result = new StringBuilder();
+    for (final int level : this.levels) {
+      result.append(level);
+      result.append(".");
+    }
+    if (result.length() > 0) {
+      result.deleteCharAt(result.length() - 1);
+      result.append(": ");
+    }
+    return result.toString();
   }
 
   private void checkLevelIsPositive(final int level) {

@@ -41,8 +41,7 @@ class CommunicationGeneralImageBuilder extends GeneralImageBuilder {
   protected Line newLine(final Link link, final ISkinParam skinParam, final FontConfiguration labelFont,
       final DotStringFactory dotStringFactory, final StringBounder stringBounder, final DotData dotData) {
 
-    final CommunicationLineGroup group = this.linkGroupIdToLineGroup.computeIfAbsent(
-        ((CommunicationLink) link).getGroupId(), id -> new CommunicationLineGroup());
+    final CommunicationLineGroup group = lineGroupFor(link);
     final CommunicationLine line = CommunicationLine.builder()
         .withGroup(group)
         .withLink(link)
@@ -57,6 +56,14 @@ class CommunicationGeneralImageBuilder extends GeneralImageBuilder {
 
     return line;
 
+  }
+
+  private CommunicationLineGroup lineGroupFor(final Link link) {
+    final UUID groupId = ((CommunicationLink) link).getGroupId();
+    if (this.linkGroupIdToLineGroup.get(groupId) == null) {
+      this.linkGroupIdToLineGroup.put(groupId, new CommunicationLineGroup());
+    }
+    return this.linkGroupIdToLineGroup.get(groupId);
   }
 
 }

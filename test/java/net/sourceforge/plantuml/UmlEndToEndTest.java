@@ -1,47 +1,62 @@
 package net.sourceforge.plantuml;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.BasicFileAttributes;
 
-import org.junit.jupiter.api.Test;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import net.sourceforge.plantuml.core.DiagramDescription;
 
-class UmlEndToEndTest {
+public class UmlEndToEndTest {
 
-  private static final String OUTPUT_DIR = "/Users/Carlos/Projects/PlantUML";
+  @BeforeClass
+  public static void createOutputDir() throws IOException {
+    Files.createDirectories(Paths.get(outputDir()));
+  }
 
   @Test
-  void generateCommunicationDiagrams() throws Exception {
+  public void generateCommunicationDiagrams() throws Exception {
     assertThatDiagramsAreGenerated("/diagrams/communication");
   }
 
   @Test
-  void generateOtherDiagrams() throws Exception {
+  public void generateOtherDiagrams() throws Exception {
     assertThatDiagramsAreGenerated("/diagrams/other");
   }
 
   private void assertThatDiagramsAreGenerated(final String diagramsPath) throws IOException, URISyntaxException {
     final URL resource = getClass().getResource(diagramsPath);
-    Files.walk(Paths.get(resource.toURI()))
-        .filter(Files::isRegularFile)
-        .forEach(this::assertThatDiagramIsGenerated);
+    Files.walkFileTree(Paths.get(resource.toURI()), new SimpleFileVisitor<Path>() {
+      @Override
+      public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs)
+          throws IOException {
+        if (Files.isRegularFile(file)) {
+          assertThatDiagramIsGenerated(file);
+        }
+        return FileVisitResult.CONTINUE;
+      }
+    });
   }
 
   private void assertThatDiagramIsGenerated(final Path path) {
     try {
-      assertThat(generateDiagram(path)).isNotNull();
+      assertNotNull(generateDiagram(path));
     } catch (final IOException e) {
-      fail(e);
+      fail(e.toString());
     }
   }
 
@@ -51,9 +66,14 @@ class UmlEndToEndTest {
   }
 
   private OutputStream outputFile(final Path path) throws IOException {
-    final Path outputPath = Paths.get(OUTPUT_DIR, path.getFileName().toString().replace(".puml", ".png"));
+    final String fileName = path.getFileName().toString().replace(".puml", ".png");
+    final Path outputPath = Paths.get(outputDir(), fileName);
     Files.deleteIfExists(outputPath);
     return Files.newOutputStream(outputPath, StandardOpenOption.CREATE);
+  }
+
+  private static String outputDir() {
+    return new File("target/test-diagrams").getAbsolutePath();
   }
 
 }

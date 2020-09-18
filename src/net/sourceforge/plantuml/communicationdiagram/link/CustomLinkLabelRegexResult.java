@@ -25,7 +25,7 @@ class CustomLinkLabelRegexResult extends RegexResult {
    *        the new link label
    */
   CustomLinkLabelRegexResult(final RegexResult originalResult, final String customLinkLabel) {
-    super(new HashMap<>());
+    super(new HashMap<String, RegexPartialMatch>());
     this.delegate = originalResult;
     this.customLinkLabel = customLinkLabel;
   }

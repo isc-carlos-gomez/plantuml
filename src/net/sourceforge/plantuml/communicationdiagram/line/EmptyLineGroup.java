@@ -12,4 +12,19 @@ class EmptyLineGroup implements LineGroup {
     return new OneLineGroup(line);
   }
 
+  @Override
+  public boolean isLineVisible(final CommunicationLine line) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Orientation orientation() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Point focalPoint() {
+    throw new UnsupportedOperationException();
+  }
+
 }
